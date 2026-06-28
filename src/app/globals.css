@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --font-sans: var(--font-outfit);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift { transition: transform 200ms var(--ease-out-expo), box-shadow 200ms var(--ease-out-expo); }
+  .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 32px -8px rgba(0,0,0,0.12); }
+}
+
+.btn-press { transition: transform 120ms var(--ease-out-expo), background-color 200ms ease, box-shadow 200ms ease; }
+.btn-press:active { transform: scale(0.97); }
+
+.nav-link {
+  position: relative;
+  transition: color 200ms ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1.5px;
+  background: #dc2626;
+  transition: width 250ms var(--ease-out-expo);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover::after { width: 100%; }
+}
+
+.clip-reveal {
+  clip-path: inset(8% 8% 8% 8% round 16px);
+  transition: clip-path 900ms var(--ease-out-expo);
+}
+.clip-reveal.visible {
+  clip-path: inset(0% 0% 0% 0% round 16px);
+}
+
+.img-zoom { transition: transform 400ms var(--ease-out-quart); }
+@media (hover: hover) and (pointer: fine) {
+  .img-zoom:hover { transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  .clip-reveal { clip-path: inset(0% 0% 0% 0% round 16px) !important; }
 }
