@@ -38,7 +38,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${outfit.variable} antialiased`}>
-      <body className="bg-white text-zinc-900 font-[family-name:var(--font-outfit)]">
+      <body className="bg-[#0f0f11] text-zinc-200 font-[family-name:var(--font-outfit)]">
+        <div className="grain" />
         <SmoothScroll />
         <Nav />
         <ScrollProgress />
