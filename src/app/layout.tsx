@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollProgress from "@/components/ScrollProgress";
 import SmoothScroll from "@/components/SmoothScroll";
+import BackToTop from "@/components/BackToTop";
 
 const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
@@ -43,6 +44,7 @@ export default function RootLayout({
         <ScrollProgress />
         <main>{children}</main>
         <Footer />
+        <BackToTop />
       </body>
     </html>
   );
