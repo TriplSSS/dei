@@ -4,6 +4,7 @@ import Reveal from "@/components/Reveal";
 import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
 import ScrambleText from "@/components/ScrambleText";
+import ProductCard from "@/components/ProductCard";
 import { motion } from "motion/react";
 
 const easeOut = [0.16, 1, 0.3, 1] as const;
@@ -116,6 +117,25 @@ export default function Home() {
                   </div>
                 </div>
               </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED PRODUCTS */}
+      <section className="py-24 px-6 bg-zinc-50">
+        <div className="max-w-[1400px] mx-auto">
+          <Reveal>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-14">Популярные товары</h2>
+          </Reveal>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Сварочные инверторы", price: "от 18 500 ₽", img: "https://picsum.photos/seed/dei-proton200/400/400" },
+              { name: "LED-DEI-120 Промышленный", category: "Светодиодные светильники", price: "от 8 200 ₽", img: "https://picsum.photos/seed/dei-led120/400/400" },
+              { name: "Центратор ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://picsum.photos/seed/dei-centr159/400/400" },
+              { name: "Электроды МР-3 d3.0", category: "Расходные материалы", price: "от 1 200 ₽/пачка", img: "https://picsum.photos/seed/dei-electrode3/400/400" },
+            ].map((p, i) => (
+              <ProductCard key={i} product={p} index={i} />
             ))}
           </div>
         </div>
