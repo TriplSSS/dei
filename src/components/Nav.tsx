@@ -17,7 +17,7 @@ export default function Nav() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#0f0f11]/80 backdrop-blur-xl border-b border-zinc-800/50">
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#09090b]/80 backdrop-blur-xl border-b border-zinc-800/30">
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold tracking-tight text-white">
             DEI<span className="text-red-500">.</span>
@@ -32,7 +32,7 @@ export default function Nav() {
           </div>
 
           <div className="flex items-center gap-3">
-            <MagneticButton href="tel:+79885807630" className="hidden sm:inline-block bg-red-600 hover:bg-red-500 text-white text-sm px-5 py-2.5 rounded-lg font-medium btn-press">
+            <MagneticButton href="tel:+79885807630" className="hidden sm:inline-block bg-red-600 hover:bg-red-500 text-white text-sm px-5 py-2.5 font-medium btn">
               Позвонить
             </MagneticButton>
 
@@ -55,7 +55,7 @@ export default function Nav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 top-16 z-30 bg-[#0f0f11] border-b border-zinc-800/50 px-6 py-6 md:hidden"
+            className="fixed inset-x-0 top-16 z-30 bg-[#09090b] border-b border-zinc-800/30 px-6 py-6 md:hidden"
           >
             <div className="flex flex-col gap-4">
               {links.map(l => (
@@ -65,7 +65,7 @@ export default function Nav() {
                 </a>
               ))}
               <a href="tel:+79885807630"
-                className="bg-red-600 text-white text-center py-3 rounded-lg font-medium btn-press sm:hidden">
+                className="bg-red-600 text-white text-center py-3 font-medium btn sm:hidden">
                 +7 (988) 580-76-30
               </a>
             </div>
