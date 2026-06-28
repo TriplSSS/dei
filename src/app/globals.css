@@ -12,7 +12,27 @@
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-html { scroll-behavior: smooth; }
+::selection {
+  background: rgba(220, 38, 38, 0.15);
+  color: #18181b;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
 
 @media (hover: hover) and (pointer: fine) {
   .hover-lift { transition: transform 200ms var(--ease-out-expo), box-shadow 200ms var(--ease-out-expo); }
@@ -38,14 +58,6 @@ html { scroll-behavior: smooth; }
   .nav-link:hover::after { width: 100%; }
 }
 
-.clip-reveal {
-  clip-path: inset(8% 8% 8% 8% round 16px);
-  transition: clip-path 900ms var(--ease-out-expo);
-}
-.clip-reveal.visible {
-  clip-path: inset(0% 0% 0% 0% round 16px);
-}
-
 .img-zoom { transition: transform 400ms var(--ease-out-quart); }
 @media (hover: hover) and (pointer: fine) {
   .img-zoom:hover { transform: scale(1.04); }
@@ -56,5 +68,4 @@ html { scroll-behavior: smooth; }
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  .clip-reveal { clip-path: inset(0% 0% 0% 0% round 16px) !important; }
 }
