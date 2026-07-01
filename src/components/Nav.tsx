@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import MagneticButton from "./MagneticButton";
+import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/#catalog", label: "Каталог" },
@@ -13,59 +13,95 @@ const links = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const reduce = useReducedMotion();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#09090b]/80 backdrop-blur-xl border-b border-zinc-800/30">
-        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold tracking-tight text-white">
-            DEI<span className="text-red-500">.</span>
-          </Link>
+      <div className="fixed top-3 inset-x-0 z-50 flex justify-center px-4">
+        <nav
+          className="w-full max-w-[1100px] transition-shadow duration-500"
+          style={{
+            background: scrolled ? "rgba(9,9,11,0.85)" : "rgba(9,9,11,0.6)",
+            backdropFilter: "blur(28px) saturate(1.6)",
+            WebkitBackdropFilter: "blur(28px) saturate(1.6)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 999,
+            boxShadow: scrolled ? "0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
+          }}
+        >
+          <div className="h-[52px] flex items-center justify-between px-5">
+            <Link href="/" className="text-[17px] font-extrabold tracking-tight text-white select-none">
+              DEI<span className="text-red-500">.</span>
+            </Link>
 
-          <div className="hidden md:flex items-center gap-8 text-[15px]">
-            {links.map(l => (
-              <a key={l.href} href={l.href} className="nav-link text-zinc-400 hover:text-white py-1">
-                {l.label}
+            <div className="hidden md:flex items-center gap-7 text-[13.5px]">
+              {links.map(l => (
+                <a key={l.href} href={l.href} className="nav-link text-zinc-400 hover:text-white transition-colors duration-200 py-1">
+                  {l.label}
+                </a>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <a
+                href="tel:+79885807630"
+                className="hidden sm:inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white text-[13px] px-4 py-2 font-semibold btn transition-colors"
+                style={{ borderRadius: 999 }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+                </svg>
+                Позвонить
               </a>
-            ))}
-          </div>
 
-          <div className="flex items-center gap-3">
-            <MagneticButton href="tel:+79885807630" className="hidden sm:inline-block bg-red-600 hover:bg-red-500 text-white text-sm px-5 py-2.5 font-medium btn">
-              Позвонить
-            </MagneticButton>
-
-            <button
-              onClick={() => setOpen(!open)}
-              className="md:hidden flex flex-col gap-[5px] w-8 h-8 items-center justify-center btn-press"
-              aria-label="Меню"
-            >
-              <span className={`block w-5 h-[1.5px] bg-zinc-300 transition-all duration-200 ${open ? "rotate-45 translate-y-[3.25px]" : ""}`} />
-              <span className={`block w-5 h-[1.5px] bg-zinc-300 transition-all duration-200 ${open ? "-rotate-45 -translate-y-[3.25px]" : ""}`} />
-            </button>
+              <button
+                onClick={() => setOpen(!open)}
+                className="md:hidden w-9 h-9 flex flex-col gap-[5px] items-center justify-center rounded-full glass-pill btn"
+                aria-label="Меню"
+              >
+                <span className={`block w-4 h-[1.5px] bg-zinc-300 transition-all duration-200 ${open ? "rotate-45 translate-y-[3.25px]" : ""}`} />
+                <span className={`block w-4 h-[1.5px] bg-zinc-300 transition-all duration-200 ${open ? "-rotate-45 -translate-y-[3.25px]" : ""}`} />
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={reduce ? false : { opacity: 0, y: -10 }}
+            initial={reduce ? false : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 top-16 z-30 bg-[#09090b] border-b border-zinc-800/30 px-6 py-6 md:hidden"
+            className="fixed inset-x-4 top-[68px] z-40 rounded-2xl glass-card px-6 py-6 md:hidden"
           >
             <div className="flex flex-col gap-4">
               {links.map(l => (
                 <a key={l.href} href={l.href} onClick={() => setOpen(false)}
-                  className="text-lg text-zinc-300 hover:text-red-500 transition-colors duration-200">
+                  className="text-[17px] text-zinc-300 hover:text-red-400 transition-colors duration-200 font-medium">
                   {l.label}
                 </a>
               ))}
               <a href="tel:+79885807630"
-                className="bg-red-600 text-white text-center py-3 font-medium btn sm:hidden">
+                className="bg-red-600 hover:bg-red-500 text-white text-center py-3.5 font-semibold btn mt-2 transition-colors"
+                style={{ borderRadius: 12 }}
+              >
                 +7 (988) 580-76-30
               </a>
             </div>

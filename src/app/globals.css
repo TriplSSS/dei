@@ -3,7 +3,7 @@
 @theme inline {
   --color-background: #09090b;
   --color-foreground: #e4e4e7;
-  --font-sans: var(--font-outfit);
+  --font-sans: var(--font-inter);
 }
 
 :root {
@@ -13,25 +13,56 @@
 
 ::selection { background: rgba(220,38,38,0.3); color: #fafafa; }
 
-html {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 body { background: #09090b; color: #a1a1aa; }
-
 *:focus-visible { outline: 2px solid #dc2626; outline-offset: 2px; }
 img { -webkit-user-drag: none; user-select: none; }
 
+/* ── Buttons ── */
 .btn {
+  border-radius: 10px;
   transition: transform 100ms ease-out, background-color 200ms ease, box-shadow 200ms ease;
 }
 .btn:active { transform: scale(0.97); }
 
-@media (hover: hover) and (pointer: fine) {
-  .img-zoom { transition: transform 500ms var(--ease-quint); }
-  .img-zoom:hover { transform: scale(1.03); }
+/* ── Glass utilities ── */
+.glass-card {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.glass-inner {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.glass-pill {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.glass-red {
+  background: rgba(220,38,38,0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(220,38,38,0.15);
+}
 
+/* ── Morphing blobs ── */
+@keyframes morph {
+  0%,100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  34%      { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+  67%      { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+}
+.morph      { animation: morph 8s  ease-in-out infinite; }
+.morph-slow { animation: morph 16s ease-in-out infinite; }
+.morph-fast { animation: morph 5s  ease-in-out infinite; }
+
+/* ── Image hover zoom ── */
+@media (hover: hover) and (pointer: fine) {
+  .img-zoom { transition: transform 600ms var(--ease-quint); }
+  .img-zoom:hover { transform: scale(1.04); }
   .nav-link { position: relative; }
   .nav-link::after {
     content: ''; position: absolute; bottom: -2px; left: 0;
@@ -41,12 +72,25 @@ img { -webkit-user-drag: none; user-select: none; }
   .nav-link:hover::after { width: 100%; }
 }
 
+/* ── Hover-lift (cards) ── */
+.hover-lift {
+  transition: transform 300ms var(--ease-quint), box-shadow 300ms ease;
+}
+@media (hover: hover) {
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px -8px rgba(0,0,0,0.5);
+  }
+}
+
+/* ── Grain overlay ── */
 .grain {
-  position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0.025;
+  position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0.022;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat; background-size: 256px;
 }
 
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
