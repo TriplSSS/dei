@@ -11,7 +11,7 @@ interface Product {
 
 export default function ProductCard({ product, index }: { product: Product; index: number }) {
   return (
-    <Reveal delay={index * 0.06}>
+    <Reveal delay={index * 0.07} direction="blur">
       <div
         className="group glass-card hover-lift rounded-2xl overflow-hidden cursor-default flex flex-col"
         style={{

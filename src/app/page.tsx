@@ -1,6 +1,7 @@
 "use client";
 
 import Reveal from "@/components/Reveal";
+import CountUp from "@/components/CountUp";
 import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
 import ScrambleText from "@/components/ScrambleText";
@@ -153,33 +154,37 @@ function PinnedHero() {
 /* ─── Glass stats ─── */
 function GlassStats() {
   const stats = [
-    { val: "2006", label: "год основания", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { val: "18+", label: "лет опыта", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { val: "НАКС", label: "аттестация", icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" },
-    { val: "РФ·СНГ", label: "поставки", icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+    { label: "год основания", countTo: 2006, countFrom: 2000, suffix: "", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
+    { label: "лет опыта",     countTo: 18,   countFrom: 0,    suffix: "+", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+    { label: "аттестация",    text: "НАКС",  icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" },
+    { label: "поставки",      text: "РФ·СНГ", icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   ];
 
   return (
     <section className="py-10 px-6 relative">
       <div className="absolute inset-0 border-y border-white/[0.04] pointer-events-none" />
       <div className="max-w-[1400px] mx-auto">
-        <Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {stats.map((s, i) => (
-              <div key={i} className="glass-card rounded-2xl p-6 lg:p-7 flex flex-col gap-3 group hover-lift cursor-default border-b-2 border-red-600/0 hover:border-red-600/30 transition-all duration-300">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {stats.map((s, i) => (
+            <Reveal key={i} delay={i * 0.1} direction="scale">
+              <div className="glass-card rounded-2xl p-6 lg:p-7 flex flex-col gap-3 group hover-lift cursor-default border-b-2 border-red-600/0 hover:border-red-600/30 transition-all duration-300">
                 <div className="w-10 h-10 rounded-xl glass-red flex items-center justify-center">
                   <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d={s.icon} />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-3xl md:text-4xl font-extrabold text-white tracking-tight tabular-nums group-hover:text-red-400 transition-colors duration-300">{s.val}</p>
+                  <p className="text-3xl md:text-4xl font-extrabold text-white tracking-tight tabular-nums group-hover:text-red-400 transition-colors duration-300">
+                    {s.countTo !== undefined
+                      ? <CountUp target={s.countTo} from={s.countFrom} suffix={s.suffix} />
+                      : s.text}
+                  </p>
                   <p className="text-[11px] text-zinc-600 uppercase tracking-wider mt-0.5">{s.label}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </Reveal>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -262,7 +267,7 @@ function Products() {
   return (
     <section className="py-20 px-6">
       <div className="max-w-[1400px] mx-auto">
-        <Reveal>
+        <Reveal direction="clip">
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Ассортимент</p>
@@ -313,31 +318,32 @@ function WhyDEI() {
       <MorphBlob className="w-[600px] h-[600px] bg-red-900 rounded-full morph-slow -right-40 top-1/2 -translate-y-1/2" />
 
       <div className="max-w-[1400px] mx-auto relative">
-        <Reveal>
-          <div className="glass-card rounded-3xl p-8 md:p-14">
+        <div className="glass-card rounded-3xl p-8 md:p-14">
             <div className="grid lg:grid-cols-[1fr_1.3fr] gap-12 items-start">
 
               {/* Left */}
-              <div className="lg:sticky lg:top-28 lg:self-start">
-                <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-4">Почему DEI</p>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.045em] text-white leading-[0.88] mb-6">
-                  Качество<br /><span className="text-red-500">оборонной</span><br />отрасли
-                </h2>
-                <p className="text-zinc-500 text-sm leading-relaxed max-w-[320px] mb-8">
-                  Основатели контролировали качество разработки космических двигателей. Эту систему мы перенесли в гражданское производство.
-                </p>
-                <MagneticButton href="/about" className="inline-flex items-center gap-2 text-sm text-red-500 hover:text-red-400 font-medium transition-colors duration-200">
-                  О компании
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </MagneticButton>
-              </div>
+              <Reveal direction="left">
+                <div className="lg:sticky lg:top-28 lg:self-start">
+                  <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-4">Почему DEI</p>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.045em] text-white leading-[0.88] mb-6">
+                    Качество<br /><span className="text-red-500">оборонной</span><br />отрасли
+                  </h2>
+                  <p className="text-zinc-500 text-sm leading-relaxed max-w-[320px] mb-8">
+                    Основатели контролировали качество разработки космических двигателей. Эту систему мы перенесли в гражданское производство.
+                  </p>
+                  <MagneticButton href="/about" className="inline-flex items-center gap-2 text-sm text-red-500 hover:text-red-400 font-medium transition-colors duration-200">
+                    О компании
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </MagneticButton>
+                </div>
+              </Reveal>
 
               {/* Right: advantage cards */}
               <div className="grid gap-3">
                 {advantages.map((a, i) => (
-                  <Reveal key={i} delay={i * 0.08}>
+                  <Reveal key={i} delay={i * 0.08} direction={i % 2 === 0 ? "right" : "left"}>
                     <div className="glass-inner rounded-2xl p-5 flex gap-4 items-start group hover:border-red-900/30 transition-all duration-500 hover-lift">
                       <div className="w-10 h-10 rounded-xl glass-red flex items-center justify-center shrink-0 group-hover:bg-red-950/50 transition-colors duration-300">
                         <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -353,8 +359,7 @@ function WhyDEI() {
                 ))}
               </div>
             </div>
-          </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -413,7 +418,7 @@ function HowWeWork() {
   return (
     <section className="py-24 px-6 relative overflow-hidden">
       <div className="max-w-[1400px] mx-auto relative">
-        <Reveal>
+        <Reveal direction="clip">
           <div className="text-center mb-14">
             <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Процесс</p>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
@@ -433,7 +438,7 @@ function HowWeWork() {
                 <div className="hidden md:block absolute top-[2.75rem] left-1/2 w-full h-px bg-gradient-to-r from-red-600/20 to-red-600/20 z-0" />
               )}
 
-              <Reveal delay={i * 0.1}>
+              <Reveal delay={i * 0.12} direction="left">
                 <div className="glass-inner rounded-2xl p-6 flex flex-col gap-4 group hover:border-red-900/30 transition-all duration-500 hover-lift mx-0 md:mx-2 relative z-10 h-full">
                   {/* Background number */}
                   <span className="absolute bottom-3 right-4 text-[4rem] font-extrabold text-red-600/20 leading-none select-none tabular-nums pointer-events-none">
