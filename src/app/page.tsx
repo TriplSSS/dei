@@ -31,18 +31,64 @@ function PinnedHero() {
     <section ref={ref} className="relative h-[200vh]">
       <div className="sticky top-0 h-[100dvh] overflow-hidden">
 
-        {/* Background */}
+        {/* Background — CSS, без фото */}
         <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
-          <img
-            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&h=1200&fit=crop&q=80"
-            alt="" className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/50 via-[#09090b]/40 to-[#09090b]/95" />
+          <div className="absolute inset-0 bg-[#09090b]" />
+
+          {/* Красный glow снизу-слева — основной */}
+          <div className="absolute pointer-events-none" style={{
+            bottom: "-20%", left: "-15%",
+            width: "80vw", height: "80vw",
+            background: "radial-gradient(circle, rgba(220,38,38,0.22) 0%, rgba(185,28,28,0.08) 40%, transparent 68%)",
+            filter: "blur(48px)",
+          }} />
+
+          {/* Красный glow сверху-справа */}
+          <div className="absolute pointer-events-none" style={{
+            top: "-20%", right: "-20%",
+            width: "55vw", height: "55vw",
+            background: "radial-gradient(circle, rgba(153,27,27,0.16) 0%, transparent 60%)",
+            filter: "blur(72px)",
+          }} />
+
+          {/* Центральный тёмно-красный акцент */}
+          <div className="absolute pointer-events-none" style={{
+            top: "30%", left: "30%",
+            width: "40vw", height: "40vw",
+            background: "radial-gradient(circle, rgba(220,38,38,0.04) 0%, transparent 70%)",
+            filter: "blur(80px)",
+          }} />
+
+          {/* Dot-grid поверх */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: "radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
+            maskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
+            WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
+          }} />
+
+          {/* Декоративные кольца справа */}
+          <div className="absolute pointer-events-none" style={{ right: "-130px", top: "50%", transform: "translateY(-50%)", width: 680, height: 680, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.04)" }} />
+          <div className="absolute pointer-events-none" style={{ right: "-220px", top: "50%", transform: "translateY(-50%)", width: 960, height: 960, borderRadius: "50%", border: "1px solid rgba(220,38,38,0.07)" }} />
+          <div className="absolute pointer-events-none" style={{ right: "-70px", top: "50%", transform: "translateY(-50%)", width: 440, height: 440, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.025)" }} />
+
+          {/* Год-водяной знак */}
+          <div
+            aria-hidden
+            className="absolute bottom-8 right-8 font-extrabold tabular-nums select-none leading-none"
+            style={{ fontSize: "clamp(5rem,13vw,11rem)", color: "rgba(255,255,255,0.022)", letterSpacing: "-0.05em" }}
+          >
+            2006
+          </div>
+
+          {/* Fade снизу */}
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#09090b] to-transparent pointer-events-none" />
         </motion.div>
 
         {/* Morphing blobs */}
-        <MorphBlob className="w-[700px] h-[700px] bg-red-800 rounded-full morph-slow -left-60 -bottom-60" />
-        <MorphBlob className="w-[400px] h-[400px] bg-red-950 rounded-full morph right-10 top-10" />
+        <MorphBlob className="w-[700px] h-[700px] bg-red-700 rounded-full morph-slow -left-48 -bottom-48" />
+        <MorphBlob className="w-[350px] h-[350px] bg-red-900 rounded-full morph right-16 top-16" />
+        <MorphBlob className="w-[180px] h-[180px] bg-red-800 rounded-full morph-fast left-[45%] top-[20%]" />
 
         {/* Content */}
         <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 h-full flex items-end pb-16 md:pb-24">
