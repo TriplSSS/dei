@@ -32,7 +32,7 @@ export default function AboutClient() {
 
       <Reveal>
         <section className="relative h-[300px] md:h-[420px] overflow-hidden">
-          <ParallaxImage src="https://picsum.photos/seed/dei-about-factory/1800/600" alt="Производство DEI" className="h-full" />
+          <ParallaxImage src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1800&h=600&fit=crop&q=80" alt="Производство DEI" className="h-full" />
           <div className="absolute inset-0 bg-black/40" />
         </section>
       </Reveal>

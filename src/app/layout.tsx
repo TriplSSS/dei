@@ -35,7 +35,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="grain" />
         <SmoothScroll />
         <Nav />
-        <ScrollProgress />
         <main>{children}</main>
         <Footer />
         <BackToTop />

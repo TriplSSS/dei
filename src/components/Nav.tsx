@@ -46,7 +46,7 @@ export default function Nav() {
         >
           <div className="h-[52px] flex items-center justify-between px-5">
             <Link href="/" className="text-[17px] font-extrabold tracking-tight text-white select-none">
-              DEI<span className="text-red-500">.</span>
+              DEI
             </Link>
 
             <div className="hidden md:flex items-center gap-7 text-[13.5px]">

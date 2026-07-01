@@ -34,7 +34,7 @@ function PinnedHero() {
         {/* Background */}
         <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
           <img
-            src="https://picsum.photos/seed/dei-hero-heavy-industry/1920/1200"
+            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&h=1200&fit=crop&q=80"
             alt="" className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/50 via-[#09090b]/40 to-[#09090b]/95" />
@@ -51,14 +51,6 @@ function PinnedHero() {
 
               {/* Left: headline */}
               <div className="max-w-[680px]">
-                {/* Eyebrow badge */}
-                <div className="glass-pill inline-flex items-center gap-2.5 px-4 py-2 rounded-full mb-8">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-                  <span className="text-[11px] text-zinc-400 uppercase tracking-[0.22em] font-medium">
-                    ДонЭлектроИнтел · Ростов-на-Дону · с 2006 года
-                  </span>
-                </div>
-
                 <h1 className="text-[clamp(4rem,10vw,9rem)] font-extrabold tracking-[-0.055em] leading-[0.82] text-white mb-6">
                   <ScrambleText text="DEI" className="text-red-500 block" />
                   <span className="block">Оборудо-<br className="sm:hidden" />вание</span>
@@ -152,10 +144,10 @@ function StickyStackCatalog() {
   const reduce = useReducedMotion();
 
   const items = [
-    { num: "01", title: "Сварочные инверторы", sub: "ПРОТОН-ДЭИ ВДИ 200 · MIG/MAG · TIG · MMA", detail: "Собственная разработка. Аттестация НАКС. Для промышленности и строительства.", img: "https://picsum.photos/seed/dei-stack-weld/1400/900" },
-    { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону", detail: "Промышленные LED-решения для цехов, складов, производственных площадок.", img: "https://picsum.photos/seed/dei-stack-led/1400/900" },
-    { num: "03", title: "Центраторы для труб", sub: "Внутренние и наружные звенные", detail: "Для монтажа трубопроводов любого диаметра. Поставка по РФ и СНГ.", img: "https://picsum.photos/seed/dei-stack-centr/1400/900" },
-    { num: "04", title: "Расходные материалы", sub: "Электроды · Проволока · Газовые смеси", detail: "Полный ассортимент расходников для сварочного производства.", img: "https://picsum.photos/seed/dei-stack-cons/1400/900" },
+    { num: "01", title: "Сварочные инверторы", sub: "ПРОТОН-ДЭИ ВДИ 200 · MIG/MAG · TIG · MMA", detail: "Собственная разработка. Аттестация НАКС. Для промышленности и строительства.", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&h=900&fit=crop&q=80" },
+    { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону", detail: "Промышленные LED-решения для цехов, складов, производственных площадок.", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1400&h=900&fit=crop&q=80" },
+    { num: "03", title: "Центраторы для труб", sub: "Внутренние и наружные звенные", detail: "Для монтажа трубопроводов любого диаметра. Поставка по РФ и СНГ.", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1400&h=900&fit=crop&q=80" },
+    { num: "04", title: "Расходные материалы", sub: "Электроды · Проволока · Газовые смеси", detail: "Полный ассортимент расходников для сварочного производства.", img: "https://images.unsplash.com/photo-1537462715879-360b4b8d0d0c?w=1400&h=900&fit=crop&q=80" },
   ];
 
   useEffect(() => {
@@ -216,10 +208,10 @@ function StickyStackCatalog() {
 /* ─── Products ─── */
 function Products() {
   const products = [
-    { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "https://picsum.photos/seed/dei-f1/400/400" },
-    { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://picsum.photos/seed/dei-f2/400/400" },
-    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://picsum.photos/seed/dei-f3/400/400" },
-    { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://picsum.photos/seed/dei-f4/400/400" },
+    { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=400&fit=crop&q=80" },
+    { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=400&h=400&fit=crop&q=80" },
+    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop&q=80" },
+    { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://images.unsplash.com/photo-1537462715879-360b4b8d0d0c?w=400&h=400&fit=crop&q=80" },
   ];
 
   return (
@@ -334,7 +326,7 @@ function TrustImage() {
       className="relative h-[50vh] md:h-[65vh] overflow-hidden"
     >
       <ParallaxImage
-        src="https://picsum.photos/seed/dei-trust-fullbleed/1920/800"
+        src="https://images.unsplash.com/photo-1487537708980-c1dc6b9b7b7e?w=1920&h=800&fit=crop&q=80"
         alt="Производственная линия ДонЭлектроИнтел"
         className="h-full"
       />
