@@ -86,29 +86,51 @@ export default function Nav() {
         </nav>
       </div>
 
+      {/* Затемнение за меню */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={reduce ? false : { opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-4 top-[68px] z-40 rounded-2xl glass-card px-6 py-6 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-30 bg-black/70 md:hidden"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Дропдаун меню */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-x-3 top-[68px] z-40 rounded-2xl md:hidden"
+            style={{
+              background: "rgba(14,14,16,0.98)",
+              backdropFilter: "blur(32px) saturate(1.4)",
+              WebkitBackdropFilter: "blur(32px) saturate(1.4)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 24px 64px rgba(0,0,0,0.6)",
+            }}
           >
-            <div className="flex flex-col gap-4">
+            <div className="px-5 py-5 flex flex-col gap-1">
               {links.map(l => (
                 <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
-                  className={`text-[17px] font-medium transition-colors duration-200 ${
+                  className={`text-[17px] font-medium py-3 border-b border-white/[0.05] last:border-0 transition-colors duration-150 ${
                     pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href.replace('/#', '/')))
                       ? 'text-white'
-                      : 'text-zinc-300 hover:text-red-400'
+                      : 'text-zinc-400 active:text-white'
                   }`}>
                   {l.label}
                 </Link>
               ))}
-              <a href="tel:+79885807630"
-                className="bg-red-600 hover:bg-red-500 text-white text-center py-3.5 font-semibold btn mt-2 transition-colors"
-                style={{ borderRadius: 12 }}
+              <a
+                href="tel:+79885807630"
+                className="mt-3 bg-red-600 active:bg-red-500 text-white text-center py-4 font-semibold text-[15px] rounded-xl transition-colors"
               >
                 +7 (988) 580-76-30
               </a>

@@ -97,9 +97,9 @@ function PinnedHero() {
 
               {/* Left: headline */}
               <div className="max-w-[680px]">
-                <h1 className="text-[clamp(4rem,10vw,9rem)] font-extrabold tracking-[-0.055em] leading-[0.82] text-white mb-6">
+                <h1 className="text-[clamp(3rem,9vw,9rem)] font-extrabold tracking-[-0.055em] leading-[0.82] text-white mb-6">
                   <ScrambleText text="DEI" className="text-red-500 block" />
-                  <span className="block">Оборудо-<br className="sm:hidden" />вание</span>
+                  <span className="block" style={{ hyphens: "none" }}>Оборудование</span>
                 </h1>
 
                 <p className="text-zinc-500 text-base md:text-lg leading-relaxed max-w-[440px] mb-8">
@@ -122,14 +122,6 @@ function PinnedHero() {
                   </a>
                 </div>
 
-                <div className="flex items-center gap-4 mt-10 overflow-hidden">
-                  <span className="text-zinc-600 text-xs uppercase tracking-widest shrink-0">Продукция:</span>
-                  <div className="flex gap-6 animate-[slide_20s_linear_infinite]">
-                    {["Сварочные аппараты", "Светодиодные светильники", "Сварочные аппараты", "Светодиодные светильники", "Сварочные аппараты", "Светодиодные светильники", "Сварочные аппараты", "Светодиодные светильники"].map((item, i) => (
-                      <span key={i} className="text-zinc-500 text-xs tracking-wide whitespace-nowrap">· {item}</span>
-                    ))}
-                  </div>
-                </div>
               </div>
 
               {/* Right: glass contact card */}
