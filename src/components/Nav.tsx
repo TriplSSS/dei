@@ -34,14 +34,14 @@ export default function Nav() {
     <>
       <div className="fixed top-3 inset-x-0 z-50 flex justify-center px-4">
         <nav
-          className="w-full max-w-[1100px] transition-shadow duration-500"
+          className="w-full max-w-[1100px]"
           style={{
-            background: scrolled ? "rgba(9,9,11,0.85)" : "rgba(9,9,11,0.6)",
+            background: "rgba(9,9,11,0.82)",
             backdropFilter: "blur(28px) saturate(1.6)",
             WebkitBackdropFilter: "blur(28px) saturate(1.6)",
             border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: 999,
-            boxShadow: scrolled ? "0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
+            boxShadow: scrolled ? "0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)" : "0 4px 24px rgba(0,0,0,0.2)",
           }}
         >
           <div className="h-[52px] flex items-center justify-between px-5">
