@@ -79,7 +79,7 @@ function PinnedHero() {
                 <div className="flex items-center gap-4 mt-10 overflow-hidden">
                   <span className="text-zinc-600 text-xs uppercase tracking-widest shrink-0">Продукция:</span>
                   <div className="flex gap-6 animate-[slide_20s_linear_infinite]">
-                    {["Сварочные инверторы", "LED-светильники", "Центраторы", "Электроды МР-3", "Сварочные инверторы", "LED-светильники", "Центраторы", "Электроды МР-3"].map((item, i) => (
+                    {["Сварочные аппараты", "Светодиодные светильники", "Сварочные аппараты", "Светодиодные светильники", "Сварочные аппараты", "Светодиодные светильники", "Сварочные аппараты", "Светодиодные светильники"].map((item, i) => (
                       <span key={i} className="text-zinc-500 text-xs tracking-wide whitespace-nowrap">· {item}</span>
                     ))}
                   </div>
@@ -153,10 +153,8 @@ function StickyStackCatalog() {
   const reduce = useReducedMotion();
 
   const items = [
-    { num: "01", title: "Сварочные инверторы", sub: "ПРОТОН-ДЭИ ВДИ 200 · MIG/MAG · TIG · MMA", detail: "Собственная разработка. Аттестация НАКС. Для промышленности и строительства.", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&h=900&fit=crop&q=80" },
-    { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону", detail: "Промышленные LED-решения для цехов, складов, производственных площадок.", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1400&h=900&fit=crop&q=80" },
-    { num: "03", title: "Центраторы для труб", sub: "Внутренние и наружные звенные", detail: "Для монтажа трубопроводов любого диаметра. Поставка по РФ и СНГ.", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1400&h=900&fit=crop&q=80" },
-    { num: "04", title: "Расходные материалы", sub: "Электроды · Проволока · Газовые смеси", detail: "Полный ассортимент расходников для сварочного производства.", img: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?w=1400&h=900&fit=crop&q=80" },
+    { num: "01", title: "Сварочные аппараты", sub: "ПРОТОН-ДЭИ ВДИ 200 · MIG/MAG · TIG · MMA · НАКС", detail: "Собственная разработка и производство. Аттестация НАКС. Для промышленности, строительства и нефтегазовой отрасли.", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&h=900&fit=crop&q=80" },
+    { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону · Гарантия 3 года", detail: "Промышленные LED-решения для цехов, складов и производственных площадок. Экономия электроэнергии до 70%.", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1400&h=900&fit=crop&q=80" },
   ];
 
   useEffect(() => {
@@ -168,8 +166,8 @@ function StickyStackCatalog() {
         if (i === cards.length - 1) return;
         ScrollTrigger.create({ trigger: card, start: "top top", endTrigger: cards[cards.length - 1], end: "top top", pin: true, pinSpacing: false });
         gsap.to(card, {
-          scale: 0.93, opacity: 0.25, ease: "none",
-          scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top top", scrub: true },
+          scale: 0.96, opacity: 0.35, y: -24, ease: "power1.inOut",
+          scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top top", scrub: 1.5 },
         });
       });
     }, ref);
