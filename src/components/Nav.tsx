@@ -51,9 +51,13 @@ export default function Nav() {
 
             <div className="hidden md:flex items-center gap-7 text-[13.5px]">
               {links.map(l => (
-                <a key={l.href} href={l.href} className="nav-link text-zinc-400 hover:text-white transition-colors duration-200 py-1">
+                <Link key={l.href} href={l.href} className={`nav-link py-1 transition-colors duration-200 ${
+                  pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href.replace('/#', '/')))
+                    ? 'text-white'
+                    : 'text-zinc-400 hover:text-white'
+                }`}>
                   {l.label}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -93,10 +97,14 @@ export default function Nav() {
           >
             <div className="flex flex-col gap-4">
               {links.map(l => (
-                <a key={l.href} href={l.href} onClick={() => setOpen(false)}
-                  className="text-[17px] text-zinc-300 hover:text-red-400 transition-colors duration-200 font-medium">
+                <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
+                  className={`text-[17px] font-medium transition-colors duration-200 ${
+                    pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href.replace('/#', '/')))
+                      ? 'text-white'
+                      : 'text-zinc-300 hover:text-red-400'
+                  }`}>
                   {l.label}
-                </a>
+                </Link>
               ))}
               <a href="tel:+79885807630"
                 className="bg-red-600 hover:bg-red-500 text-white text-center py-3.5 font-semibold btn mt-2 transition-colors"

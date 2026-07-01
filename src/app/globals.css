@@ -97,3 +97,43 @@ img { -webkit-user-drag: none; user-select: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Ticker/marquee animation ── */
+@keyframes slide {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Shimmer on glass cards ── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.glass-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.04) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* ── Red glow border on hover ── */
+.glass-card-hover {
+  transition: border-color 300ms ease, box-shadow 300ms ease;
+}
+.glass-card-hover:hover {
+  border-color: rgba(220,38,38,0.25);
+  box-shadow: 0 0 0 1px rgba(220,38,38,0.1), 0 16px 48px -12px rgba(220,38,38,0.15);
+}
+
+/* ── Pulse dot ── */
+.pulse-dot {
+  animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}

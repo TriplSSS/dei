@@ -75,6 +75,15 @@ function PinnedHero() {
                     </svg>
                   </a>
                 </div>
+
+                <div className="flex items-center gap-4 mt-10 overflow-hidden">
+                  <span className="text-zinc-600 text-xs uppercase tracking-widest shrink-0">Продукция:</span>
+                  <div className="flex gap-6 animate-[slide_20s_linear_infinite]">
+                    {["Сварочные инверторы", "LED-светильники", "Центраторы", "Электроды МР-3", "Сварочные инверторы", "LED-светильники", "Центраторы", "Электроды МР-3"].map((item, i) => (
+                      <span key={i} className="text-zinc-500 text-xs tracking-wide whitespace-nowrap">· {item}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Right: glass contact card */}
@@ -119,14 +128,14 @@ function GlassStats() {
         <Reveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {stats.map((s, i) => (
-              <div key={i} className="glass-card rounded-2xl p-5 flex flex-col gap-3 group hover-lift cursor-default">
-                <div className="w-9 h-9 rounded-xl glass-red flex items-center justify-center">
-                  <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+              <div key={i} className="glass-card rounded-2xl p-6 lg:p-7 flex flex-col gap-3 group hover-lift cursor-default border-b-2 border-red-600/0 hover:border-red-600/30 transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl glass-red flex items-center justify-center">
+                  <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d={s.icon} />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-2xl md:text-3xl font-extrabold text-white tracking-tight tabular-nums group-hover:text-red-400 transition-colors duration-300">{s.val}</p>
+                  <p className="text-3xl md:text-4xl font-extrabold text-white tracking-tight tabular-nums group-hover:text-red-400 transition-colors duration-300">{s.val}</p>
                   <p className="text-[11px] text-zinc-600 uppercase tracking-wider mt-0.5">{s.label}</p>
                 </div>
               </div>
@@ -146,8 +155,8 @@ function StickyStackCatalog() {
   const items = [
     { num: "01", title: "Сварочные инверторы", sub: "ПРОТОН-ДЭИ ВДИ 200 · MIG/MAG · TIG · MMA", detail: "Собственная разработка. Аттестация НАКС. Для промышленности и строительства.", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&h=900&fit=crop&q=80" },
     { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону", detail: "Промышленные LED-решения для цехов, складов, производственных площадок.", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1400&h=900&fit=crop&q=80" },
-    { num: "03", title: "Центраторы для труб", sub: "Внутренние и наружные звенные", detail: "Для монтажа трубопроводов любого диаметра. Поставка по РФ и СНГ.", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1400&h=900&fit=crop&q=80" },
-    { num: "04", title: "Расходные материалы", sub: "Электроды · Проволока · Газовые смеси", detail: "Полный ассортимент расходников для сварочного производства.", img: "https://images.unsplash.com/photo-1537462715879-360b4b8d0d0c?w=1400&h=900&fit=crop&q=80" },
+    { num: "03", title: "Центраторы для труб", sub: "Внутренние и наружные звенные", detail: "Для монтажа трубопроводов любого диаметра. Поставка по РФ и СНГ.", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1400&h=900&fit=crop&q=80" },
+    { num: "04", title: "Расходные материалы", sub: "Электроды · Проволока · Газовые смеси", detail: "Полный ассортимент расходников для сварочного производства.", img: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?w=1400&h=900&fit=crop&q=80" },
   ];
 
   useEffect(() => {
@@ -210,8 +219,8 @@ function Products() {
   const products = [
     { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=400&fit=crop&q=80" },
     { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=400&h=400&fit=crop&q=80" },
-    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop&q=80" },
-    { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://images.unsplash.com/photo-1537462715879-360b4b8d0d0c?w=400&h=400&fit=crop&q=80" },
+    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=400&fit=crop&q=80" },
+    { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?w=400&h=400&fit=crop&q=80" },
   ];
 
   return (
@@ -315,6 +324,108 @@ function WhyDEI() {
   );
 }
 
+/* ─── How we work ─── */
+function HowWeWork() {
+  const steps = [
+    {
+      num: "01",
+      title: "Заявка",
+      desc: "Принимаем заявку и уточняем задачу",
+      icon: (
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+        </svg>
+      ),
+    },
+    {
+      num: "02",
+      title: "Выезд",
+      desc: "Выезжаем на объект для оценки",
+      icon: (
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      ),
+    },
+    {
+      num: "03",
+      title: "Расчёт",
+      desc: "Делаем расчёт и подбираем оборудование",
+      icon: (
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      ),
+    },
+    {
+      num: "04",
+      title: "Поставка",
+      desc: "Поставляем, монтируем, консультируем",
+      icon: (
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <rect x="1" y="3" width="15" height="13" />
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <section className="py-24 px-6 relative overflow-hidden">
+      <div className="max-w-[1400px] mx-auto relative">
+        <Reveal>
+          <div className="text-center mb-14">
+            <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Процесс</p>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
+              Как мы <span className="text-red-500">работаем</span>
+            </h2>
+            <p className="text-zinc-500 text-sm mt-4 max-w-[400px] mx-auto leading-relaxed">
+              Полный цикл от первого звонка до ввода в эксплуатацию
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-0 relative">
+          {steps.map((step, i) => (
+            <div key={i} className="relative flex md:flex-col items-start md:items-stretch gap-4 md:gap-0">
+              {/* Connector line between cards (desktop only) */}
+              {i < steps.length - 1 && (
+                <div className="hidden md:block absolute top-[2.75rem] left-1/2 w-full h-px bg-gradient-to-r from-red-600/20 to-red-600/20 z-0" />
+              )}
+
+              <Reveal delay={i * 0.1}>
+                <div className="glass-inner rounded-2xl p-6 flex flex-col gap-4 group hover:border-red-900/30 transition-all duration-500 hover-lift mx-0 md:mx-2 relative z-10 h-full">
+                  {/* Background number */}
+                  <span className="absolute bottom-3 right-4 text-[4rem] font-extrabold text-red-600/20 leading-none select-none tabular-nums pointer-events-none">
+                    {step.num}
+                  </span>
+
+                  {/* Icon */}
+                  <div className="w-10 h-10 rounded-xl glass-red flex items-center justify-center shrink-0 group-hover:bg-red-950/50 transition-colors duration-300">
+                    {step.icon}
+                  </div>
+
+                  {/* Text */}
+                  <div>
+                    <h3 className="text-base font-bold text-white mb-1.5 group-hover:text-red-400 transition-colors duration-200">
+                      {step.title}
+                    </h3>
+                    <p className="text-xs text-zinc-600 leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Full-bleed trust image ─── */
 function TrustImage() {
   return (
@@ -326,7 +437,7 @@ function TrustImage() {
       className="relative h-[50vh] md:h-[65vh] overflow-hidden"
     >
       <ParallaxImage
-        src="https://images.unsplash.com/photo-1487537708980-c1dc6b9b7b7e?w=1920&h=800&fit=crop&q=80"
+        src="https://images.unsplash.com/photo-1533581908700-82aca30ac82a?w=1920&h=800&fit=crop&q=80"
         alt="Производственная линия ДонЭлектроИнтел"
         className="h-full"
       />
@@ -387,6 +498,7 @@ export default function Home() {
       <StickyStackCatalog />
       <Products />
       <WhyDEI />
+      <HowWeWork />
       <TrustImage />
       <CTA />
     </>
