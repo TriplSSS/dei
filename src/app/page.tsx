@@ -6,10 +6,10 @@ import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
 import ScrambleText from "@/components/ScrambleText";
 import ProductCard from "@/components/ProductCard";
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { useRef, useEffect } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -205,12 +205,28 @@ function StickyStackCatalog() {
     if (window.innerWidth < 768) return;
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(".stack-card");
+
       cards.forEach((card, i) => {
         if (i === cards.length - 1) return;
-        ScrollTrigger.create({ trigger: card, start: "top top", endTrigger: cards[cards.length - 1], end: "top top", pin: true, pinSpacing: false });
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top top",
+          endTrigger: cards[cards.length - 1],
+          end: "top top",
+          pin: true,
+          pinSpacing: false,
+        });
         gsap.to(card, {
-          scale: 0.96, opacity: 0.35, y: -24, ease: "power1.inOut",
-          scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top top", scrub: 1.5 },
+          filter: "blur(22px) brightness(0.08)",
+          scale: 1.08,
+          opacity: 0,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: cards[i + 1],
+            start: "top 70%",
+            end: "top top",
+            scrub: 1.5,
+          },
         });
       });
     }, ref);
