@@ -205,6 +205,7 @@ function StickyStackCatalog() {
     if (window.innerWidth < 768) return;
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(".stack-card");
+      const visuals = gsap.utils.toArray<HTMLElement>(".stack-card-visual");
 
       cards.forEach((card, i) => {
         if (i === cards.length - 1) return;
@@ -216,14 +217,15 @@ function StickyStackCatalog() {
           pin: true,
           pinSpacing: false,
         });
-        gsap.to(card, {
-          filter: "blur(22px) brightness(0.08)",
+        // blur применяем к inner-div (не к sticky — браузерный баг со stacking context)
+        gsap.to(visuals[i], {
+          filter: "blur(24px) brightness(0.06)",
           scale: 1.08,
           opacity: 0,
-          ease: "power2.inOut",
+          ease: "power1.in",
           scrollTrigger: {
             trigger: cards[i + 1],
-            start: "top 70%",
+            start: "top 100%",
             end: "top top",
             scrub: 1.5,
           },
@@ -236,10 +238,13 @@ function StickyStackCatalog() {
   return (
     <section id="catalog" ref={ref} className="relative">
       {items.map((item, i) => (
-        <div key={i} className="stack-card sticky top-0 min-h-[100dvh] flex items-end overflow-hidden pb-16 md:pb-20">
-          <img src={item.img} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/98 via-[#09090b]/65 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/50 to-transparent" />
+        <div key={i} className="stack-card sticky top-0 min-h-[100dvh] flex items-end pb-16 md:pb-20">
+          {/* inner-div для blur-анимации — не sticky, filter работает корректно */}
+          <div className="stack-card-visual absolute inset-0 overflow-hidden">
+            <img src={item.img} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/98 via-[#09090b]/65 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/50 to-transparent" />
+          </div>
 
           <div className="relative z-10 max-w-[1400px] mx-auto px-6 w-full">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
