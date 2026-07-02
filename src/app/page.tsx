@@ -197,7 +197,7 @@ function StickyStackCatalog() {
 
   const items = [
     { num: "01", title: "Сварочные аппараты", sub: "ПРОТОН-ДЭИ ВДИ 200 · MIG/MAG · TIG · MMA · НАКС", detail: "Собственная разработка и производство. Аттестация НАКС. Для промышленности, строительства и нефтегазовой отрасли.", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&h=900&fit=crop&q=80" },
-    { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону · Гарантия 3 года", detail: "Промышленные LED-решения для цехов, складов и производственных площадок. Экономия электроэнергии до 70%.", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1400&h=900&fit=crop&q=80" },
+    { num: "02", title: "Светодиодные светильники", sub: "Собственное производство · Ростов-на-Дону · Гарантия 3 года", detail: "Промышленные LED-решения для цехов, складов и производственных площадок. Экономия электроэнергии до 70%.", img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1400&h=900&fit=crop&q=80" },
   ];
 
   useEffect(() => {
@@ -280,8 +280,8 @@ function StickyStackCatalog() {
 function Products() {
   const products = [
     { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=400&fit=crop&q=80" },
-    { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=400&h=400&fit=crop&q=80" },
-    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=400&fit=crop&q=80" },
+    { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=400&h=400&fit=crop&q=80" },
+    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1605600659873-d808a13e4d2a?w=400&h=400&fit=crop&q=80" },
     { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?w=400&h=400&fit=crop&q=80" },
   ];
 

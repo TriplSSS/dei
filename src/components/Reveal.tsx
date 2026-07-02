@@ -1,7 +1,7 @@
 "use client";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-import { motion, useReducedMotion, type TargetAndTransition } from "motion/react";
+import { motion, MotionConfig, type TargetAndTransition } from "motion/react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -31,18 +31,22 @@ export default function Reveal({
   className?: string;
   direction?: RevealDirection;
 }) {
-  const reduce = useReducedMotion();
   const v = variants[direction];
 
+  // reducedMotion="user": разметка сервера и клиента совпадает (нет ветвления),
+  // а при включённом «уменьшенном движении» Motion сам отключает перемещения,
+  // оставляя проявление через opacity — секции не застревают невидимыми
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : v.hidden}
-      whileInView={v.visible}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: durations[direction], delay, ease }}
-    >
-      {children}
-    </motion.div>
+    <MotionConfig reducedMotion="user">
+      <motion.div
+        className={className}
+        initial={v.hidden}
+        whileInView={v.visible}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: durations[direction], delay, ease }}
+      >
+        {children}
+      </motion.div>
+    </MotionConfig>
   );
 }
