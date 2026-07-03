@@ -6,6 +6,7 @@ import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
 import ScrambleText from "@/components/ScrambleText";
 import ProductCard from "@/components/ProductCard";
+import ParticleSphere from "@/components/ParticleSphere";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
@@ -68,10 +69,10 @@ function PinnedHero() {
             WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
           }} />
 
-          {/* Декоративные кольца справа */}
-          <div className="absolute pointer-events-none" style={{ right: "-130px", top: "50%", transform: "translateY(-50%)", width: 680, height: 680, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.04)" }} />
-          <div className="absolute pointer-events-none" style={{ right: "-220px", top: "50%", transform: "translateY(-50%)", width: 960, height: 960, borderRadius: "50%", border: "1px solid rgba(220,38,38,0.07)" }} />
-          <div className="absolute pointer-events-none" style={{ right: "-70px", top: "50%", transform: "translateY(-50%)", width: 440, height: 440, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.025)" }} />
+          {/* Сфера из частиц (референс: uxerflow) */}
+          <div className="sphere-in absolute pointer-events-none" style={{ right: "-8%", top: "46%", transform: "translateY(-50%)", width: "min(72vw, 860px)", height: "min(72vw, 860px)" }}>
+            <ParticleSphere className="w-full h-full" />
+          </div>
 
           {/* Год-водяной знак */}
           <div
@@ -99,16 +100,16 @@ function PinnedHero() {
               {/* Left: headline */}
               <div className="max-w-[680px]">
                 <h1 className="text-[clamp(3rem,9vw,9rem)] font-extrabold tracking-[-0.055em] leading-[0.82] text-white mb-6">
-                  <ScrambleText text="DEI" className="text-red-500 block" />
-                  <span className="block" style={{ hyphens: "none" }}>Оборудование</span>
+                  <span className="hero-in hero-in-1 block"><ScrambleText text="DEI" className="text-red-500 block" /></span>
+                  <span className="hero-in hero-in-2 block" style={{ hyphens: "none" }}>Оборудование</span>
                 </h1>
 
-                <p className="text-zinc-500 text-base md:text-lg leading-relaxed max-w-[440px] mb-8">
+                <p className="hero-in hero-in-3 text-zinc-500 text-base md:text-lg leading-relaxed max-w-[440px] mb-8">
                   Производим сварочные инверторы и светодиодные светильники.
                   Аттестация НАКС. Поставки по РФ и СНГ.
                 </p>
 
-                <div className="flex items-center gap-4">
+                <div className="hero-in hero-in-4 flex items-center gap-4">
                   <MagneticButton
                     href="#catalog"
                     className="bg-red-600 hover:bg-red-500 text-white px-7 py-3.5 font-semibold btn inline-block shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors"
@@ -126,7 +127,7 @@ function PinnedHero() {
               </div>
 
               {/* Right: glass contact card */}
-              <div className="glass-card rounded-2xl p-6 max-w-[260px] shrink-0 lg:mb-0">
+              <div className="hero-in hero-in-5 glass-card rounded-2xl p-6 max-w-[260px] shrink-0 lg:mb-0">
                 <p className="text-[11px] text-zinc-600 uppercase tracking-widest mb-3">Связаться</p>
                 <a href="tel:+79885807630" className="text-white text-lg font-bold block mb-1 hover:text-red-400 transition-colors duration-200 leading-tight">
                   +7 (988) 580-76-30

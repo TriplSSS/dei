@@ -90,10 +90,29 @@ img { -webkit-user-drag: none; user-select: none; }
   background-repeat: repeat; background-size: 256px;
 }
 
+/* ── Hero: последовательное появление при загрузке ── */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(22px); filter: blur(12px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+.hero-in   { opacity: 0; animation: hero-in 850ms var(--ease-expo) forwards; }
+.hero-in-1 { animation-delay: 100ms; }
+.hero-in-2 { animation-delay: 260ms; }
+.hero-in-3 { animation-delay: 430ms; }
+.hero-in-4 { animation-delay: 580ms; }
+.hero-in-5 { animation-delay: 720ms; }
+
+@keyframes sphere-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.sphere-in { opacity: 0; animation: sphere-in 1600ms ease forwards 200ms; }
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
   }
 }
