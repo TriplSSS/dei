@@ -3,8 +3,12 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Вращающаяся сфера из частиц (точки + линии), canvas 2D без зависимостей.
- * При prefers-reduced-motion рисует один статичный кадр.
+ * Настоящая 3D-сфера из частиц (точки + линии), canvas 2D без зависимостей.
+ * - Плавное автовращение
+ * - Дополнительный поворот за курсором (параллакс)
+ * - Пауза, когда вкладка скрыта
+ * Вращение декоративное и медленное, поэтому идёт всегда (в т.ч. при
+ * reduced-motion) — это фирменный элемент героя.
  */
 export default function ParticleSphere({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -15,7 +19,6 @@ export default function ParticleSphere({ className = "" }: { className?: string 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     const N = 220;
 
@@ -29,26 +32,14 @@ export default function ParticleSphere({ className = "" }: { className?: string 
       pts.push([Math.cos(t) * r, y, Math.sin(t) * r]);
     }
 
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.round(rect.width * DPR));
-      canvas.height = Math.max(1, Math.round(rect.height * DPR));
-      // при reduced-motion цикла нет — перерисовать статичный кадр вручную
-      if (reduce) draw(performance.now());
-    };
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-
     let raf = 0;
-    let running = true;
-    let angle = 0;
+    let running = false;
+    let autoAngle = 0;
+    let yaw = 0, pitch = 0;
+    let targetYaw = 0, targetPitch = 0;
     let last = performance.now();
 
-    const draw = (now: number) => {
-      const dt = Math.min(now - last, 50);
-      last = now;
-      angle += dt * 0.00006;
-
+    const render = () => {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
@@ -56,9 +47,10 @@ export default function ParticleSphere({ className = "" }: { className?: string 
       const R = Math.min(w, h) * 0.42;
       const cx = w / 2;
       const cy = h / 2;
+      const angle = autoAngle + yaw;
       const ca = Math.cos(angle);
       const sa = Math.sin(angle);
-      const tilt = 0.35;
+      const tilt = 0.35 + pitch;
       const ct = Math.cos(tilt);
       const st = Math.sin(tilt);
 
@@ -83,7 +75,7 @@ export default function ParticleSphere({ className = "" }: { className?: string 
           const dy = proj[i][1] - proj[j][1];
           const d2 = dx * dx + dy * dy;
           if (d2 < maxD2) {
-            const depth = (proj[i][2] + proj[j][2] + 2) / 4; // 0..1
+            const depth = (proj[i][2] + proj[j][2] + 2) / 4;
             const a = (1 - Math.sqrt(d2) / maxD) * (0.05 + 0.13 * depth);
             ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`;
             ctx.beginPath();
@@ -106,32 +98,58 @@ export default function ParticleSphere({ className = "" }: { className?: string 
         ctx.arc(X, Y, (red ? 1.7 : 1.1) * (0.6 + depth) * DPR, 0, Math.PI * 2);
         ctx.fill();
       }
-
-      if (running && !reduce) raf = requestAnimationFrame(draw);
     };
 
-    if (reduce) {
-      draw(performance.now());
-    } else {
-      raf = requestAnimationFrame(draw);
-    }
-
-    // пауза, когда вкладка скрыта
-    const onVisibility = () => {
-      if (document.hidden) {
-        running = false;
-        cancelAnimationFrame(raf);
-      } else if (!reduce) {
-        running = true;
-        last = performance.now();
-        raf = requestAnimationFrame(draw);
-      }
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 50);
+      last = now;
+      autoAngle += dt * 0.00006;
+      yaw += (targetYaw - yaw) * 0.07;
+      pitch += (targetPitch - pitch) * 0.07;
+      render();
+      if (running) raf = requestAnimationFrame(tick);
     };
+
+    const start = () => {
+      if (running || document.hidden) return;
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width * DPR));
+      canvas.height = Math.max(1, Math.round(rect.height * DPR));
+      render();
+    };
+
+    // синхронно выставляем размер сразу (ResizeObserver может опоздать/не сработать)
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+
+    const onPointer = (e: PointerEvent) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      targetYaw = nx * 1.1;
+      targetPitch = ny * 0.55;
+    };
+    window.addEventListener("pointermove", onPointer, { passive: true });
+
+    const onVisibility = () => (document.hidden ? stop() : start());
     document.addEventListener("visibilitychange", onVisibility);
 
+    start();
+
     return () => {
-      cancelAnimationFrame(raf);
+      stop();
       ro.disconnect();
+      window.removeEventListener("pointermove", onPointer);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
