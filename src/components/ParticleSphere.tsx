@@ -137,7 +137,8 @@ export default function ParticleSphere({ className = "" }: { className?: string 
       const nx = e.clientX / window.innerWidth - 0.5;
       const ny = e.clientY / window.innerHeight - 0.5;
       targetYaw = nx * 1.1;
-      targetPitch = ny * 0.55;
+      // знак инвертирован: мышь вниз → сфера кренится вниз (естественное направление)
+      targetPitch = -ny * 0.55;
     };
     window.addEventListener("pointermove", onPointer, { passive: true });
 

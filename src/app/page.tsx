@@ -69,10 +69,15 @@ function PinnedHero() {
             WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
           }} />
 
-          {/* Сфера из частиц (референс: uxerflow) */}
-          <div className="sphere-in absolute pointer-events-none" style={{ right: "-8%", top: "46%", transform: "translateY(-50%)", width: "min(72vw, 860px)", height: "min(72vw, 860px)" }}>
+          {/* Сфера из частиц — центральный фон за текстом (референс: uxerflow) */}
+          <div className="sphere-in absolute pointer-events-none left-1/2 top-1/2" style={{ transform: "translate(-50%, -50%)", width: "min(96vw, 820px)", height: "min(96vw, 820px)" }}>
             <ParticleSphere className="w-full h-full" />
           </div>
+
+          {/* Затемнение по центру под текстом — читабельность поверх сферы */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: "radial-gradient(ellipse 42% 46% at 50% 50%, rgba(9,9,11,0.62) 0%, rgba(9,9,11,0.28) 45%, transparent 72%)",
+          }} />
 
           {/* Год-водяной знак */}
           <div
@@ -92,55 +97,31 @@ function PinnedHero() {
         <MorphBlob className="w-[350px] h-[350px] bg-red-900 rounded-full morph right-16 top-16" />
         <MorphBlob className="w-[180px] h-[180px] bg-red-800 rounded-full morph-fast left-[45%] top-[20%]" />
 
-        {/* Content */}
-        <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 h-full flex items-end pb-16 md:pb-24">
-          <div className="max-w-[1400px] mx-auto px-6 w-full">
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10">
+        {/* Content — по центру, поверх сферы */}
+        <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 h-full flex items-center justify-center px-6">
+          <div className="flex flex-col items-center text-center max-w-[760px]">
+            <h1 className="hero-in hero-in-1 text-[clamp(4.5rem,17vw,14rem)] font-extrabold tracking-[-0.055em] leading-[0.85] mb-7">
+              <ScrambleText text="DEI" className="text-red-500" />
+            </h1>
 
-              {/* Left: headline */}
-              <div className="max-w-[680px]">
-                <h1 className="text-[clamp(3rem,9vw,9rem)] font-extrabold tracking-[-0.055em] leading-[0.82] text-white mb-6">
-                  <span className="hero-in hero-in-1 block"><ScrambleText text="DEI" className="text-red-500 block" /></span>
-                  <span className="hero-in hero-in-2 block" style={{ hyphens: "none" }}>Оборудование</span>
-                </h1>
+            <p className="hero-in hero-in-3 text-zinc-300 text-base md:text-lg leading-relaxed max-w-[480px] mb-9">
+              Производим сварочные инверторы и светодиодные светильники.
+              Аттестация НАКС. Поставки по РФ и СНГ.
+            </p>
 
-                <p className="hero-in hero-in-3 text-zinc-500 text-base md:text-lg leading-relaxed max-w-[440px] mb-8">
-                  Производим сварочные инверторы и светодиодные светильники.
-                  Аттестация НАКС. Поставки по РФ и СНГ.
-                </p>
-
-                <div className="hero-in hero-in-4 flex items-center gap-4">
-                  <MagneticButton
-                    href="#catalog"
-                    className="bg-red-600 hover:bg-red-500 text-white px-7 py-3.5 font-semibold btn inline-block shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors"
-                  >
-                    Каталог
-                  </MagneticButton>
-                  <a href="/contacts" className="text-zinc-500 hover:text-white text-sm font-medium inline-flex items-center gap-1.5 transition-colors duration-200">
-                    Контакты
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                  </a>
-                </div>
-
-              </div>
-
-              {/* Right: glass contact card */}
-              <div className="hero-in hero-in-5 glass-card rounded-2xl p-6 max-w-[260px] shrink-0 lg:mb-0">
-                <p className="text-[11px] text-zinc-600 uppercase tracking-widest mb-3">Связаться</p>
-                <a href="tel:+79885807630" className="text-white text-lg font-bold block mb-1 hover:text-red-400 transition-colors duration-200 leading-tight">
-                  +7 (988) 580-76-30
-                </a>
-                <p className="text-zinc-600 text-xs mb-5">Пн–Пт: 9:00–18:00</p>
-                <a
-                  href="/contacts"
-                  className="w-full glass-inner rounded-xl px-4 py-2.5 text-[13px] text-zinc-400 hover:text-white font-medium text-center block transition-colors duration-200"
-                >
-                  Оставить заявку
-                </a>
-              </div>
-
+            <div className="hero-in hero-in-4 flex items-center gap-4">
+              <MagneticButton
+                href="#catalog"
+                className="bg-red-600 hover:bg-red-500 text-white px-7 py-3.5 font-semibold btn inline-block shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors"
+              >
+                Каталог
+              </MagneticButton>
+              <a href="/contacts" className="text-zinc-400 hover:text-white text-sm font-medium inline-flex items-center gap-1.5 transition-colors duration-200">
+                Контакты
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
             </div>
           </div>
         </motion.div>
