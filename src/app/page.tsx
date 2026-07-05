@@ -24,14 +24,19 @@ function MorphBlob({ className = "" }: { className?: string }) {
 function PinnedHero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const curtainY   = useTransform(scrollYProgress, [0, 1],   ["100%", "0%"]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const textY       = useTransform(scrollYProgress, [0, 0.4], [0, -60]);
+  // герой плавно растворяется и слегка масштабируется при уходе — без «шторки»
+  const heroFade  = useTransform(scrollYProgress, [0, 0.55, 0.92], [1, 1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
+  const textY       = useTransform(scrollYProgress, [0, 0.45], [0, -60]);
   const imgScale    = useTransform(scrollYProgress, [0, 1],   [1, 1.08]);
 
   return (
-    <section ref={ref} className="relative h-[200vh]">
-      <div className="sticky top-0 h-[100dvh] overflow-hidden">
+    <section ref={ref} className="relative h-[150vh]">
+      <motion.div
+        style={{ opacity: heroFade, scale: heroScale }}
+        className="sticky top-0 h-[100dvh] overflow-hidden"
+      >
 
         {/* Background — CSS, без фото */}
         <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
@@ -121,9 +126,7 @@ function PinnedHero() {
           </div>
         </motion.div>
 
-        {/* Curtain */}
-        <motion.div style={{ y: curtainY }} className="absolute inset-0 z-20 bg-[#09090b]" />
-      </div>
+      </motion.div>
     </section>
   );
 }
