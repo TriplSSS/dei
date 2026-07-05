@@ -180,9 +180,9 @@ function DirectionBlock({ d }: { d: (typeof directions)[number] }) {
   const left = d.align === "left";
   return (
     <motion.div
-      initial={{ clipPath: "inset(6% 3% 6% 3% round 24px)", opacity: 0.4 }}
-      whileInView={{ clipPath: "inset(0% 0% 0% 0% round 0px)", opacity: 1 }}
-      viewport={{ once: true, amount: 0.25 }}
+      initial={{ clipPath: "inset(4% 2% 4% 2% round 20px)" }}
+      whileInView={{ clipPath: "inset(0% 0% 0% 0% round 0px)" }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 1, ease }}
       className="relative h-[78vh] min-h-[560px] overflow-hidden"
     >
