@@ -6,9 +6,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/#catalog", label: "Каталог" },
-  { href: "/about", label: "О компании" },
-  { href: "/contacts", label: "Контакты" },
+  { href: "/catalog",    label: "Каталог" },
+  { href: "/calculator", label: "Калькулятор" },
+  { href: "/documents",  label: "Документы" },
+  { href: "/about",      label: "О компании" },
+  { href: "/contacts",   label: "Контакты" },
 ];
 
 export default function Nav() {
@@ -52,7 +54,7 @@ export default function Nav() {
             <div className="hidden md:flex items-center gap-7 text-[13.5px]">
               {links.map(l => (
                 <Link key={l.href} href={l.href} className={`nav-link py-1 transition-colors duration-200 ${
-                  pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href.replace('/#', '/')))
+                  pathname === l.href || pathname.startsWith(l.href + '/')
                     ? 'text-white'
                     : 'text-zinc-400 hover:text-white'
                 }`}>
@@ -121,7 +123,7 @@ export default function Nav() {
               {links.map(l => (
                 <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
                   className={`text-[17px] font-medium py-3 border-b border-white/[0.05] last:border-0 transition-colors duration-150 ${
-                    pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href.replace('/#', '/')))
+                    pathname === l.href || pathname.startsWith(l.href + '/')
                       ? 'text-white'
                       : 'text-zinc-400 active:text-white'
                   }`}>
