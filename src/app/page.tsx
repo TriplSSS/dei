@@ -6,7 +6,7 @@ import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
 import ScrambleText from "@/components/ScrambleText";
 import ProductCard from "@/components/ProductCard";
-import ParticleSphere from "@/components/ParticleSphere";
+import SideCircuits from "@/components/SideCircuits";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
@@ -69,15 +69,10 @@ function PinnedHero() {
             WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
           }} />
 
-          {/* Сфера из частиц — центральный фон за текстом (референс: uxerflow) */}
-          <div className="sphere-in absolute pointer-events-none left-1/2 top-1/2" style={{ transform: "translate(-50%, -50%)", width: "min(96vw, 820px)", height: "min(96vw, 820px)" }}>
-            <ParticleSphere className="w-full h-full" />
+          {/* Боковые энергетические рельсы (ток по проводам) */}
+          <div className="sphere-in absolute inset-0 pointer-events-none">
+            <SideCircuits className="w-full h-full" />
           </div>
-
-          {/* Затемнение по центру под текстом — читабельность поверх сферы */}
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: "radial-gradient(ellipse 42% 46% at 50% 50%, rgba(9,9,11,0.62) 0%, rgba(9,9,11,0.28) 45%, transparent 72%)",
-          }} />
 
           {/* Год-водяной знак */}
           <div
