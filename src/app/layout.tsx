@@ -5,6 +5,8 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import BackToTop from "@/components/BackToTop";
+import { CartProvider } from "@/context/CartContext";
+import CartDrawer from "@/components/CartDrawer";
 
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
@@ -31,12 +33,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ru" className={`${inter.variable} antialiased`}>
       <body className="bg-[#09090b] text-zinc-400 font-[family-name:var(--font-inter)]">
-        <div className="grain" />
-        <SmoothScroll />
-        <Nav />
-        <main>{children}</main>
-        <Footer />
-        <BackToTop />
+        <CartProvider>
+          <div className="grain" />
+          <SmoothScroll />
+          <Nav />
+          <main>{children}</main>
+          <Footer />
+          <BackToTop />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

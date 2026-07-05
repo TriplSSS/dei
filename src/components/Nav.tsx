@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import CartButton from "@/components/CartButton";
 
 const links = [
   { href: "/catalog",    label: "Каталог" },
@@ -64,6 +65,8 @@ export default function Nav() {
             </div>
 
             <div className="flex items-center gap-2">
+              <CartButton />
+
               <a
                 href="tel:+79885807630"
                 className="hidden sm:inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white text-[13px] px-4 py-2 font-semibold btn transition-colors"

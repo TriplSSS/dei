@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import AddToCartButton from "@/components/AddToCartButton";
 import { type Product, PRODUCTS } from "@/data/products";
 
 export default function ProductPageClient({ product }: { product: Product }) {
+  const [qty, setQty] = useState(1);
   const related = PRODUCTS
     .filter(p => p.category === product.category && p.slug !== product.slug)
     .slice(0, 3);
@@ -65,18 +68,23 @@ export default function ProductPageClient({ product }: { product: Product }) {
                   <p className="mt-3 text-zinc-400 text-base leading-relaxed">{product.fullDescription}</p>
                 </div>
 
-                {/* Цена */}
-                <div className="glass-red rounded-xl px-5 py-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-zinc-500 uppercase tracking-widest mb-0.5">Стоимость</p>
-                    <p className="text-red-400 font-bold text-2xl tabular-nums">{product.price}</p>
+                {/* Цена + покупка */}
+                <div className="glass-red rounded-xl px-5 py-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-zinc-500 uppercase tracking-widest mb-0.5">Стоимость</p>
+                      <p className="text-red-400 font-bold text-2xl tabular-nums">{product.price}</p>
+                    </div>
+                    {/* количество */}
+                    <div className="flex items-center rounded-lg border border-white/[0.1] bg-black/20">
+                      <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white btn" aria-label="Меньше">−</button>
+                      <span className="w-9 text-center text-white font-medium tabular-nums">{qty}</span>
+                      <button onClick={() => setQty(q => q + 1)} className="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white btn" aria-label="Больше">+</button>
+                    </div>
                   </div>
-                  <a
-                    href="/contacts"
-                    className="bg-red-600 hover:bg-red-500 text-white font-semibold px-5 py-2.5 rounded-xl btn text-sm transition-colors"
-                  >
-                    Запросить цену
-                  </a>
+                  <p className="mt-3 text-[11px] text-zinc-500 leading-relaxed">
+                    Цена ориентировочная. Точную стоимость и счёт пришлём после оформления заявки.
+                  </p>
                 </div>
 
                 {/* Технические характеристики */}
@@ -105,12 +113,11 @@ export default function ProductPageClient({ product }: { product: Product }) {
 
                 {/* CTA */}
                 <div className="flex gap-3">
-                  <a
-                    href="/contacts"
-                    className="flex-1 bg-red-600 hover:bg-red-500 text-white font-semibold py-3.5 rounded-xl btn text-sm text-center transition-colors"
-                  >
-                    Оставить заявку
-                  </a>
+                  <AddToCartButton
+                    product={product}
+                    qty={qty}
+                    className="flex-1 bg-red-600 hover:bg-red-500 text-white font-semibold py-3.5 rounded-xl text-sm text-center"
+                  />
                   <a
                     href="tel:+79885807630"
                     className="glass-pill hover:text-white text-zinc-400 font-medium py-3.5 px-5 rounded-xl btn text-sm text-center transition-colors"
