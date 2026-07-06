@@ -168,7 +168,8 @@ const directions = [
       { v: "3 года", l: "гарантия" },
     ],
     price: "от 18 500 ₽",
-    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=1200&fit=crop&q=80",
+    img: "/products/dei-mig-250.jpg",
+    fit: "contain" as const,
   },
   {
     tab: "Свет",
@@ -182,6 +183,7 @@ const directions = [
     ],
     price: "от 8 200 ₽",
     img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1200&h=1200&fit=crop&q=80",
+    fit: "cover" as const,
   },
 ];
 
@@ -277,20 +279,31 @@ function Directions() {
             </div>
 
             {/* Фото */}
-            <div className="relative order-1 min-h-[240px] overflow-hidden md:order-2 md:min-h-[460px]">
+            <div className="relative order-1 min-h-[260px] overflow-hidden bg-[#0a0a0c] md:order-2 md:min-h-[460px]">
+              {/* мягкое свечение под продуктом */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{ background: "radial-gradient(60% 55% at 50% 45%, rgba(220,38,38,0.10) 0%, transparent 70%)" }}
+              />
               <AnimatePresence mode="wait">
                 <motion.img
                   key={active}
                   src={d.img}
                   alt={d.title}
-                  initial={{ opacity: 0, scale: 1.04 }}
+                  initial={{ opacity: 0, scale: 1.03 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, ease }}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className={`absolute inset-0 h-full w-full ${
+                    d.fit === "contain" ? "object-contain p-6 md:p-8" : "object-cover"
+                  }`}
                 />
               </AnimatePresence>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e]/50 to-transparent md:bg-gradient-to-l" />
+              {/* растворение края в панель (только для фото-фонов) */}
+              {d.fit === "cover" && (
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e]/50 to-transparent md:bg-gradient-to-l" />
+              )}
             </div>
           </div>
         </div>
