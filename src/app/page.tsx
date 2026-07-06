@@ -7,8 +7,9 @@ import MagneticButton from "@/components/MagneticButton";
 import ScrambleText from "@/components/ScrambleText";
 import ProductCard from "@/components/ProductCard";
 import SideCircuits from "@/components/SideCircuits";
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence, MotionConfig, useScroll, useTransform } from "motion/react";
+import { useRef, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -154,103 +155,148 @@ function StatsBand() {
   );
 }
 
-/* ─── Направления: крупные фото с параллаксом ─── */
+/* ─── Направления: интерактивный переключатель ─── */
 const directions = [
   {
-    num: "01",
+    tab: "Сварка",
+    kicker: "MMA · TIG · MIG/MAG",
     title: "Сварочное оборудование",
-    desc: "Инверторы ПРОТОН-ДЭИ собственной разработки. Для промышленности, строительства и нефтегазовой отрасли.",
-    chips: ["MMA · TIG · MIG/MAG", "Аттестация НАКС", "Ток 20–200 А"],
+    desc: "Инверторы ПРОТОН-ДЭИ собственной разработки. Аттестация НАКС. Для промышленности, строительства и нефтегазовой отрасли.",
+    specs: [
+      { v: "200 А", l: "макс. ток сварки" },
+      { v: "НАКС", l: "аттестация" },
+      { v: "3 года", l: "гарантия" },
+    ],
     price: "от 18 500 ₽",
-    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=1000&fit=crop&q=80",
-    align: "left" as const,
+    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=1200&fit=crop&q=80",
   },
   {
-    num: "02",
+    tab: "Свет",
+    kicker: "Цех · Склад · Улица",
     title: "Светодиодные светильники",
-    desc: "Промышленные LED-решения для цехов, складов и производственных площадок. Собственное производство, Ростов-на-Дону.",
-    chips: ["Экономия до 70%", "Степень защиты IP65", "Гарантия 3 года"],
+    desc: "Промышленные LED-решения для цехов, складов и производственных площадок. Собственное производство в Ростове-на-Дону.",
+    specs: [
+      { v: "70%", l: "экономия энергии" },
+      { v: "IP65", l: "степень защиты" },
+      { v: "50 000 ч", l: "ресурс" },
+    ],
     price: "от 8 200 ₽",
-    img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1600&h=1000&fit=crop&q=80",
-    align: "right" as const,
+    img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1200&h=1200&fit=crop&q=80",
   },
 ];
 
-function DirectionBlock({ d }: { d: (typeof directions)[number] }) {
-  const left = d.align === "left";
-  return (
-    <motion.div
-      initial={{ clipPath: "inset(4% 2% 4% 2% round 20px)" }}
-      whileInView={{ clipPath: "inset(0% 0% 0% 0% round 0px)" }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 1, ease }}
-      className="relative h-[78vh] min-h-[560px] overflow-hidden"
-    >
-      <div className="absolute inset-0">
-        <ParallaxImage src={d.img} alt={d.title} className="h-full" />
-      </div>
-      <div
-        className={`absolute inset-0 ${
-          left
-            ? "bg-gradient-to-r from-[#09090b] via-[#09090b]/80 to-transparent"
-            : "bg-gradient-to-l from-[#09090b] via-[#09090b]/80 to-transparent"
-        }`}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent" />
+function Directions() {
+  const [active, setActive] = useState(0);
+  const d = directions[active];
 
-      <div className="relative z-10 mx-auto flex h-full max-w-[1400px] items-center px-6">
-        <div className={`max-w-[560px] ${left ? "" : "ml-auto text-right"}`}>
-          <span className="block font-extrabold tabular-nums leading-none text-red-600/25 text-[clamp(5rem,11vw,9rem)] select-none">
-            {d.num}
-          </span>
-          <h2 className="mt-2 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
-            {d.title}
-          </h2>
-          <p className={`mt-5 text-zinc-400 text-sm md:text-base leading-relaxed max-w-[420px] ${left ? "" : "ml-auto"}`}>
-            {d.desc}
-          </p>
-          <div className={`mt-6 flex flex-wrap gap-2.5 ${left ? "" : "justify-end"}`}>
-            {d.chips.map((c) => (
-              <span
-                key={c}
-                className="glass-pill rounded-full px-3.5 py-1.5 text-xs font-medium text-zinc-200"
-              >
-                {c}
-              </span>
-            ))}
+  return (
+    <MotionConfig reducedMotion="user">
+    <section id="catalog" className="py-16 md:py-24 px-6">
+      <div className="mx-auto max-w-[1200px]">
+        <Reveal>
+          <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Каталог</p>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
+                Что мы производим
+              </h2>
+            </div>
+
+            {/* Переключатель направлений */}
+            <div className="inline-flex self-start rounded-full glass-pill p-1">
+              {directions.map((dir, i) => (
+                <button
+                  key={dir.tab}
+                  onClick={() => setActive(i)}
+                  className={`relative rounded-full px-6 py-2.5 text-sm font-semibold transition-colors ${
+                    active === i ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  {active === i && (
+                    <motion.span
+                      layoutId="dir-pill"
+                      className="absolute inset-0 rounded-full bg-red-600"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative z-10">{dir.tab}</span>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className={`mt-8 flex items-center gap-6 ${left ? "" : "justify-end"}`}>
-            <span className="text-2xl md:text-3xl font-extrabold text-red-500 tabular-nums">{d.price}</span>
-            <MagneticButton
-              href="/contacts"
-              className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 font-semibold btn inline-block shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors"
-            >
-              Запросить цену
-            </MagneticButton>
+        </Reveal>
+
+        {/* Панель активного направления */}
+        <div className="glass-card overflow-hidden rounded-3xl">
+          <div className="grid md:grid-cols-2">
+            {/* Данные */}
+            <div className="order-2 flex flex-col p-8 md:order-1 md:p-10 lg:p-12">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.28, ease }}
+                  className="flex flex-1 flex-col"
+                >
+                  <p className="font-[family-name:var(--font-inter)] text-[11px] uppercase tracking-[0.2em] text-red-400">
+                    {d.kicker}
+                  </p>
+                  <h3 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-[-0.03em] text-white leading-[0.95]">
+                    {d.title}
+                  </h3>
+                  <p className="mt-4 max-w-[440px] text-sm md:text-base leading-relaxed text-zinc-400">
+                    {d.desc}
+                  </p>
+
+                  {/* Характеристики как числа */}
+                  <div className="mt-8 grid grid-cols-3 gap-4">
+                    {d.specs.map((s) => (
+                      <div key={s.l}>
+                        <p className="text-2xl md:text-3xl font-extrabold tracking-tight text-white tabular-nums">{s.v}</p>
+                        <p className="mt-1 text-[11px] leading-snug text-zinc-500">{s.l}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-auto flex flex-wrap items-center gap-5 pt-10">
+                    <span className="text-2xl font-extrabold text-red-500 tabular-nums">{d.price}</span>
+                    <Link
+                      href="/catalog"
+                      className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500 shadow-[0_8px_28px_-6px_rgba(220,38,38,0.5)]"
+                    >
+                      Смотреть в каталоге
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Фото */}
+            <div className="relative order-1 min-h-[240px] overflow-hidden md:order-2 md:min-h-[460px]">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={active}
+                  src={d.img}
+                  alt={d.title}
+                  initial={{ opacity: 0, scale: 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease }}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e]/50 to-transparent md:bg-gradient-to-l" />
+            </div>
           </div>
         </div>
       </div>
-    </motion.div>
-  );
-}
-
-function Directions() {
-  return (
-    <section id="catalog" className="py-16 md:py-24">
-      <div className="mx-auto max-w-[1400px] px-6 mb-10 md:mb-14">
-        <Reveal>
-          <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Каталог</p>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
-            Два направления<br />производства
-          </h2>
-        </Reveal>
-      </div>
-      <div className="flex flex-col gap-4 md:gap-6">
-        {directions.map((d) => (
-          <DirectionBlock key={d.num} d={d} />
-        ))}
-      </div>
     </section>
+    </MotionConfig>
   );
 }
 
