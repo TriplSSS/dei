@@ -137,7 +137,7 @@ export default function CatalogClient() {
         <div className="mx-auto grid max-w-[1400px] gap-8 lg:grid-cols-[260px_1fr]">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="sticky top-28 rounded-2xl border border-white/[0.06] bg-white/[0.015] p-5">
+            <div className="glass-card sticky top-28 rounded-2xl p-5">
               {Filters}
             </div>
           </aside>
@@ -180,14 +180,14 @@ export default function CatalogClient() {
 
             {/* Фильтры (моб, раскрывающиеся) */}
             {filtersOpen && (
-              <div className="mb-6 rounded-2xl border border-white/[0.06] bg-white/[0.015] p-5 lg:hidden">
+              <div className="glass-card mb-6 rounded-2xl p-5 lg:hidden">
                 {Filters}
               </div>
             )}
 
             {/* Сетка */}
             {filtered.length === 0 ? (
-              <div className="rounded-2xl border border-white/[0.06] py-20 text-center">
+              <div className="glass-card rounded-2xl py-20 text-center">
                 <p className="text-zinc-500">Ничего не найдено</p>
                 <button onClick={reset} className="mt-3 text-sm text-red-500 hover:text-red-400 transition-colors">
                   Сбросить фильтры
@@ -197,7 +197,7 @@ export default function CatalogClient() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {filtered.map((product, i) => (
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
-                    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.015] transition-colors duration-300 hover:border-red-600/25">
+                    <div className="group glass-card hover-lift flex h-full flex-col overflow-hidden rounded-2xl transition-colors duration-300 hover:border-red-600/25">
                       <Link href={`/catalog/${product.slug}`} className="block">
                         <div className="relative aspect-[4/3] overflow-hidden">
                           <img src={product.img} alt={product.name} className="h-full w-full object-cover img-zoom" />
@@ -248,7 +248,7 @@ export default function CatalogClient() {
             )}
 
             {/* Нестандартный заказ */}
-            <div className="mt-12 flex flex-col items-center gap-5 rounded-2xl border border-red-600/20 bg-red-600/[0.06] px-8 py-8 sm:flex-row sm:justify-between">
+            <div className="glass-red mt-12 flex flex-col items-center gap-5 rounded-2xl px-8 py-8 sm:flex-row sm:justify-between">
               <div>
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>
