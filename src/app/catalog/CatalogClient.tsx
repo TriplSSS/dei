@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import AddToCartButton from "@/components/AddToCartButton";
 import { PRODUCTS, CATEGORIES } from "@/data/products";
@@ -9,9 +10,14 @@ import { PRODUCTS, CATEGORIES } from "@/data/products";
 const PRICE_MIN = Math.min(...PRODUCTS.map((p) => p.priceNum));
 const PRICE_MAX = Math.max(...PRODUCTS.map((p) => p.priceNum));
 const ruble = (n: number) => n.toLocaleString("ru-RU") + " ₽";
+const CATEGORY_KEYS = CATEGORIES.map((c) => c.key as string);
 
 export default function CatalogClient() {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category");
+  const [activeCategory, setActiveCategory] = useState(
+    initialCategory && CATEGORY_KEYS.includes(initialCategory) ? initialCategory : "all"
+  );
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<"default" | "asc" | "desc">("default");
   const [maxPrice, setMaxPrice] = useState(PRICE_MAX);

@@ -30,10 +30,31 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "ООО ДонЭлектроИнтел",
+  alternateName: "DEI",
+  url: "https://dei-coral.vercel.app",
+  foundingDate: "2006",
+  telephone: "+7 (988) 580-76-30",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "пер. Нарядный, 14/2",
+    addressLocality: "Ростов-на-Дону",
+    postalCode: "344065",
+    addressCountry: "RU",
+  },
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" className={`${inter.variable} antialiased`}>
       <body className="bg-[#09090b] text-zinc-400 font-[family-name:var(--font-inter)]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <CartProvider>
           <div className="grain" />
           <SmoothScroll />

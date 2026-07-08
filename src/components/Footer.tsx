@@ -4,10 +4,10 @@ const navColumns = [
   {
     title: "Продукция",
     links: [
-      { href: "/#catalog", label: "Сварочные инверторы" },
-      { href: "/#catalog", label: "LED-светильники" },
-      { href: "/#catalog", label: "Центраторы" },
-      { href: "/#catalog", label: "Электроды и расходники" },
+      { href: "/catalog?category=welding", label: "Сварочные инверторы" },
+      { href: "/catalog?category=light", label: "LED-светильники" },
+      { href: "/catalog?category=centrators", label: "Центраторы" },
+      { href: "/catalog?category=consumables", label: "Электроды и расходники" },
     ],
   },
   {

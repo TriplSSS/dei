@@ -2,6 +2,15 @@
 
 Постоянная память проекта. Обновляется после каждой рабочей сессии.
 
+## Сессия 08.07.2026 (вечер) — JSON-LD и ссылки футера
+
+1. **JSON-LD**: Organization (название, адрес, телефон, foundingDate) в layout.tsx; Product (цена, валюта, InStock, бренд) + BreadcrumbList на карточках товара (catalog/[slug]/page.tsx, серверный компонент).
+2. **Футер**: ссылки «Продукция» ведут на /catalog?category=welding|light|centrators|consumables вместо /#catalog. CatalogClient читает параметр через useSearchParams (обёрнут в Suspense в catalog/page.tsx — обязательно для статического пререндера).
+
+Изменённые файлы: `src/app/layout.tsx`, `src/app/catalog/[slug]/page.tsx`, `src/app/catalog/page.tsx`, `src/app/catalog/CatalogClient.tsx`, `src/components/Footer.tsx`.
+
+Следующее: e-shop Этап 3 (Resend), реальные фото товаров (ждём от Саши), кастомный домен, Метрика.
+
 ## Сессия 08.07.2026 — SEO-фиксы по итогам аудита прода
 
 Аудит производственного сайта (dei-coral.vercel.app) выявил 5 проблем; в этой сессии исправлены 4:
