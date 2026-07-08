@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -79,7 +80,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { items: [] });
   const [isOpen, setIsOpen] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const storageReadyRef = useRef(false);
 
   // загрузка из localStorage при монтировании
   useEffect(() => {
@@ -89,18 +90,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {
       /* игнорируем повреждённые данные */
     }
-    setHydrated(true);
+
+    const timer = window.setTimeout(() => {
+      storageReadyRef.current = true;
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   // сохранение
   useEffect(() => {
-    if (!hydrated) return;
+    if (!storageReadyRef.current) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
     } catch {
       /* приватный режим / переполнение — не критично */
     }
-  }, [state.items, hydrated]);
+  }, [state.items]);
 
   const value = useMemo<CartContextValue>(() => {
     const count = state.items.reduce((s, i) => s + i.qty, 0);

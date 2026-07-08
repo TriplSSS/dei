@@ -26,7 +26,6 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -48,7 +47,7 @@ export default function Nav() {
           }}
         >
           <div className="h-[52px] flex items-center justify-between px-5">
-            <Link href="/" className="text-[17px] font-extrabold tracking-tight text-white select-none">
+            <Link href="/" onClick={() => setOpen(false)} className="text-[17px] font-extrabold tracking-tight text-white select-none">
               DEI
             </Link>
 
