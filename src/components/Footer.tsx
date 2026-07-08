@@ -89,7 +89,7 @@ export default function Footer() {
           style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
           className="pt-6 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-zinc-600"
         >
-          <span>© 2006–2025 ДонЭлектроИнтел</span>
+          <span>© 2006–{new Date().getFullYear()} ДонЭлектроИнтел</span>
           <Link
             href="/contacts"
             className="transition-colors duration-200 hover:text-zinc-400"

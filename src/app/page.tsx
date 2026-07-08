@@ -132,7 +132,7 @@ function PinnedHero() {
 function StatsBand() {
   const stats = [
     { render: <CountUp target={2006} from={2000} />, label: "год основания" },
-    { render: <><CountUp target={18} from={0} />+</>, label: "лет опыта" },
+    { render: <><CountUp target={new Date().getFullYear() - 2006} from={0} />+</>, label: "лет опыта" },
     { render: "НАКС", label: "аттестация инверторов" },
     { render: "РФ·СНГ", label: "поставки" },
   ];
@@ -279,12 +279,12 @@ function Directions() {
             </div>
 
             {/* Фото */}
-            <div className="relative order-1 min-h-[260px] overflow-hidden bg-[#0a0a0c] md:order-2 md:min-h-[460px]">
+            <div className="relative order-1 min-h-[260px] overflow-hidden md:order-2 md:min-h-[460px]">
               {/* мягкое свечение под продуктом */}
               <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0"
-                style={{ background: "radial-gradient(60% 55% at 50% 45%, rgba(220,38,38,0.10) 0%, transparent 70%)" }}
+                style={{ background: "radial-gradient(55% 50% at 52% 46%, rgba(220,38,38,0.12) 0%, transparent 68%)" }}
               />
               <AnimatePresence mode="wait">
                 <motion.img
@@ -296,8 +296,19 @@ function Directions() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, ease }}
                   className={`absolute inset-0 h-full w-full ${
-                    d.fit === "contain" ? "object-contain p-6 md:p-8" : "object-cover"
+                    d.fit === "contain" ? "object-contain p-4 md:p-6" : "object-cover"
                   }`}
+                  style={
+                    d.fit === "contain"
+                      ? {
+                          // растворяем края фото в панель — без видимой рамки
+                          maskImage:
+                            "radial-gradient(ellipse 80% 84% at 50% 48%, #000 58%, transparent 94%)",
+                          WebkitMaskImage:
+                            "radial-gradient(ellipse 80% 84% at 50% 48%, #000 58%, transparent 94%)",
+                        }
+                      : undefined
+                  }
                 />
               </AnimatePresence>
               {/* растворение края в панель (только для фото-фонов) */}
@@ -316,7 +327,7 @@ function Directions() {
 /* ─── Популярные позиции ─── */
 function Products() {
   const products = [
-    { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=400&fit=crop&q=80" },
+    { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "/products/dei-mig-250.jpg" },
     { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=400&h=400&fit=crop&q=80" },
     { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1605600659873-d808a13e4d2a?w=400&h=400&fit=crop&q=80" },
     { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?w=400&h=400&fit=crop&q=80" },

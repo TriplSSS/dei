@@ -14,6 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dei-coral.vercel.app"),
   title: {
     default: "ДонЭлектроИнтел — сварочное оборудование и освещение",
     template: "%s — ДонЭлектроИнтел",

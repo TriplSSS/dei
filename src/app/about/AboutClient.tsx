@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import ParallaxImage from "@/components/ParallaxImage";
 
 const stats = [
-  { value: "18+", label: "лет опыта" },
+  { value: `${new Date().getFullYear() - 2006}+`, label: "лет опыта" },
   { value: "НАКС", label: "аттестация" },
   { value: "РФ·СНГ", label: "поставки" },
   { value: "24/7", label: "поддержка" },

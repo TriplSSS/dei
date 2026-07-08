@@ -16,7 +16,9 @@ export default function CountUp({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
-  const [count, setCount] = useState(from);
+  // SSR и первый рендер показывают конечное значение (SEO, no-JS);
+  // анимация от `from` запускается только когда элемент попал во вьюпорт.
+  const [count, setCount] = useState(target);
 
   useEffect(() => {
     if (!isInView) return;
