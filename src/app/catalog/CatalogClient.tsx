@@ -54,7 +54,7 @@ export default function CatalogClient() {
   };
 
   const Filters = (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6 lg:gap-8">
       {/* Категории */}
       <div>
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Категории</p>
@@ -117,7 +117,7 @@ export default function CatalogClient() {
   return (
     <>
       {/* ── Шапка ── */}
-      <section className="relative px-6 pt-36 pb-10 overflow-hidden">
+      <section className="relative overflow-hidden px-4 pb-8 pt-32 sm:px-6 md:pb-10 md:pt-36">
         <div
           aria-hidden
           className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full"
@@ -132,15 +132,15 @@ export default function CatalogClient() {
             >
               Продукция <span className="text-red-500">DEI</span>
             </h1>
-            <p className="mt-4 max-w-[520px] text-zinc-400">
+            <p className="mt-4 max-w-[520px] text-sm leading-relaxed text-zinc-400 sm:text-base">
               Собственное производство в Ростове-на-Дону. Сварочное оборудование, промышленное освещение, центраторы и расходники.
             </p>
           </Reveal>
         </div>
       </section>
 
-      <section className="px-6 pb-24">
-        <div className="mx-auto grid max-w-[1400px] gap-8 lg:grid-cols-[260px_1fr]">
+      <section className="px-4 pb-24 sm:px-6">
+        <div className="mx-auto grid min-w-0 max-w-[1400px] gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
             <div className="glass-card sticky top-28 rounded-2xl p-5">
@@ -149,32 +149,35 @@ export default function CatalogClient() {
           </aside>
 
           {/* ── Основная колонка ── */}
-          <div>
+          <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <p className="text-sm text-zinc-500">
-                Найдено: <span className="font-semibold text-zinc-300 tabular-nums">{filtered.length}</span>
-              </p>
-              <div className="flex gap-2 sm:ml-auto">
+            <div className="mb-5 flex min-w-0 flex-col gap-3 md:flex-row md:items-center">
+              <div className="flex min-w-0 items-center justify-between gap-3">
+                <p className="text-sm text-zinc-500">
+                  Найдено: <span className="font-semibold text-zinc-300 tabular-nums">{filtered.length}</span>
+                </p>
                 <button
                   onClick={() => setFiltersOpen((v) => !v)}
-                  className="lg:hidden glass-pill rounded-xl px-4 py-2 text-sm text-zinc-300"
+                  className="glass-pill shrink-0 rounded-lg px-3.5 py-2 text-sm text-zinc-300 lg:hidden"
                   style={{ border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   Фильтры
                 </button>
+              </div>
+
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_7.75rem] gap-2 md:ml-auto md:flex md:items-center">
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Поиск по каталогу…"
-                  className="glass-pill flex-1 rounded-xl px-4 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 outline-none focus:border-red-600/40 sm:w-56 sm:flex-none"
+                  className="glass-pill min-w-0 rounded-lg px-3.5 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 outline-none focus:border-red-600/40 md:w-64 md:flex-none"
                   style={{ border: "1px solid rgba(255,255,255,0.08)" }}
                 />
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as typeof sort)}
-                  className="glass-pill cursor-pointer rounded-xl px-3 py-2 text-sm text-zinc-400 outline-none"
+                  className="glass-pill w-full cursor-pointer rounded-lg px-3 py-2 text-sm text-zinc-400 outline-none md:w-auto"
                   style={{ border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   <option value="default" style={{ background: "#09090b" }}>Сортировка</option>
@@ -186,26 +189,26 @@ export default function CatalogClient() {
 
             {/* Фильтры (моб, раскрывающиеся) */}
             {filtersOpen && (
-              <div className="glass-card mb-6 rounded-2xl p-5 lg:hidden">
+              <div className="glass-card mb-5 rounded-lg p-4 lg:hidden">
                 {Filters}
               </div>
             )}
 
             {/* Сетка */}
             {filtered.length === 0 ? (
-              <div className="glass-card rounded-2xl py-20 text-center">
+              <div className="glass-card rounded-lg py-16 text-center">
                 <p className="text-zinc-500">Ничего не найдено</p>
                 <button onClick={reset} className="mt-3 text-sm text-red-500 hover:text-red-400 transition-colors">
                   Сбросить фильтры
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
                 {filtered.map((product, i) => (
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
-                    <div className="group glass-card hover-lift flex h-full flex-col overflow-hidden rounded-2xl transition-colors duration-300 hover:border-red-600/25">
+                    <div className="group glass-card hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300 hover:border-red-600/25">
                       <Link href={`/catalog/${product.slug}`} className="block">
-                        <div className="relative aspect-[4/3] overflow-hidden">
+                        <div className="relative aspect-[16/10] overflow-hidden sm:aspect-[4/3]">
                           <img src={product.img} alt={product.name} className="h-full w-full object-cover img-zoom" />
                           <div className="absolute left-3 top-3 flex gap-1.5">
                             <span className="glass-pill rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-red-400">
@@ -220,25 +223,25 @@ export default function CatalogClient() {
                         </div>
                       </Link>
 
-                      <div className="flex flex-1 flex-col gap-2 p-4">
-                        <Link href={`/catalog/${product.slug}`}>
-                          <h3 className="text-sm font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white">
+                      <div className="flex min-w-0 flex-1 flex-col gap-2 p-3 sm:p-4">
+                        <Link href={`/catalog/${product.slug}`} className="min-w-0">
+                          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white">
                             {product.name}
                           </h3>
                         </Link>
                         <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">{product.description}</p>
 
                         <div className="mt-auto flex items-end justify-between pt-2">
-                          <p className="text-lg font-bold tabular-nums text-red-500">{product.price}</p>
+                          <p className="text-base font-bold tabular-nums text-red-500 sm:text-lg">{product.price}</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex min-w-0 gap-2">
                           <AddToCartButton
                             product={product}
-                            className="flex-1 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold py-2.5 rounded-lg text-center"
+                            className="min-w-0 flex-1 rounded-lg bg-red-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-red-500"
                           />
                           <Link
                             href={`/catalog/${product.slug}`}
-                            className="glass-pill flex items-center justify-center rounded-lg px-3 text-zinc-400 hover:text-white btn transition-colors"
+                            className="glass-pill btn flex shrink-0 items-center justify-center rounded-lg px-3 text-zinc-400 transition-colors hover:text-white"
                             aria-label="Подробнее"
                           >
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -254,14 +257,14 @@ export default function CatalogClient() {
             )}
 
             {/* Нестандартный заказ */}
-            <div className="glass-red mt-12 flex flex-col items-center gap-5 rounded-2xl px-8 py-8 sm:flex-row sm:justify-between">
-              <div>
+            <div className="glass-red mt-10 flex flex-col items-start gap-5 rounded-lg px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
+              <div className="min-w-0">
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>
               </div>
               <a
                 href="/contacts"
-                className="shrink-0 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500"
+                className="btn shrink-0 rounded-lg bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
               >
                 Оставить заявку
               </a>

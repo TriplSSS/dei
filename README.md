@@ -32,14 +32,16 @@ ORDER_NOTIFY_EMAIL=
 RESEND_FROM_EMAIL=DEI <onboarding@resend.dev>
 ADMIN_ORDERS_TOKEN=
 ORDER_STORAGE_DIR=
+DATABASE_URL=
 ```
 
 Notes:
 
 - If Resend variables are missing, order creation still succeeds and returns `notification.status = skipped_config_missing`.
-- Local order storage defaults to `.data/orders.jsonl`; the folder is ignored by git.
+- Without `DATABASE_URL`, order storage uses the local JSONL fallback at `.data/orders.jsonl`; the folder is ignored by git. `ORDER_STORAGE_DIR` can override the local folder.
+- With `DATABASE_URL`, order storage uses Neon/Postgres through `@neondatabase/serverless`. The database client is initialized lazily at request time, so local builds and first deploys do not require the env var.
 - The internal order list is available at `/admin/orders` after `ADMIN_ORDERS_TOKEN` is set.
-- This is a safe local/MVP storage layer. For durable production storage on Vercel, replace JSONL with a database or managed storage before relying on it as the only order archive.
+- For Vercel production, add Neon from the Vercel Marketplace or provide an existing Neon connection string as `DATABASE_URL`, then run the SQL in `docs/sql/orders.sql` once against the database. The app also runs `CREATE TABLE IF NOT EXISTS` defensively on first order access.
 
 ## Learn More
 
