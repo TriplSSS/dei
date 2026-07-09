@@ -20,6 +20,27 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## DEI orders
+
+Checkout creates orders through `POST /api/orders`. The server recalculates cart items from `src/data/products.ts`, generates an order id, stores the order in a local JSONL journal, and can notify a manager through Resend.
+
+Environment variables:
+
+```bash
+RESEND_API_KEY=
+ORDER_NOTIFY_EMAIL=
+RESEND_FROM_EMAIL=DEI <onboarding@resend.dev>
+ADMIN_ORDERS_TOKEN=
+ORDER_STORAGE_DIR=
+```
+
+Notes:
+
+- If Resend variables are missing, order creation still succeeds and returns `notification.status = skipped_config_missing`.
+- Local order storage defaults to `.data/orders.jsonl`; the folder is ignored by git.
+- The internal order list is available at `/admin/orders` after `ADMIN_ORDERS_TOKEN` is set.
+- This is a safe local/MVP storage layer. For durable production storage on Vercel, replace JSONL with a database or managed storage before relying on it as the only order archive.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
