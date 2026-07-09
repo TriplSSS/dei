@@ -21,8 +21,21 @@ type CreatedOrder = {
   id: string;
   paymentMethod: PaymentMethod;
   paymentLabel: string;
-  paymentStatus: "invoice_requested" | "yookassa_draft";
+  paymentStatus:
+    | "invoice_requested"
+    | "yookassa_draft"
+    | "yookassa_config_missing"
+    | "yookassa_pending"
+    | "yookassa_failed";
   paymentMessage: string;
+  onlinePayment?: {
+    provider: "yookassa";
+    status: "created" | "config_missing" | "failed";
+    paymentId?: string;
+    paymentStatus?: string;
+    confirmationUrl?: string;
+    message: string;
+  };
   notification: {
     status: "sent" | "skipped_config_missing" | "failed";
     message: string;
@@ -104,6 +117,8 @@ export default function CheckoutClient() {
 
   if (order) {
     const isInvoice = order.paymentMethod === "invoice";
+    const paymentUrl =
+      order.onlinePayment?.status === "created" ? order.onlinePayment.confirmationUrl : undefined;
 
     return (
       <section className="px-6 pt-36 pb-28">
@@ -141,9 +156,18 @@ export default function CheckoutClient() {
 
           <div className={`mt-5 rounded-2xl border p-4 text-left ${isInvoice ? "border-emerald-500/20 bg-emerald-500/10" : "border-red-500/20 bg-red-500/10"}`}>
             <p className={`text-sm font-semibold ${isInvoice ? "text-emerald-300" : "text-red-300"}`}>
-              {isInvoice ? "Счет на оплату" : "ЮKassa подготовлена"}
+              {isInvoice ? "Счет на оплату" : paymentUrl ? "ЮKassa готова к оплате" : "ЮKassa"}
             </p>
             <p className="mt-2 text-sm leading-relaxed text-zinc-300">{order.paymentMessage}</p>
+            {paymentUrl && (
+              <a
+                href={paymentUrl}
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500"
+              >
+                Перейти к оплате
+              </a>
+            )}
           </div>
 
           <div className="mt-5 rounded-2xl border border-white/[0.08] bg-black/20 p-4 text-left">
@@ -209,7 +233,7 @@ export default function CheckoutClient() {
                   <PaymentButton
                     active={paymentMethod === "online_yookassa"}
                     title="Онлайн ЮKassa"
-                    description="Пока без списания: только подготовка заказа."
+                    description="После создания заказа откроем платежную ссылку, если ЮKassa настроена."
                     onClick={() => setPaymentMethod("online_yookassa")}
                   />
                 </div>
@@ -238,7 +262,7 @@ export default function CheckoutClient() {
 
               {paymentMethod === "online_yookassa" && (
                 <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-zinc-300">
-                  Онлайн-оплата через ЮKassa находится в подготовке. После отправки заказа платежная ссылка не создается автоматически.
+                  Онлайн-оплата через ЮKassa создается на сервере. Если платежный сервис настроен, после оформления появится ссылка для оплаты.
                 </div>
               )}
 

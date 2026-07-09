@@ -4,11 +4,13 @@ import {
   saveOrder,
   type StoredCustomer,
   type StoredNotification,
+  type StoredOnlinePayment,
   type StoredOrder,
   type StoredOrderItem,
   type StoredPaymentMethod,
   type StoredPaymentStatus,
 } from "@/lib/orderStorage";
+import { createYooKassaPayment } from "@/lib/yookassa";
 import { timingSafeEqual } from "node:crypto";
 
 export const runtime = "nodejs";
@@ -36,6 +38,7 @@ type OrderRequest = {
 type NormalizedOrderItem = StoredOrderItem;
 type NormalizedCustomer = StoredCustomer;
 type NotificationResult = StoredNotification;
+type OnlinePaymentResult = StoredOnlinePayment;
 
 const paymentLabels: Record<PaymentMethod, string> = {
   invoice: "Счет на оплату",
@@ -268,6 +271,22 @@ async function notifyManager(params: {
   };
 }
 
+function getPaymentMessage(paymentMethod: PaymentMethod, onlinePayment?: OnlinePaymentResult) {
+  if (paymentMethod === "invoice") {
+    return "Заявка на счет создана. Менеджер проверит позиции и подготовит счет на оплату.";
+  }
+
+  return onlinePayment?.message ?? "Заказ создан. Онлайн-оплата ЮKassa ожидает настройки.";
+}
+
+function getPaymentStatus(paymentMethod: PaymentMethod, onlinePayment?: OnlinePaymentResult): StoredPaymentStatus {
+  if (paymentMethod === "invoice") return "invoice_requested";
+  if (!onlinePayment) return "yookassa_draft";
+  if (onlinePayment.status === "created") return "yookassa_pending";
+  if (onlinePayment.status === "config_missing") return "yookassa_config_missing";
+  return "yookassa_failed";
+}
+
 export async function GET(request: Request) {
   const auth = verifyAdminRequest(request);
 
@@ -349,11 +368,16 @@ export async function POST(request: Request) {
     comment: normalizeText(customer.comment),
   };
   const paymentLabel = paymentLabels[paymentMethod];
-  const paymentStatus: StoredPaymentStatus = paymentMethod === "invoice" ? "invoice_requested" : "yookassa_draft";
-  const paymentMessage =
-    paymentMethod === "invoice"
-      ? "Заявка на счет создана. Менеджер проверит позиции и подготовит счет на оплату."
-      : "Заказ создан. Онлайн-оплата через ЮKassa пока не подключена: платежная ссылка будет добавлена после настройки магазина и секретов.";
+  const onlinePayment: OnlinePaymentResult | undefined =
+    paymentMethod === "online_yookassa"
+      ? await createYooKassaPayment({
+          orderId,
+          total,
+          description: `Заказ DEI ${orderId}`,
+        })
+      : undefined;
+  const paymentStatus = getPaymentStatus(paymentMethod, onlinePayment);
+  const paymentMessage = getPaymentMessage(paymentMethod, onlinePayment);
   const notification = await notifyManager({
     orderId,
     paymentLabel,
@@ -371,6 +395,7 @@ export async function POST(request: Request) {
     paymentLabel,
     paymentStatus,
     paymentMessage,
+    onlinePayment,
     notification,
     customer: normalizedCustomer,
     items: normalizedItems,

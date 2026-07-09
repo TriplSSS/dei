@@ -3,7 +3,12 @@ import { mkdir, readFile, appendFile } from "node:fs/promises";
 import path from "node:path";
 
 export type StoredPaymentMethod = "invoice" | "online_yookassa";
-export type StoredPaymentStatus = "invoice_requested" | "yookassa_draft";
+export type StoredPaymentStatus =
+  | "invoice_requested"
+  | "yookassa_draft"
+  | "yookassa_config_missing"
+  | "yookassa_pending"
+  | "yookassa_failed";
 
 export type StoredCustomer = {
   name: string;
@@ -28,6 +33,15 @@ export type StoredNotification = {
   message: string;
 };
 
+export type StoredOnlinePayment = {
+  provider: "yookassa";
+  status: "created" | "config_missing" | "failed";
+  paymentId?: string;
+  paymentStatus?: string;
+  confirmationUrl?: string;
+  message: string;
+};
+
 export type StoredOrder = {
   schemaVersion: "order/v0";
   id: string;
@@ -37,6 +51,7 @@ export type StoredOrder = {
   paymentLabel: string;
   paymentStatus: StoredPaymentStatus;
   paymentMessage: string;
+  onlinePayment?: StoredOnlinePayment;
   notification: StoredNotification;
   customer: StoredCustomer;
   items: StoredOrderItem[];

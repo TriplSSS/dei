@@ -33,6 +33,9 @@ RESEND_FROM_EMAIL=DEI <onboarding@resend.dev>
 ADMIN_ORDERS_TOKEN=
 ORDER_STORAGE_DIR=
 DATABASE_URL=
+YOOKASSA_SHOP_ID=
+YOOKASSA_SECRET_KEY=
+YOOKASSA_RETURN_URL=
 ```
 
 Notes:
@@ -40,6 +43,8 @@ Notes:
 - If Resend variables are missing, order creation still succeeds and returns `notification.status = skipped_config_missing`.
 - Without `DATABASE_URL`, order storage uses the local JSONL fallback at `.data/orders.jsonl`; the folder is ignored by git. `ORDER_STORAGE_DIR` can override the local folder.
 - With `DATABASE_URL`, order storage uses Neon/Postgres through `@neondatabase/serverless`. The database client is initialized lazily at request time, so local builds and first deploys do not require the env var.
+- For `paymentMethod=online_yookassa`, the server creates a ЮKassa payment only when `YOOKASSA_SHOP_ID`, `YOOKASSA_SECRET_KEY`, and `YOOKASSA_RETURN_URL` are set. Missing ЮKassa env does not fail order creation; the order is saved with `paymentStatus = yookassa_config_missing`.
+- ЮKassa secrets must stay server-side only. The API uses Basic Auth and an `Idempotence-Key` derived from the generated order id, and returns only safe payment metadata such as payment id, status, and confirmation URL.
 - The internal order list is available at `/admin/orders` after `ADMIN_ORDERS_TOKEN` is set.
 - For Vercel production, add Neon from the Vercel Marketplace or provide an existing Neon connection string as `DATABASE_URL`, then run the SQL in `docs/sql/orders.sql` once against the database. The app also runs `CREATE TABLE IF NOT EXISTS` defensively on first order access.
 

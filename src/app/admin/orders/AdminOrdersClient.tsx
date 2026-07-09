@@ -6,7 +6,20 @@ type AdminOrder = {
   id: string;
   createdAt: string;
   paymentLabel: string;
-  paymentStatus: "invoice_requested" | "yookassa_draft";
+  paymentStatus:
+    | "invoice_requested"
+    | "yookassa_draft"
+    | "yookassa_config_missing"
+    | "yookassa_pending"
+    | "yookassa_failed";
+  onlinePayment?: {
+    provider: "yookassa";
+    status: "created" | "config_missing" | "failed";
+    paymentId?: string;
+    paymentStatus?: string;
+    confirmationUrl?: string;
+    message: string;
+  };
   notification: {
     status: "sent" | "skipped_config_missing" | "failed";
     message: string;
@@ -47,7 +60,12 @@ function formatDate(value: string) {
 }
 
 function paymentStatusLabel(status: AdminOrder["paymentStatus"]) {
-  return status === "invoice_requested" ? "Счет запрошен" : "ЮKassa в подготовке";
+  if (status === "invoice_requested") return "Счет запрошен";
+  if (status === "yookassa_pending") return "ЮKassa ожидает оплаты";
+  if (status === "yookassa_config_missing") return "ЮKassa не настроена";
+  if (status === "yookassa_failed") return "ЮKassa ошибка";
+
+  return "ЮKassa в подготовке";
 }
 
 function notificationLabel(status: AdminOrder["notification"]["status"]) {
@@ -172,6 +190,20 @@ export default function AdminOrdersClient() {
                   <p className="font-semibold text-zinc-200">{order.customer.name}</p>
                   <p className="mt-1 text-zinc-400">{order.customer.phone}</p>
                   {order.customer.email && <p className="mt-1 break-all text-zinc-500">{order.customer.email}</p>}
+                  {order.onlinePayment?.paymentId && (
+                    <div className="mt-3 rounded-xl border border-white/[0.06] bg-black/20 px-3 py-2 text-xs text-zinc-400">
+                      <p>
+                        <span className="text-zinc-500">ЮKassa payment id: </span>
+                        <span className="break-all text-zinc-300">{order.onlinePayment.paymentId}</span>
+                      </p>
+                      {order.onlinePayment.paymentStatus && (
+                        <p className="mt-1">
+                          <span className="text-zinc-500">Статус платежа: </span>
+                          <span className="text-zinc-300">{order.onlinePayment.paymentStatus}</span>
+                        </p>
+                      )}
+                    </div>
+                  )}
                   {order.customer.company && <p className="mt-3 text-zinc-400">{order.customer.company}</p>}
                   {order.customer.inn && <p className="mt-1 text-zinc-500">ИНН: {order.customer.inn}</p>}
                   {order.customer.comment && (

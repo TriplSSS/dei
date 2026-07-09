@@ -44,6 +44,10 @@ export default function CatalogClient() {
 
   const countByCat = (key: string) =>
     key === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === key).length;
+  const activeCategoryLabel = CATEGORIES.find((cat) => cat.key === activeCategory)?.label ?? "Все";
+  const hasPriceFilter = maxPrice < PRICE_MAX;
+  const activeFilterCount = (activeCategory !== "all" ? 1 : 0) + (hasPriceFilter ? 1 : 0) + (onlyNaks ? 1 : 0);
+  const hasCatalogState = activeFilterCount > 0 || search.trim().length > 0 || sort !== "default";
 
   const reset = () => {
     setActiveCategory("all");
@@ -151,39 +155,69 @@ export default function CatalogClient() {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="mb-5 flex min-w-0 flex-col gap-3 md:flex-row md:items-center">
-              <div className="flex min-w-0 items-center justify-between gap-3">
-                <p className="text-sm text-zinc-500">
-                  Найдено: <span className="font-semibold text-zinc-300 tabular-nums">{filtered.length}</span>
-                </p>
-                <button
-                  onClick={() => setFiltersOpen((v) => !v)}
-                  className="glass-pill shrink-0 rounded-lg px-3.5 py-2 text-sm text-zinc-300 lg:hidden"
-                  style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  Фильтры
-                </button>
+            <div className="mb-5 min-w-0 rounded-lg border border-white/[0.07] bg-white/[0.025] p-2.5 backdrop-blur-xl sm:p-3">
+              <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
+                <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
+                  <p className="text-sm text-zinc-500">
+                    Показано{" "}
+                    <span className="font-semibold text-zinc-200 tabular-nums">{filtered.length}</span>
+                    <span className="text-zinc-600"> / {PRODUCTS.length}</span>
+                  </p>
+                  <button
+                    onClick={() => setFiltersOpen((v) => !v)}
+                    className="glass-pill inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm text-zinc-300 lg:hidden"
+                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                  >
+                    Фильтры
+                    {activeFilterCount > 0 && (
+                      <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_7.75rem] gap-2 md:ml-auto md:flex md:items-center">
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Поиск по каталогу…"
+                    className="glass-pill min-w-0 rounded-lg px-3.5 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 outline-none focus:border-red-600/40 md:w-64 md:flex-none"
+                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                  />
+                  <select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as typeof sort)}
+                    className="glass-pill w-full cursor-pointer rounded-lg px-3 py-2 text-sm text-zinc-400 outline-none md:w-auto"
+                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                  >
+                    <option value="default" style={{ background: "#09090b" }}>Сортировка</option>
+                    <option value="asc" style={{ background: "#09090b" }}>Дешевле</option>
+                    <option value="desc" style={{ background: "#09090b" }}>Дороже</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_7.75rem] gap-2 md:ml-auto md:flex md:items-center">
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Поиск по каталогу…"
-                  className="glass-pill min-w-0 rounded-lg px-3.5 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 outline-none focus:border-red-600/40 md:w-64 md:flex-none"
-                  style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-                />
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as typeof sort)}
-                  className="glass-pill w-full cursor-pointer rounded-lg px-3 py-2 text-sm text-zinc-400 outline-none md:w-auto"
-                  style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  <option value="default" style={{ background: "#09090b" }}>Сортировка</option>
-                  <option value="asc" style={{ background: "#09090b" }}>Дешевле</option>
-                  <option value="desc" style={{ background: "#09090b" }}>Дороже</option>
-                </select>
+              <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
+                <span className="rounded-md border border-white/[0.06] bg-black/20 px-2 py-1 text-zinc-500">
+                  {activeCategoryLabel}
+                </span>
+                {hasPriceFilter && (
+                  <span className="rounded-md border border-white/[0.06] bg-black/20 px-2 py-1 text-zinc-500">
+                    до {ruble(maxPrice)}
+                  </span>
+                )}
+                {onlyNaks && (
+                  <span className="rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-1 text-emerald-300">
+                    НАКС
+                  </span>
+                )}
+                {hasCatalogState && (
+                  <button onClick={reset} className="ml-auto rounded-md px-2 py-1 text-zinc-500 transition-colors hover:text-red-400">
+                    Сбросить
+                  </button>
+                )}
               </div>
             </div>
 
@@ -208,7 +242,7 @@ export default function CatalogClient() {
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
                     <div className="group glass-card hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300 hover:border-red-600/25">
                       <Link href={`/catalog/${product.slug}`} className="block">
-                        <div className="relative aspect-[16/10] overflow-hidden sm:aspect-[4/3]">
+                        <div className="relative aspect-[16/10] overflow-hidden">
                           <img src={product.img} alt={product.name} className="h-full w-full object-cover img-zoom" />
                           <div className="absolute left-3 top-3 flex gap-1.5">
                             <span className="glass-pill rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-red-400">
@@ -231,8 +265,18 @@ export default function CatalogClient() {
                         </Link>
                         <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">{product.description}</p>
 
-                        <div className="mt-auto flex items-end justify-between pt-2">
+                        <div className="grid gap-1.5 border-t border-white/[0.05] pt-2">
+                          {product.specs.slice(0, 2).map((spec) => (
+                            <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-[11px] leading-none">
+                              <span className="truncate text-zinc-600">{spec.label}</span>
+                              <span className="shrink-0 font-medium text-zinc-300">{spec.value}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="mt-auto flex items-baseline justify-between gap-3 border-t border-white/[0.05] pt-3">
                           <p className="text-base font-bold tabular-nums text-red-500 sm:text-lg">{product.price}</p>
+                          <span className="shrink-0 text-[11px] text-zinc-600">под заказ</span>
                         </div>
                         <div className="flex min-w-0 gap-2">
                           <AddToCartButton
