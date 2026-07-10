@@ -26,11 +26,14 @@ type CreatedOrder = {
     | "yookassa_draft"
     | "yookassa_config_missing"
     | "yookassa_pending"
+    | "yookassa_waiting_for_capture"
+    | "yookassa_succeeded"
+    | "yookassa_canceled"
     | "yookassa_failed";
   paymentMessage: string;
   onlinePayment?: {
     provider: "yookassa";
-    status: "created" | "config_missing" | "failed";
+    status: "created" | "config_missing" | "pending" | "waiting_for_capture" | "succeeded" | "canceled" | "failed";
     paymentId?: string;
     paymentStatus?: string;
     confirmationUrl?: string;

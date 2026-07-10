@@ -8,6 +8,9 @@ export type StoredPaymentStatus =
   | "yookassa_draft"
   | "yookassa_config_missing"
   | "yookassa_pending"
+  | "yookassa_waiting_for_capture"
+  | "yookassa_succeeded"
+  | "yookassa_canceled"
   | "yookassa_failed";
 
 export type StoredCustomer = {
@@ -35,10 +38,13 @@ export type StoredNotification = {
 
 export type StoredOnlinePayment = {
   provider: "yookassa";
-  status: "created" | "config_missing" | "failed";
+  status: "created" | "config_missing" | "pending" | "waiting_for_capture" | "succeeded" | "canceled" | "failed";
   paymentId?: string;
   paymentStatus?: string;
   confirmationUrl?: string;
+  event?: string;
+  paid?: boolean;
+  updatedAt?: string;
   message: string;
 };
 
@@ -62,6 +68,30 @@ export type StoredOrder = {
 export type OrderStorageResult = {
   status: "saved" | "failed";
   message: string;
+};
+
+export type OrderPaymentUpdate = {
+  orderId?: string;
+  paymentId: string;
+  paymentStatus: string;
+  event: string;
+  paid?: boolean;
+};
+
+export type OrderPaymentUpdateResult = {
+  status: "updated" | "not_found" | "failed";
+  message: string;
+  order?: StoredOrder;
+};
+
+type StoredOrderPaymentUpdateRecord = {
+  schemaVersion: "order-payment-update/v0";
+  orderId?: string;
+  paymentId: string;
+  paymentStatus: string;
+  event: string;
+  paid?: boolean;
+  updatedAt: string;
 };
 
 const ORDER_FILE_NAME = "orders.jsonl";
@@ -130,6 +160,84 @@ function isStoredOrder(value: unknown): value is StoredOrder {
   );
 }
 
+function isOrderPaymentUpdateRecord(value: unknown): value is StoredOrderPaymentUpdateRecord {
+  if (!value || typeof value !== "object") return false;
+
+  const record = value as Partial<StoredOrderPaymentUpdateRecord>;
+  return (
+    record.schemaVersion === "order-payment-update/v0" &&
+    typeof record.paymentId === "string" &&
+    typeof record.paymentStatus === "string" &&
+    typeof record.event === "string" &&
+    typeof record.updatedAt === "string"
+  );
+}
+
+function mapYooKassaPaymentStatus(status: string): StoredPaymentStatus {
+  if (status === "pending") return "yookassa_pending";
+  if (status === "waiting_for_capture") return "yookassa_waiting_for_capture";
+  if (status === "succeeded") return "yookassa_succeeded";
+  if (status === "canceled") return "yookassa_canceled";
+
+  return "yookassa_failed";
+}
+
+function mapOnlinePaymentStatus(status: string): StoredOnlinePayment["status"] {
+  if (status === "pending") return "pending";
+  if (status === "waiting_for_capture") return "waiting_for_capture";
+  if (status === "succeeded") return "succeeded";
+  if (status === "canceled") return "canceled";
+
+  return "failed";
+}
+
+function makePaymentMessage(status: string) {
+  if (status === "succeeded") return "Платеж ЮKassa успешно оплачен.";
+  if (status === "waiting_for_capture") return "Платеж ЮKassa ожидает подтверждения списания.";
+  if (status === "canceled") return "Платеж ЮKassa отменен.";
+  if (status === "pending") return "Платеж ЮKassa ожидает оплаты.";
+
+  return "Статус платежа ЮKassa обновлен.";
+}
+
+function applyPaymentUpdate(order: StoredOrder, update: StoredOrderPaymentUpdateRecord): StoredOrder {
+  return {
+    ...order,
+    paymentStatus: mapYooKassaPaymentStatus(update.paymentStatus),
+    paymentMessage: makePaymentMessage(update.paymentStatus),
+    onlinePayment: {
+      provider: "yookassa",
+      ...order.onlinePayment,
+      status: mapOnlinePaymentStatus(update.paymentStatus),
+      paymentId: update.paymentId,
+      paymentStatus: update.paymentStatus,
+      event: update.event,
+      paid: update.paid,
+      updatedAt: update.updatedAt,
+      message: makePaymentMessage(update.paymentStatus),
+    },
+  };
+}
+
+function applyPaymentUpdateToOrders(
+  orders: Map<string, StoredOrder>,
+  paymentIndex: Map<string, string>,
+  update: StoredOrderPaymentUpdateRecord
+) {
+  const orderId = update.orderId || paymentIndex.get(update.paymentId);
+  if (!orderId) return;
+
+  const order = orders.get(orderId);
+  if (!order) return;
+
+  const updatedOrder = applyPaymentUpdate(order, update);
+  orders.set(orderId, updatedOrder);
+
+  if (updatedOrder.onlinePayment?.paymentId) {
+    paymentIndex.set(updatedOrder.onlinePayment.paymentId, updatedOrder.id);
+  }
+}
+
 async function saveOrderToJsonl(order: StoredOrder): Promise<OrderStorageResult> {
   const dir = getOrderStorageDir();
   await mkdir(dir, { recursive: true });
@@ -182,19 +290,36 @@ async function saveOrderToDatabase(sql: SqlClient, order: StoredOrder): Promise<
 
 async function listOrdersFromJsonl(limit: number): Promise<StoredOrder[]> {
   const content = await readFile(getOrderStorageFile(), "utf8");
-  const orders = content
+  const orders = new Map<string, StoredOrder>();
+  const paymentIndex = new Map<string, string>();
+
+  content
     .split("\n")
     .filter(Boolean)
-    .map((line) => {
+    .forEach((line) => {
+      let parsed: unknown;
       try {
-        return JSON.parse(line) as unknown;
+        parsed = JSON.parse(line) as unknown;
       } catch {
-        return null;
+        return;
       }
-    })
-    .filter(isStoredOrder);
 
-  return orders.reverse().slice(0, limit);
+      if (isStoredOrder(parsed)) {
+        orders.set(parsed.id, parsed);
+        if (parsed.onlinePayment?.paymentId) {
+          paymentIndex.set(parsed.onlinePayment.paymentId, parsed.id);
+        }
+        return;
+      }
+
+      if (isOrderPaymentUpdateRecord(parsed)) {
+        applyPaymentUpdateToOrders(orders, paymentIndex, parsed);
+      }
+    });
+
+  return Array.from(orders.values())
+    .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
+    .slice(0, limit);
 }
 
 async function listOrdersFromDatabase(sql: SqlClient, limit: number): Promise<StoredOrder[]> {
@@ -237,5 +362,98 @@ export async function listOrders(limit = 50): Promise<StoredOrder[]> {
     }
 
     throw new Error("Order storage is unavailable.");
+  }
+}
+
+async function findJsonlOrderForPayment(update: StoredOrderPaymentUpdateRecord): Promise<StoredOrder | null> {
+  const orders = await listOrdersFromJsonl(Number.MAX_SAFE_INTEGER);
+
+  return (
+    orders.find((order) => order.id === update.orderId) ??
+    orders.find((order) => order.onlinePayment?.paymentId === update.paymentId) ??
+    null
+  );
+}
+
+async function updateOrderPaymentInJsonl(update: StoredOrderPaymentUpdateRecord): Promise<OrderPaymentUpdateResult> {
+  const order = await findJsonlOrderForPayment(update);
+  if (!order) {
+    return {
+      status: "not_found",
+      message: "Заказ для платежа ЮKassa не найден.",
+    };
+  }
+
+  const updateWithOrderId = { ...update, orderId: order.id };
+  const dir = getOrderStorageDir();
+  await mkdir(dir, { recursive: true });
+  await appendFile(getOrderStorageFile(), `${JSON.stringify(updateWithOrderId)}\n`, "utf8");
+
+  return {
+    status: "updated",
+    message: "Статус платежа ЮKassa обновлен.",
+    order: applyPaymentUpdate(order, updateWithOrderId),
+  };
+}
+
+async function updateOrderPaymentInDatabase(
+  sql: SqlClient,
+  update: StoredOrderPaymentUpdateRecord
+): Promise<OrderPaymentUpdateResult> {
+  await ensureOrdersTable(sql);
+  const rows = await sql`
+    SELECT payload
+    FROM orders
+    WHERE id = ${update.orderId ?? ""} OR payload->'onlinePayment'->>'paymentId' = ${update.paymentId}
+    ORDER BY created_at DESC
+    LIMIT 1
+  ` as Array<{ payload: unknown }>;
+
+  const order = rows.map((row) => row.payload).find(isStoredOrder);
+  if (!order) {
+    return {
+      status: "not_found",
+      message: "Заказ для платежа ЮKassa не найден.",
+    };
+  }
+
+  const updatedOrder = applyPaymentUpdate(order, { ...update, orderId: order.id });
+  await sql`
+    UPDATE orders
+    SET
+      payment_status = ${updatedOrder.paymentStatus},
+      payload = ${JSON.stringify(updatedOrder)}::jsonb
+    WHERE id = ${updatedOrder.id}
+  `;
+
+  return {
+    status: "updated",
+    message: "Статус платежа ЮKassa обновлен.",
+    order: updatedOrder,
+  };
+}
+
+export async function updateOrderPayment(update: OrderPaymentUpdate): Promise<OrderPaymentUpdateResult> {
+  const useDatabase = Boolean(getDatabaseUrl());
+  const updateRecord: StoredOrderPaymentUpdateRecord = {
+    schemaVersion: "order-payment-update/v0",
+    orderId: update.orderId,
+    paymentId: update.paymentId,
+    paymentStatus: update.paymentStatus,
+    event: update.event,
+    paid: update.paid,
+    updatedAt: new Date().toISOString(),
+  };
+
+  try {
+    const sql = getDbClient();
+    return sql ? await updateOrderPaymentInDatabase(sql, updateRecord) : await updateOrderPaymentInJsonl(updateRecord);
+  } catch {
+    return {
+      status: "failed",
+      message: useDatabase
+        ? "Статус платежа не обновлен: база заказов сейчас недоступна."
+        : "Статус платежа не обновлен: локальный журнал заявок сейчас недоступен.",
+    };
   }
 }

@@ -11,10 +11,13 @@ type AdminOrder = {
     | "yookassa_draft"
     | "yookassa_config_missing"
     | "yookassa_pending"
+    | "yookassa_waiting_for_capture"
+    | "yookassa_succeeded"
+    | "yookassa_canceled"
     | "yookassa_failed";
   onlinePayment?: {
     provider: "yookassa";
-    status: "created" | "config_missing" | "failed";
+    status: "created" | "config_missing" | "pending" | "waiting_for_capture" | "succeeded" | "canceled" | "failed";
     paymentId?: string;
     paymentStatus?: string;
     confirmationUrl?: string;
@@ -62,10 +65,25 @@ function formatDate(value: string) {
 function paymentStatusLabel(status: AdminOrder["paymentStatus"]) {
   if (status === "invoice_requested") return "Счет запрошен";
   if (status === "yookassa_pending") return "ЮKassa ожидает оплаты";
+  if (status === "yookassa_waiting_for_capture") return "ЮKassa ожидает списания";
+  if (status === "yookassa_succeeded") return "ЮKassa оплачена";
+  if (status === "yookassa_canceled") return "ЮKassa отменена";
   if (status === "yookassa_config_missing") return "ЮKassa не настроена";
   if (status === "yookassa_failed") return "ЮKassa ошибка";
 
   return "ЮKassa в подготовке";
+}
+
+function paymentStatusClass(status: AdminOrder["paymentStatus"]) {
+  if (status === "invoice_requested") return "border-emerald-500/20 bg-emerald-500/10 text-emerald-300";
+  if (status === "yookassa_pending") return "border-sky-500/20 bg-sky-500/10 text-sky-300";
+  if (status === "yookassa_waiting_for_capture") return "border-amber-500/25 bg-amber-500/10 text-amber-200";
+  if (status === "yookassa_succeeded") return "border-emerald-500/20 bg-emerald-500/10 text-emerald-300";
+  if (status === "yookassa_canceled") return "border-red-500/25 bg-red-500/10 text-red-200";
+  if (status === "yookassa_config_missing") return "border-amber-500/25 bg-amber-500/10 text-amber-200";
+  if (status === "yookassa_failed") return "border-red-500/25 bg-red-500/10 text-red-200";
+
+  return "border-white/[0.08] bg-white/[0.03] text-zinc-400";
 }
 
 function notificationLabel(status: AdminOrder["notification"]["status"]) {
@@ -73,6 +91,13 @@ function notificationLabel(status: AdminOrder["notification"]["status"]) {
   if (status === "failed") return "Email не отправлен";
 
   return "Email не настроен";
+}
+
+function notificationClass(status: AdminOrder["notification"]["status"]) {
+  if (status === "sent") return "border-emerald-500/20 bg-emerald-500/10 text-emerald-300";
+  if (status === "failed") return "border-red-500/25 bg-red-500/10 text-red-200";
+
+  return "border-amber-500/25 bg-amber-500/10 text-amber-200";
 }
 
 export default function AdminOrdersClient() {
@@ -119,7 +144,7 @@ export default function AdminOrdersClient() {
   };
 
   return (
-    <main className="px-6 pt-32 pb-24">
+    <main className="px-4 pt-32 pb-24 sm:px-6">
       <div className="mx-auto max-w-[1180px]">
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -163,38 +188,38 @@ export default function AdminOrdersClient() {
 
         <div className="grid gap-4">
           {orders.map((order) => (
-            <article key={order.id} className="glass-card rounded-2xl p-5">
+            <article key={order.id} className="glass-card min-w-0 rounded-lg p-4 sm:p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="break-all text-lg font-bold text-white">{order.id}</h2>
-                    <span className="rounded-full border border-white/[0.08] px-2.5 py-1 text-[11px] font-semibold text-zinc-400">
+                    <h2 className="min-w-0 break-all text-base font-bold text-white sm:text-lg">{order.id}</h2>
+                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${paymentStatusClass(order.paymentStatus)}`}>
                       {paymentStatusLabel(order.paymentStatus)}
                     </span>
-                    <span className="rounded-full border border-white/[0.08] px-2.5 py-1 text-[11px] font-semibold text-zinc-400">
+                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${notificationClass(order.notification.status)}`}>
                       {notificationLabel(order.notification.status)}
                     </span>
                   </div>
                   <p className="mt-2 text-xs text-zinc-500">{formatDate(order.createdAt)}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3 lg:text-right">
+                <div className="grid min-w-0 grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:min-w-[360px] lg:text-right">
                   <Info label="Оплата" value={order.paymentLabel} />
                   <Info label="Позиций" value={`${order.count} шт.`} />
                   <Info label="Сумма" value={ruble(order.total)} strong />
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-5 border-t border-white/[0.06] pt-5 lg:grid-cols-[320px_1fr]">
-                <div className="text-sm">
+              <div className="mt-5 grid min-w-0 gap-5 border-t border-white/[0.06] pt-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+                <div className="min-w-0 text-sm">
                   <p className="font-semibold text-zinc-200">{order.customer.name}</p>
                   <p className="mt-1 text-zinc-400">{order.customer.phone}</p>
                   {order.customer.email && <p className="mt-1 break-all text-zinc-500">{order.customer.email}</p>}
                   {order.onlinePayment?.paymentId && (
-                    <div className="mt-3 rounded-xl border border-white/[0.06] bg-black/20 px-3 py-2 text-xs text-zinc-400">
+                    <div className="mt-3 rounded-lg border border-white/[0.06] bg-black/20 px-3 py-2 text-xs text-zinc-400">
                       <p>
-                        <span className="text-zinc-500">ЮKassa payment id: </span>
-                        <span className="break-all text-zinc-300">{order.onlinePayment.paymentId}</span>
+                        <span className="text-zinc-500">ID платежа ЮKassa: </span>
+                        <span className="break-all font-mono text-zinc-300">{order.onlinePayment.paymentId}</span>
                       </p>
                       {order.onlinePayment.paymentStatus && (
                         <p className="mt-1">
@@ -207,27 +232,27 @@ export default function AdminOrdersClient() {
                   {order.customer.company && <p className="mt-3 text-zinc-400">{order.customer.company}</p>}
                   {order.customer.inn && <p className="mt-1 text-zinc-500">ИНН: {order.customer.inn}</p>}
                   {order.customer.comment && (
-                    <p className="mt-3 rounded-xl border border-white/[0.06] bg-black/20 px-3 py-2 text-zinc-400">
+                    <p className="mt-3 rounded-lg border border-white/[0.06] bg-black/20 px-3 py-2 text-zinc-400">
                       {order.customer.comment}
                     </p>
                   )}
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="min-w-0 overflow-x-auto rounded-lg border border-white/[0.06] bg-black/10">
                   <table className="w-full min-w-[560px] border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-white/[0.08] text-left text-xs uppercase tracking-[0.12em] text-zinc-600">
-                        <th className="pb-3 font-semibold">Товар</th>
-                        <th className="pb-3 text-center font-semibold">Кол-во</th>
-                        <th className="pb-3 text-right font-semibold">Сумма</th>
+                        <th className="px-3 py-3 font-semibold">Товар</th>
+                        <th className="px-3 py-3 text-center font-semibold">Кол-во</th>
+                        <th className="px-3 py-3 text-right font-semibold">Сумма</th>
                       </tr>
                     </thead>
                     <tbody>
                       {order.items.map((item) => (
                         <tr key={`${order.id}-${item.slug}`} className="border-b border-white/[0.04] last:border-0">
-                          <td className="py-3 pr-4 text-zinc-200">{item.name}</td>
-                          <td className="py-3 text-center tabular-nums text-zinc-400">{item.qty}</td>
-                          <td className="py-3 text-right tabular-nums text-zinc-300">{ruble(item.lineTotal)}</td>
+                          <td className="px-3 py-3 text-zinc-200">{item.name}</td>
+                          <td className="px-3 py-3 text-center tabular-nums text-zinc-400">{item.qty}</td>
+                          <td className="px-3 py-3 text-right tabular-nums text-zinc-300">{ruble(item.lineTotal)}</td>
                         </tr>
                       ))}
                     </tbody>
