@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import AddToCartButton from "@/components/AddToCartButton";
-import { type Product, PRODUCTS } from "@/data/products";
+import { type Product } from "@/data/products";
 
-export default function ProductPageClient({ product }: { product: Product }) {
+export default function ProductPageClient({ product, products }: { product: Product; products: Product[] }) {
   const [qty, setQty] = useState(1);
-  const related = PRODUCTS
+  const related = products
     .filter(p => p.category === product.category && p.slug !== product.slug)
     .slice(0, 3);
 

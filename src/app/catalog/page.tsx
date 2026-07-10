@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { listProducts } from "@/lib/productCatalog";
 import CatalogClient from "./CatalogClient";
 
 export const metadata: Metadata = {
@@ -11,10 +12,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CatalogPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CatalogPage() {
+  const products = await listProducts();
+
   return (
     <Suspense>
-      <CatalogClient />
+      <CatalogClient products={products} />
     </Suspense>
   );
 }

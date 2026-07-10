@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PRODUCTS, getProductBySlug } from "@/data/products";
+import { getProductBySlug, listProducts } from "@/lib/productCatalog";
 import ProductPageClient from "./ProductPageClient";
 
-export function generateStaticParams() {
-  return PRODUCTS.map(p => ({ slug: p.slug }));
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const products = await listProducts();
+  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -26,8 +29,9 @@ const SITE_URL = "https://dei-coral.vercel.app";
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
+  const products = await listProducts();
 
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -65,7 +69,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ProductPageClient product={product} />
+      <ProductPageClient product={product} products={products} />
     </>
   );
 }

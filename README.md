@@ -32,6 +32,7 @@ ORDER_NOTIFY_EMAIL=
 RESEND_FROM_EMAIL=DEI <onboarding@resend.dev>
 ADMIN_ORDERS_TOKEN=
 ORDER_STORAGE_DIR=
+PRODUCT_STORAGE_DIR=
 DATABASE_URL=
 YOOKASSA_SHOP_ID=
 YOOKASSA_SECRET_KEY=
@@ -43,6 +44,9 @@ Notes:
 - Если переменные Resend не заданы, заказ все равно создается и возвращает `notification.status = skipped_config_missing`.
 - Без `DATABASE_URL` заказы сохраняются в локальный JSONL fallback `.data/orders.jsonl`; папка игнорируется git. `ORDER_STORAGE_DIR` может переопределить локальную папку.
 - С `DATABASE_URL` заказы сохраняются в Neon/Postgres через `@neondatabase/serverless`. Клиент базы инициализируется лениво во время запроса, поэтому локальные сборки и первые деплои не требуют env-переменную.
+- Управляемый каталог доступен на `/admin/products` и использует тот же `ADMIN_ORDERS_TOKEN`, что и админка заказов. Исходные товары из `src/data/products.ts` остаются seed/fallback, а изменения админки накладываются поверх них.
+- Без `DATABASE_URL` изменения каталога пишутся в JSONL `.data/products.jsonl`. `PRODUCT_STORAGE_DIR` может переопределить папку каталога; если он не задан, используется `ORDER_STORAGE_DIR`, затем `.data`.
+- С `DATABASE_URL` управляемый каталог использует таблицу `products`; перед production-запуском выполните SQL из `docs/sql/products.sql`. Публичный каталог, карточки товаров, sitemap и `/api/orders` читают товары через runtime helper, поэтому серверный пересчет заказа использует актуальные цены из хранилища.
 - Для `paymentMethod=online_yookassa` сервер создает платеж ЮKassa только если заданы `YOOKASSA_SHOP_ID`, `YOOKASSA_SECRET_KEY` и `YOOKASSA_RETURN_URL`. Если переменные ЮKassa отсутствуют, создание заказа не падает; заказ сохраняется с `paymentStatus = yookassa_config_missing`.
 - Секреты ЮKassa должны оставаться только на сервере. API использует Basic Auth и `Idempotence-Key` на основе созданного номера заказа, а наружу возвращает только безопасные данные платежа: ID, статус и ссылку подтверждения оплаты.
 - Настройте в ЮKassa webhook URL `/api/yookassa/webhook` для событий платежей, например `payment.succeeded` и `payment.canceled`. Если заданы учетные данные ЮKassa, обработчик webhook сначала проверяет платеж запросом в ЮKassa и только потом обновляет сохраненный статус заказа.

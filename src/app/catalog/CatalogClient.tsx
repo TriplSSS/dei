@@ -5,27 +5,27 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import AddToCartButton from "@/components/AddToCartButton";
-import { PRODUCTS, CATEGORIES } from "@/data/products";
+import { CATEGORIES, type Product } from "@/data/products";
 
-const PRICE_MIN = Math.min(...PRODUCTS.map((p) => p.priceNum));
-const PRICE_MAX = Math.max(...PRODUCTS.map((p) => p.priceNum));
 const ruble = (n: number) => n.toLocaleString("ru-RU") + " ₽";
 const CATEGORY_KEYS = CATEGORIES.map((c) => c.key as string);
 
-export default function CatalogClient() {
+export default function CatalogClient({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category");
+  const priceMin = Math.min(...products.map((p) => p.priceNum));
+  const priceMax = Math.max(...products.map((p) => p.priceNum));
   const [activeCategory, setActiveCategory] = useState(
     initialCategory && CATEGORY_KEYS.includes(initialCategory) ? initialCategory : "all"
   );
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<"default" | "asc" | "desc">("default");
-  const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
+  const [maxPrice, setMaxPrice] = useState(priceMax);
   const [onlyNaks, setOnlyNaks] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    let list = activeCategory === "all" ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeCategory);
+    let list = activeCategory === "all" ? products : products.filter((p) => p.category === activeCategory);
     if (onlyNaks) list = list.filter((p) => p.naks);
     list = list.filter((p) => p.priceNum <= maxPrice);
     if (search.trim()) {
@@ -40,12 +40,12 @@ export default function CatalogClient() {
     if (sort === "asc") list = [...list].sort((a, b) => a.priceNum - b.priceNum);
     if (sort === "desc") list = [...list].sort((a, b) => b.priceNum - a.priceNum);
     return list;
-  }, [activeCategory, search, sort, maxPrice, onlyNaks]);
+  }, [activeCategory, search, sort, maxPrice, onlyNaks, products]);
 
   const countByCat = (key: string) =>
-    key === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === key).length;
+    key === "all" ? products.length : products.filter((p) => p.category === key).length;
   const activeCategoryLabel = CATEGORIES.find((cat) => cat.key === activeCategory)?.label ?? "Все";
-  const hasPriceFilter = maxPrice < PRICE_MAX;
+  const hasPriceFilter = maxPrice < priceMax;
   const activeFilterCount = (activeCategory !== "all" ? 1 : 0) + (hasPriceFilter ? 1 : 0) + (onlyNaks ? 1 : 0);
   const hasCatalogState = activeFilterCount > 0 || search.trim().length > 0 || sort !== "default";
 
@@ -53,7 +53,7 @@ export default function CatalogClient() {
     setActiveCategory("all");
     setSearch("");
     setSort("default");
-    setMaxPrice(PRICE_MAX);
+    setMaxPrice(priceMax);
     setOnlyNaks(false);
   };
 
@@ -85,15 +85,15 @@ export default function CatalogClient() {
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Цена до</p>
         <input
           type="range"
-          min={PRICE_MIN}
-          max={PRICE_MAX}
+          min={priceMin}
+          max={priceMax}
           step={100}
           value={maxPrice}
           onChange={(e) => setMaxPrice(Number(e.target.value))}
           className="w-full accent-red-600"
         />
         <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 tabular-nums">
-          <span>{ruble(PRICE_MIN)}</span>
+          <span>{ruble(priceMin)}</span>
           <span className="font-semibold text-red-400">до {ruble(maxPrice)}</span>
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function CatalogClient() {
                   <p className="text-sm text-zinc-500">
                     Показано{" "}
                     <span className="font-semibold text-zinc-200 tabular-nums">{filtered.length}</span>
-                    <span className="text-zinc-600"> / {PRODUCTS.length}</span>
+                    <span className="text-zinc-600"> / {products.length}</span>
                   </p>
                   <button
                     onClick={() => setFiltersOpen((v) => !v)}

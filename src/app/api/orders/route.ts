@@ -1,4 +1,3 @@
-import { PRODUCTS } from "@/data/products";
 import {
   listOrders,
   saveOrder,
@@ -10,6 +9,7 @@ import {
   type StoredPaymentMethod,
   type StoredPaymentStatus,
 } from "@/lib/orderStorage";
+import { listProducts } from "@/lib/productCatalog";
 import { createYooKassaPayment } from "@/lib/yookassa";
 import { timingSafeEqual } from "node:crypto";
 
@@ -332,10 +332,11 @@ export async function POST(request: Request) {
     return jsonError("Корзина пуста.");
   }
 
+  const products = await listProducts();
   const items = body.items.map((item): NormalizedOrderItem | null => {
     const slug = normalizeText(item.slug);
     const qty = Number(item.qty);
-    const product = PRODUCTS.find((p) => p.slug === slug);
+    const product = products.find((p) => p.slug === slug);
 
     if (!product || !Number.isInteger(qty) || qty < 1 || qty > 999) {
       return null;
