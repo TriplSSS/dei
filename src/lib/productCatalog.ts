@@ -1,7 +1,15 @@
 import { neon } from "@neondatabase/serverless";
 import { mkdir, readFile, appendFile } from "node:fs/promises";
 import path from "node:path";
-import { PRODUCTS, type Product, type ProductSpec } from "@/data/products";
+import {
+  PRODUCTS,
+  type Product,
+  type ProductAvailabilityStatus,
+  type ProductDocument,
+  type ProductGalleryImage,
+  type ProductSpec,
+  type ProductVariant,
+} from "@/data/products";
 
 export type ProductCategory = Product["category"];
 
@@ -13,6 +21,7 @@ export type ProductMutationResult = {
 
 const PRODUCT_FILE_NAME = "products.jsonl";
 const CATEGORY_KEYS = new Set<ProductCategory>(["welding", "light", "centrators", "consumables"]);
+const AVAILABILITY_STATUSES = new Set<ProductAvailabilityStatus>(["in_stock", "on_order", "preorder", "out_of_stock"]);
 
 type SqlClient = ReturnType<typeof neon>;
 
@@ -96,6 +105,80 @@ function normalizeTextArray(value: unknown) {
   return Array.isArray(value) ? value.map(normalizeText).filter(Boolean) : [];
 }
 
+function normalizeOptionalText(value: unknown) {
+  const text = normalizeText(value);
+  return text || undefined;
+}
+
+function normalizeOptionalNumber(value: unknown, min = 0) {
+  if (value === undefined || value === null || value === "") return undefined;
+
+  const number = Number(value);
+  return Number.isFinite(number) && number >= min ? number : undefined;
+}
+
+function normalizeAvailabilityStatus(value: unknown): ProductAvailabilityStatus | undefined {
+  const status = normalizeText(value) as ProductAvailabilityStatus;
+  return AVAILABILITY_STATUSES.has(status) ? status : undefined;
+}
+
+function normalizeGalleryImage(value: unknown): ProductGalleryImage | null {
+  if (!isRecord(value)) return null;
+
+  const url = normalizeText(value.url);
+  if (!url) return null;
+
+  return {
+    url,
+    ...(normalizeOptionalText(value.alt) ? { alt: normalizeOptionalText(value.alt) } : {}),
+    ...(normalizeOptionalText(value.title) ? { title: normalizeOptionalText(value.title) } : {}),
+  };
+}
+
+function normalizeProductDocument(value: unknown): ProductDocument | null {
+  if (!isRecord(value)) return null;
+
+  const type = normalizeText(value.type);
+  const title = normalizeText(value.title);
+  const url = normalizeText(value.url);
+  if (!type || !title || !url) return null;
+
+  return { type, title, url };
+}
+
+function normalizeVariantOptions(value: unknown) {
+  if (!isRecord(value)) return undefined;
+
+  const entries = Object.entries(value)
+    .map(([key, optionValue]) => [normalizeText(key), normalizeText(optionValue)] as const)
+    .filter(([key, optionValue]) => key && optionValue);
+
+  return entries.length ? Object.fromEntries(entries) : undefined;
+}
+
+function normalizeProductVariant(value: unknown): ProductVariant | null {
+  if (!isRecord(value)) return null;
+
+  const title = normalizeText(value.title);
+  if (!title) return null;
+
+  return {
+    title,
+    ...(normalizeOptionalText(value.sku) ? { sku: normalizeOptionalText(value.sku) } : {}),
+    ...(normalizeVariantOptions(value.options) ? { options: normalizeVariantOptions(value.options) } : {}),
+    ...(normalizeOptionalNumber(value.price) !== undefined ? { price: normalizeOptionalNumber(value.price) } : {}),
+    ...(normalizeOptionalNumber(value.stock) !== undefined ? { stock: normalizeOptionalNumber(value.stock) } : {}),
+    ...(normalizeOptionalText(value.leadTime) ? { leadTime: normalizeOptionalText(value.leadTime) } : {}),
+  };
+}
+
+function normalizeArray<T>(value: unknown, normalizeItem: (item: unknown) => T | null) {
+  if (!Array.isArray(value)) return undefined;
+
+  const items = value.map(normalizeItem).filter((item): item is T => item !== null);
+  return items.length ? items : undefined;
+}
+
 export function normalizeProductInput(value: unknown): Product | null {
   if (!isRecord(value)) return null;
 
@@ -128,7 +211,7 @@ export function normalizeProductInput(value: unknown): Product | null {
     return null;
   }
 
-  return {
+  const product: Product = {
     slug,
     name,
     shortName,
@@ -144,6 +227,39 @@ export function normalizeProductInput(value: unknown): Product | null {
     naks: normalizeBoolean(value.naks),
     featured: normalizeBoolean(value.featured),
   };
+
+  const optionalFields: Partial<Product> = {
+    sku: normalizeOptionalText(value.sku),
+    brand: normalizeOptionalText(value.brand),
+    manufacturer: normalizeOptionalText(value.manufacturer),
+    model: normalizeOptionalText(value.model),
+    series: normalizeOptionalText(value.series),
+    subcategory: normalizeOptionalText(value.subcategory),
+    availabilityStatus: normalizeAvailabilityStatus(value.availabilityStatus),
+    stockQuantity: normalizeOptionalNumber(value.stockQuantity),
+    leadTime: normalizeOptionalText(value.leadTime),
+    deliveryNote: normalizeOptionalText(value.deliveryNote),
+    saleUnit: normalizeOptionalText(value.saleUnit),
+    minOrderQuantity: normalizeOptionalNumber(value.minOrderQuantity, 1),
+    oldPrice: normalizeOptionalNumber(value.oldPrice),
+    wholesalePrice: normalizeOptionalNumber(value.wholesalePrice),
+    vatRate: normalizeOptionalNumber(value.vatRate),
+    vatIncluded: value.vatIncluded === undefined ? undefined : normalizeBoolean(value.vatIncluded),
+    gallery: normalizeArray(value.gallery, normalizeGalleryImage),
+    documents: normalizeArray(value.documents, normalizeProductDocument),
+    seoTitle: normalizeOptionalText(value.seoTitle),
+    seoDescription: normalizeOptionalText(value.seoDescription),
+    sortOrder: normalizeOptionalNumber(value.sortOrder),
+    variants: normalizeArray(value.variants, normalizeProductVariant),
+  };
+
+  Object.entries(optionalFields).forEach(([key, optionalValue]) => {
+    if (optionalValue !== undefined) {
+      product[key as keyof Product] = optionalValue as never;
+    }
+  });
+
+  return product;
 }
 
 function isProduct(value: unknown): value is Product {

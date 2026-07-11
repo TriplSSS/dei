@@ -1,4 +1,15 @@
 export type ProductSpec = { label: string; value: string };
+export type ProductAvailabilityStatus = "in_stock" | "on_order" | "preorder" | "out_of_stock";
+export type ProductGalleryImage = { url: string; alt?: string; title?: string };
+export type ProductDocument = { type: string; title: string; url: string };
+export type ProductVariant = {
+  sku?: string;
+  title: string;
+  options?: Record<string, string>;
+  price?: number;
+  stock?: number;
+  leadTime?: string;
+};
 
 export type Product = {
   slug: string;
@@ -15,6 +26,28 @@ export type Product = {
   tags: string[];
   naks?: boolean;
   featured?: boolean;
+  sku?: string;
+  brand?: string;
+  manufacturer?: string;
+  model?: string;
+  series?: string;
+  subcategory?: string;
+  availabilityStatus?: ProductAvailabilityStatus;
+  stockQuantity?: number;
+  leadTime?: string;
+  deliveryNote?: string;
+  saleUnit?: string;
+  minOrderQuantity?: number;
+  oldPrice?: number;
+  wholesalePrice?: number;
+  vatRate?: number;
+  vatIncluded?: boolean;
+  gallery?: ProductGalleryImage[];
+  documents?: ProductDocument[];
+  seoTitle?: string;
+  seoDescription?: string;
+  sortOrder?: number;
+  variants?: ProductVariant[];
 };
 
 export const CATEGORIES = [
