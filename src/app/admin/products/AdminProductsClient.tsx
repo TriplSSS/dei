@@ -194,6 +194,11 @@ export default function AdminProductsClient() {
 
   const deleteCurrentProduct = async () => {
     if (!token.trim() || !form.slug.trim()) return;
+    const confirmed = window.confirm(
+      `Скрыть товар "${form.name || form.slug}" из публичного каталога? Его можно будет вернуть, сохранив карточку заново.`
+    );
+
+    if (!confirmed) return;
 
     setSaving(true);
     setError("");
@@ -228,7 +233,7 @@ export default function AdminProductsClient() {
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">DEI admin</p>
             <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Товары</h1>
             <p className="mt-3 max-w-[640px] text-sm leading-relaxed text-zinc-400">
-              Управление рабочим каталогом магазина. Изменения сохраняются в локальный JSONL fallback или Neon при наличии `DATABASE_URL`.
+              Управление рабочим каталогом магазина. После сохранения товар используется на сайте и при оформлении заказов. В локальном запуске изменения остаются на этом компьютере, на сервере сохраняются в подключенном хранилище.
             </p>
           </div>
 

@@ -243,16 +243,17 @@ export default function CheckoutClient() {
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Контактное лицо *" value={form.name} onChange={set("name")} placeholder="Иван Петров" />
-                <Field label="Телефон *" value={form.phone} onChange={set("phone")} placeholder="+7 (___) ___-__-__" type="tel" />
-                <Field label="Организация" value={form.company} onChange={set("company")} placeholder="ООО «Ромашка»" />
-                <Field label="ИНН" value={form.inn} onChange={set("inn")} placeholder="Для выставления счета" />
+                <Field id="checkout-name" label="Контактное лицо *" value={form.name} onChange={set("name")} placeholder="Иван Петров" />
+                <Field id="checkout-phone" label="Телефон *" value={form.phone} onChange={set("phone")} placeholder="+7 (___) ___-__-__" type="tel" />
+                <Field id="checkout-company" label="Организация" value={form.company} onChange={set("company")} placeholder="ООО «Ромашка»" />
+                <Field id="checkout-inn" label="ИНН" value={form.inn} onChange={set("inn")} placeholder="Для выставления счета" />
                 <div className="sm:col-span-2">
-                  <Field label="Email" value={form.email} onChange={set("email")} placeholder="mail@company.ru" type="email" />
+                  <Field id="checkout-email" label="Email" value={form.email} onChange={set("email")} placeholder="mail@company.ru" type="email" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-xs font-medium text-zinc-400">Комментарий</label>
+                  <label htmlFor="checkout-comment" className="mb-1.5 block text-xs font-medium text-zinc-400">Комментарий</label>
                   <textarea
+                    id="checkout-comment"
                     value={form.comment}
                     onChange={set("comment")}
                     rows={3}
@@ -364,12 +365,14 @@ function Info({ label, value }: { label: string; value: string }) {
 }
 
 function Field({
+  id,
   label,
   value,
   onChange,
   placeholder,
   type = "text",
 }: {
+  id: string;
   label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -378,8 +381,9 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-zinc-400">{label}</label>
+      <label htmlFor={id} className="mb-1.5 block text-xs font-medium text-zinc-400">{label}</label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={onChange}
