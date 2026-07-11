@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CATEGORIES, type Product, type ProductSpec } from "@/data/products";
+import { CATEGORIES, type Product, type ProductAvailabilityStatus, type ProductSpec } from "@/data/products";
 
 type ProductsResponse =
   | { ok: true; products: Product[]; count: number }
@@ -17,13 +17,29 @@ type FormState = {
   shortName: string;
   category: Product["category"];
   categoryLabel: string;
+  sku: string;
+  brand: string;
+  manufacturer: string;
+  model: string;
+  series: string;
   price: string;
   priceNum: string;
+  oldPrice: string;
+  wholesalePrice: string;
+  vatRate: string;
+  vatIncluded: boolean;
+  availabilityStatus: "" | ProductAvailabilityStatus;
+  stockQuantity: string;
+  leadTime: string;
+  saleUnit: string;
+  minOrderQuantity: string;
   img: string;
   description: string;
   fullDescription: string;
   specsText: string;
   tagsText: string;
+  seoTitle: string;
+  seoDescription: string;
   naks: boolean;
   featured: boolean;
 };
@@ -34,16 +50,40 @@ const emptyForm: FormState = {
   shortName: "",
   category: "welding",
   categoryLabel: "",
+  sku: "",
+  brand: "",
+  manufacturer: "",
+  model: "",
+  series: "",
   price: "",
   priceNum: "",
+  oldPrice: "",
+  wholesalePrice: "",
+  vatRate: "",
+  vatIncluded: true,
+  availabilityStatus: "",
+  stockQuantity: "",
+  leadTime: "",
+  saleUnit: "",
+  minOrderQuantity: "",
   img: "",
   description: "",
   fullDescription: "",
   specsText: "",
   tagsText: "",
+  seoTitle: "",
+  seoDescription: "",
   naks: false,
   featured: false,
 };
+
+const AVAILABILITY_OPTIONS: Array<{ value: "" | ProductAvailabilityStatus; label: string }> = [
+  { value: "", label: "Не указано" },
+  { value: "in_stock", label: "В наличии" },
+  { value: "on_order", label: "Под заказ" },
+  { value: "preorder", label: "Предзаказ" },
+  { value: "out_of_stock", label: "Нет в наличии" },
+];
 
 function specsToText(specs: ProductSpec[]) {
   return specs.map((spec) => `${spec.label}: ${spec.value}`).join("\n");
@@ -65,6 +105,22 @@ function parseSpecs(value: string): ProductSpec[] {
     .filter((spec): spec is ProductSpec => spec !== null);
 }
 
+function numberToFormValue(value: number | undefined) {
+  return typeof value === "number" ? String(value) : "";
+}
+
+function optionalText(value: string) {
+  const text = value.trim();
+  return text || undefined;
+}
+
+function optionalNumber(value: string) {
+  if (!value.trim()) return undefined;
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : undefined;
+}
+
 function productToForm(product: Product): FormState {
   return {
     slug: product.slug,
@@ -72,20 +128,36 @@ function productToForm(product: Product): FormState {
     shortName: product.shortName,
     category: product.category,
     categoryLabel: product.categoryLabel,
+    sku: product.sku || "",
+    brand: product.brand || "",
+    manufacturer: product.manufacturer || "",
+    model: product.model || "",
+    series: product.series || "",
     price: product.price,
     priceNum: String(product.priceNum),
+    oldPrice: numberToFormValue(product.oldPrice),
+    wholesalePrice: numberToFormValue(product.wholesalePrice),
+    vatRate: numberToFormValue(product.vatRate),
+    vatIncluded: product.vatIncluded ?? true,
+    availabilityStatus: product.availabilityStatus || "",
+    stockQuantity: numberToFormValue(product.stockQuantity),
+    leadTime: product.leadTime || "",
+    saleUnit: product.saleUnit || "",
+    minOrderQuantity: numberToFormValue(product.minOrderQuantity),
     img: product.img,
     description: product.description,
     fullDescription: product.fullDescription,
     specsText: specsToText(product.specs),
     tagsText: product.tags.join(", "),
+    seoTitle: product.seoTitle || "",
+    seoDescription: product.seoDescription || "",
     naks: Boolean(product.naks),
     featured: Boolean(product.featured),
   };
 }
 
 function formToProduct(form: FormState): Product {
-  return {
+  const product: Product = {
     slug: form.slug.trim().toLowerCase(),
     name: form.name.trim(),
     shortName: form.shortName.trim(),
@@ -101,6 +173,33 @@ function formToProduct(form: FormState): Product {
     naks: form.naks,
     featured: form.featured,
   };
+
+  const optionalFields: Partial<Product> = {
+    sku: optionalText(form.sku),
+    brand: optionalText(form.brand),
+    manufacturer: optionalText(form.manufacturer),
+    model: optionalText(form.model),
+    series: optionalText(form.series),
+    oldPrice: optionalNumber(form.oldPrice),
+    wholesalePrice: optionalNumber(form.wholesalePrice),
+    vatRate: optionalNumber(form.vatRate),
+    vatIncluded: form.vatRate.trim() ? form.vatIncluded : undefined,
+    availabilityStatus: form.availabilityStatus || undefined,
+    stockQuantity: optionalNumber(form.stockQuantity),
+    leadTime: optionalText(form.leadTime),
+    saleUnit: optionalText(form.saleUnit),
+    minOrderQuantity: optionalNumber(form.minOrderQuantity),
+    seoTitle: optionalText(form.seoTitle),
+    seoDescription: optionalText(form.seoDescription),
+  };
+
+  Object.entries(optionalFields).forEach(([key, value]) => {
+    if (value !== undefined) {
+      product[key as keyof Product] = value as never;
+    }
+  });
+
+  return product;
 }
 
 export default function AdminProductsClient() {
@@ -306,39 +405,88 @@ export default function AdminProductsClient() {
             </button>
           </div>
 
-          <form onSubmit={saveCurrentProduct} className="grid gap-3">
-            <Field label="Slug" value={form.slug} onChange={setField("slug")} placeholder="new-product-slug" />
-            <Field label="Название" value={form.name} onChange={setField("name")} />
-            <Field label="Короткое имя" value={form.shortName} onChange={setField("shortName")} />
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-zinc-400">Категория</span>
-              <select
-                value={form.category}
-                onChange={setField("category")}
-                className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none focus:border-red-600/50"
-              >
-                {CATEGORIES.filter((category) => category.key !== "all").map((category) => (
-                  <option key={category.key} value={category.key} style={{ background: "#09090b" }}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <Field label="Метка категории" value={form.categoryLabel} onChange={setField("categoryLabel")} />
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Цена текстом" value={form.price} onChange={setField("price")} placeholder="от 18 500 ₽" />
-              <Field label="Цена числом" value={form.priceNum} onChange={setField("priceNum")} type="number" />
-            </div>
-            <Field label="Изображение" value={form.img} onChange={setField("img")} placeholder="/products/example.jpg" />
-            <TextArea label="Краткое описание" value={form.description} onChange={setField("description")} rows={2} />
-            <TextArea label="Полное описание" value={form.fullDescription} onChange={setField("fullDescription")} rows={4} />
-            <TextArea label="Характеристики" value={form.specsText} onChange={setField("specsText")} rows={5} hint="Одна строка: Метка: значение" />
-            <TextArea label="Теги" value={form.tagsText} onChange={setField("tagsText")} rows={2} hint="Через запятую" />
+          <form onSubmit={saveCurrentProduct} className="grid gap-4">
+            <FormSection title="Основное">
+              <Field label="Slug" value={form.slug} onChange={setField("slug")} placeholder="new-product-slug" />
+              <Field label="Название" value={form.name} onChange={setField("name")} />
+              <Field label="Короткое имя" value={form.shortName} onChange={setField("shortName")} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Артикул / SKU" value={form.sku} onChange={setField("sku")} placeholder="DEI-VDI-200" />
+                <Field label="Бренд" value={form.brand} onChange={setField("brand")} placeholder="DEI" />
+              </div>
+              <Field label="Производитель" value={form.manufacturer} onChange={setField("manufacturer")} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Модель" value={form.model} onChange={setField("model")} />
+                <Field label="Серия" value={form.series} onChange={setField("series")} />
+              </div>
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-medium text-zinc-400">Категория</span>
+                <select
+                  value={form.category}
+                  onChange={setField("category")}
+                  className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none focus:border-red-600/50"
+                >
+                  {CATEGORIES.filter((category) => category.key !== "all").map((category) => (
+                    <option key={category.key} value={category.key} style={{ background: "#09090b" }}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Field label="Метка категории" value={form.categoryLabel} onChange={setField("categoryLabel")} />
+            </FormSection>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              <Checkbox label="НАКС" checked={form.naks} onChange={setField("naks")} />
-              <Checkbox label="Рекомендуемый" checked={form.featured} onChange={setField("featured")} />
-            </div>
+            <FormSection title="Продажи и наличие">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Цена текстом" value={form.price} onChange={setField("price")} placeholder="от 18 500 ₽" />
+                <Field label="Цена числом" value={form.priceNum} onChange={setField("priceNum")} type="number" />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Старая цена" value={form.oldPrice} onChange={setField("oldPrice")} type="number" />
+                <Field label="Оптовая цена" value={form.wholesalePrice} onChange={setField("wholesalePrice")} type="number" />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="НДС, %" value={form.vatRate} onChange={setField("vatRate")} type="number" placeholder="20" />
+                <Checkbox label="Цена с НДС" checked={form.vatIncluded} onChange={setField("vatIncluded")} />
+              </div>
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-medium text-zinc-400">Статус наличия</span>
+                <select
+                  value={form.availabilityStatus}
+                  onChange={setField("availabilityStatus")}
+                  className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none focus:border-red-600/50"
+                >
+                  {AVAILABILITY_OPTIONS.map((option) => (
+                    <option key={option.value || "empty"} value={option.value} style={{ background: "#09090b" }}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Field label="Остаток" value={form.stockQuantity} onChange={setField("stockQuantity")} type="number" />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Срок поставки" value={form.leadTime} onChange={setField("leadTime")} placeholder="2-5 дней" />
+                <Field label="Единица продажи" value={form.saleUnit} onChange={setField("saleUnit")} placeholder="шт." />
+              </div>
+              <Field label="Минимальный заказ" value={form.minOrderQuantity} onChange={setField("minOrderQuantity")} type="number" />
+            </FormSection>
+
+            <FormSection title="Контент">
+              <Field label="Изображение" value={form.img} onChange={setField("img")} placeholder="/products/example.jpg" />
+              <TextArea label="Краткое описание" value={form.description} onChange={setField("description")} rows={2} />
+              <TextArea label="Полное описание" value={form.fullDescription} onChange={setField("fullDescription")} rows={4} />
+              <TextArea label="Характеристики" value={form.specsText} onChange={setField("specsText")} rows={5} hint="Одна строка: Метка: значение" />
+              <TextArea label="Теги" value={form.tagsText} onChange={setField("tagsText")} rows={2} hint="Через запятую" />
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Checkbox label="НАКС" checked={form.naks} onChange={setField("naks")} />
+                <Checkbox label="Рекомендуемый" checked={form.featured} onChange={setField("featured")} />
+              </div>
+            </FormSection>
+
+            <FormSection title="SEO">
+              <Field label="SEO title" value={form.seoTitle} onChange={setField("seoTitle")} />
+              <TextArea label="SEO description" value={form.seoDescription} onChange={setField("seoDescription")} rows={3} />
+            </FormSection>
 
             <button
               type="submit"
@@ -386,6 +534,15 @@ function Field({
         className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-red-600/50"
       />
     </label>
+  );
+}
+
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="grid gap-3 rounded-lg border border-white/[0.07] bg-white/[0.025] p-3">
+      <h3 className="text-sm font-semibold text-zinc-100">{title}</h3>
+      {children}
+    </section>
   );
 }
 
