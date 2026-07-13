@@ -14,7 +14,7 @@ export default function ProductCard({ product, index }: { product: Product; inde
   return (
     <Reveal delay={index * 0.07} direction="blur">
       <div
-        className="group glass-card flex cursor-default flex-col overflow-hidden rounded-lg"
+        className="product-card-premium group glass-card flex cursor-default flex-col overflow-hidden rounded-lg"
         style={{
           transition:
             "box-shadow 220ms ease, border-color 220ms ease, background-color 220ms ease",
@@ -31,22 +31,25 @@ export default function ProductCard({ product, index }: { product: Product; inde
           (e.currentTarget as HTMLDivElement).style.boxShadow = "";
         }}
       >
-        {/* Картинка */}
         <div className="relative aspect-[4/3] overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_24%,rgba(248,113,113,0.2),transparent_48%)]" />
           <img
             src={product.img}
             alt={product.name}
-            className="w-full h-full object-cover img-zoom"
+            className="relative h-full w-full object-cover img-zoom"
           />
-          <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
-          {/* Категория поверх картинки */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/72 via-transparent to-black/12 transition-colors duration-300 group-hover:from-[#09090b]/55" />
           <div className="absolute top-3 left-3">
-            <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-400">
+            <span className="glass-pill inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-400 shadow-[0_0_12px_rgba(248,113,113,0.85)]" />
               {product.category}
             </span>
           </div>
+          <div className="absolute bottom-3 right-3 rounded-md border border-white/[0.08] bg-black/30 px-2 py-1 text-[10px] font-medium text-zinc-300 backdrop-blur-md">
+            В наличии / под заказ
+          </div>
         </div>
-        <div className="h-px bg-white/[0.06]" />
+        <div className="h-px bg-gradient-to-r from-transparent via-red-500/35 to-transparent" />
 
         <div className="glass-inner flex flex-1 flex-col gap-3 p-4">
           <h3 className="min-h-10 text-sm font-semibold leading-snug text-zinc-100 transition-colors duration-200 group-hover:text-white">
@@ -60,7 +63,7 @@ export default function ProductCard({ product, index }: { product: Product; inde
 
             <Link
               href="/catalog"
-              className="btn rounded-md border border-white/[0.08] px-3 py-1.5 text-xs text-zinc-300 transition-colors duration-200 hover:border-red-600/30 hover:text-white"
+              className="energy-strip btn rounded-md border border-white/[0.08] px-3 py-1.5 text-xs text-zinc-300 transition-colors duration-200 hover:border-red-600/30 hover:text-white"
             >
               В каталог
             </Link>

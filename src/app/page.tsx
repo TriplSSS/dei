@@ -34,8 +34,9 @@ function PinnedHero() {
         {/* Background */}
         <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
           <div className="absolute inset-0 bg-[#09090b]" />
+          <div className="ambient-red-grid absolute inset-[-8%] opacity-70" />
 
-          <div className="absolute bottom-[8%] right-[-8%] h-[58dvh] max-h-[620px] w-[82vw] max-w-[720px] opacity-75 mix-blend-screen sm:right-[2%] md:h-[68dvh] md:w-[58vw]">
+          <div className="hero-product-frame absolute bottom-[7%] right-[-12%] h-[58dvh] max-h-[650px] w-[88vw] max-w-[780px] opacity-90 mix-blend-screen sm:right-[1%] md:h-[70dvh] md:w-[60vw]">
             <Image
               src="/products/dei-mig-250.jpg"
               alt=""
@@ -48,6 +49,8 @@ function PinnedHero() {
 
           <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-[#09090b]/88 to-[#09090b]/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-[#09090b]/45" />
+          <div className="absolute left-0 right-0 top-[18%] h-px bg-gradient-to-r from-transparent via-red-500/35 to-transparent" />
+          <div className="absolute bottom-[18%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
           <div className="absolute pointer-events-none" style={{
             bottom: "-20%", left: "-15%",
@@ -83,7 +86,7 @@ function PinnedHero() {
             <p className="hero-in hero-in-1 mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">
               Интернет-магазин промышленного оборудования
             </p>
-            <h1 className="hero-in hero-in-1 mb-6 text-6xl font-extrabold leading-none tracking-normal text-white md:text-8xl lg:text-9xl">
+            <h1 className="hero-in hero-in-1 hero-title-gradient mb-6 text-7xl font-extrabold leading-none tracking-normal md:text-9xl lg:text-[10rem]">
               DEI
             </h1>
 
@@ -94,20 +97,28 @@ function PinnedHero() {
             <div className="hero-in hero-in-4 flex flex-wrap items-center gap-3">
               <MagneticButton
                 href="/catalog"
-                className="inline-block bg-red-600 px-7 py-3.5 font-semibold text-white shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors hover:bg-red-500 btn"
+                className="energy-strip inline-block bg-red-600 px-7 py-3.5 font-semibold text-white shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors hover:bg-red-500 btn"
               >
                 Перейти в каталог
               </MagneticButton>
-              <Link href="/checkout" className="glass-pill inline-flex rounded-lg px-5 py-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:text-white btn">
+              <Link href="/checkout" className="glass-pill inline-flex rounded-lg px-5 py-3 text-sm font-semibold text-zinc-300 shadow-[0_12px_34px_-18px_rgba(255,255,255,0.35)] transition-colors duration-200 hover:text-white btn">
                 Оформить заказ
               </Link>
             </div>
 
             <div className="hero-in hero-in-5 mt-8 grid w-full max-w-[620px] grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/[0.07] bg-white/[0.06] sm:grid-cols-4">
               {["Сварка", "Свет", "Центраторы", "Расходники"].map((item) => (
-                <Link key={item} href="/catalog" className="bg-[#0b0b0d]/80 px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.04] hover:text-white">
+                <Link key={item} href="/catalog" className="category-rail-link bg-[#0b0b0d]/80 px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white">
                   {item}
                 </Link>
+              ))}
+            </div>
+
+            <div className="hero-in hero-in-5 mt-5 flex flex-wrap gap-2 text-[11px] text-zinc-500">
+              {["Счет на оплату", "Онлайн-оплата", "Поставка по РФ"].map((item) => (
+                <span key={item} className="rounded-md border border-white/[0.07] bg-white/[0.025] px-3 py-1.5">
+                  {item}
+                </span>
               ))}
             </div>
 
@@ -226,10 +237,11 @@ function Directions() {
         </Reveal>
 
         {/* Панель активного направления */}
-        <div className="glass-card overflow-hidden rounded-3xl">
+        <div className="premium-panel glass-card overflow-hidden rounded-3xl">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
           <div className="grid md:grid-cols-2">
             {/* Данные */}
-            <div className="order-2 flex flex-col p-8 md:order-1 md:p-10 lg:p-12">
+            <div className="relative order-2 flex flex-col p-8 md:order-1 md:p-10 lg:p-12">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active}
@@ -239,10 +251,15 @@ function Directions() {
                   transition={{ duration: 0.28, ease }}
                   className="flex flex-1 flex-col"
                 >
-                  <p className="font-[family-name:var(--font-inter)] text-[11px] uppercase tracking-[0.2em] text-red-400">
-                    {d.kicker}
-                  </p>
-                  <h3 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-[-0.03em] text-white leading-[0.95]">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-[family-name:var(--font-inter)] text-[11px] uppercase tracking-[0.18em] text-red-400">
+                      {d.kicker}
+                    </p>
+                    <span className="rounded-md border border-emerald-400/15 bg-emerald-400/5 px-2 py-1 text-[10px] font-medium text-emerald-300">
+                      Под заказ
+                    </span>
+                  </div>
+                  <h3 className="mt-3 text-3xl font-extrabold leading-tight tracking-normal text-white md:text-4xl">
                     {d.title}
                   </h3>
                   <p className="mt-4 max-w-[440px] text-sm md:text-base leading-relaxed text-zinc-400">
@@ -250,10 +267,10 @@ function Directions() {
                   </p>
 
                   {/* Характеристики как числа */}
-                  <div className="mt-8 grid grid-cols-3 gap-4">
+                  <div className="mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.06]">
                     {d.specs.map((s) => (
-                      <div key={s.l}>
-                        <p className="text-2xl md:text-3xl font-extrabold tracking-tight text-white tabular-nums">{s.v}</p>
+                      <div key={s.l} className="store-metric p-4">
+                        <p className="text-2xl font-extrabold tracking-normal text-white tabular-nums md:text-3xl">{s.v}</p>
                         <p className="mt-1 text-[11px] leading-snug text-zinc-500">{s.l}</p>
                       </div>
                     ))}
@@ -263,7 +280,7 @@ function Directions() {
                     <span className="text-2xl font-extrabold text-red-500 tabular-nums">{d.price}</span>
                     <Link
                       href="/catalog"
-                      className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500 shadow-[0_8px_28px_-6px_rgba(220,38,38,0.5)]"
+                      className="energy-strip inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500 shadow-[0_8px_28px_-6px_rgba(220,38,38,0.5)]"
                     >
                       Смотреть в каталоге
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -281,8 +298,9 @@ function Directions() {
               <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0"
-                style={{ background: "radial-gradient(55% 50% at 52% 46%, rgba(220,38,38,0.12) 0%, transparent 68%)" }}
+                style={{ background: "radial-gradient(55% 50% at 52% 46%, rgba(220,38,38,0.22) 0%, transparent 68%)" }}
               />
+              <div className="absolute inset-x-8 top-8 h-px bg-gradient-to-r from-transparent via-red-400/40 to-transparent" />
               <AnimatePresence mode="wait">
                 <motion.img
                   key={active}
@@ -331,8 +349,9 @@ function Products() {
   ];
 
   return (
-    <section className="px-6 py-20">
-      <div className="mx-auto max-w-[1400px]">
+    <section className="relative overflow-hidden px-6 py-20">
+      <div className="ambient-red-grid pointer-events-none absolute inset-x-0 top-10 h-[420px] opacity-45" />
+      <div className="relative mx-auto max-w-[1400px]">
         <Reveal>
           <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-[720px]">
@@ -348,7 +367,7 @@ function Products() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="/catalog"
-                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500"
+                className="energy-strip inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500"
               >
                 Открыть каталог
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -362,13 +381,13 @@ function Products() {
           </div>
         </Reveal>
 
-        <div className="mb-5 grid gap-px overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.06] md:grid-cols-3">
+        <div className="mb-5 grid gap-px overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.06] shadow-[0_20px_80px_-52px_rgba(220,38,38,0.65)] md:grid-cols-3">
           {[
-            ["10", "товаров в демо-каталоге"],
+            ["10+", "позиций в каталоге"],
             ["4", "основные группы"],
             ["2", "способа оплаты"],
           ].map(([value, label]) => (
-            <div key={label} className="bg-[#0b0b0d]/80 px-5 py-4">
+            <div key={label} className="store-metric px-5 py-4">
               <div className="text-2xl font-extrabold tabular-nums text-white">{value}</div>
               <div className="mt-1 text-xs text-zinc-500">{label}</div>
             </div>
@@ -379,6 +398,15 @@ function Products() {
           {products.map((p, i) => (
             <ProductCard key={p.name} product={p} index={i} />
           ))}
+        </div>
+
+        <div className="mt-8 overflow-hidden rounded-lg border border-red-500/15 bg-red-500/[0.045] px-5 py-4">
+          <div className="energy-strip flex flex-col gap-2 text-sm text-zinc-300 sm:flex-row sm:items-center sm:justify-between">
+            <span>Не нашли нужную комплектацию? Подберем оборудование под задачу и подготовим счет.</span>
+            <Link href="/contacts" className="font-semibold text-red-300 transition-colors hover:text-red-200">
+              Связаться
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -488,10 +516,11 @@ function HowWeWork() {
 function CTA() {
   return (
     <section className="py-24 px-6 relative overflow-hidden">
+      <div className="ambient-red-grid pointer-events-none absolute inset-x-0 top-0 h-full opacity-45" />
       <div className="mx-auto max-w-[820px] relative text-center">
         <Reveal>
-          <h2 className="text-4xl md:text-6xl font-extrabold tracking-[-0.045em] text-white leading-[0.92]">
-            Нужна <span className="text-red-500">консультация?</span>
+          <h2 className="text-4xl font-extrabold leading-tight tracking-normal text-white md:text-6xl">
+            Нужна <span className="hero-title-gradient">консультация?</span>
           </h2>
           <p className="mx-auto mt-5 max-w-[420px] text-zinc-400 text-sm md:text-base leading-relaxed">
             Выезд специалиста, расчёт проекта, подбор оборудования — без обязательств.
@@ -499,7 +528,7 @@ function CTA() {
           <div className="mt-9 flex flex-col items-center justify-center gap-5 sm:flex-row">
             <MagneticButton
               href="tel:+79885807630"
-              className="inline-block bg-red-600 hover:bg-red-500 text-white px-9 py-4 text-lg font-bold btn transition-colors shadow-[0_12px_40px_-6px_rgba(220,38,38,0.45)]"
+              className="energy-strip inline-block bg-red-600 hover:bg-red-500 text-white px-9 py-4 text-lg font-bold btn transition-colors shadow-[0_12px_40px_-6px_rgba(220,38,38,0.45)]"
             >
               +7 (988) 580-76-30
             </MagneticButton>

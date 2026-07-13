@@ -122,19 +122,15 @@ export default function CatalogClient({ products }: { products: Product[] }) {
     <>
       {/* ── Шапка ── */}
       <section className="relative overflow-hidden px-4 pb-8 pt-32 sm:px-6 md:pb-10 md:pt-36">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full"
-          style={{ background: "radial-gradient(ellipse, rgba(220,38,38,0.06) 0%, transparent 70%)" }}
-        />
+        <div aria-hidden className="ambient-red-grid pointer-events-none absolute inset-x-0 top-0 h-[520px] opacity-60" />
         <div className="mx-auto max-w-[1400px]">
           <Reveal>
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-red-500">Каталог</p>
             <h1
-              className="font-bold tracking-tight text-white"
-              style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: "0.95", letterSpacing: "-0.03em" }}
+              className="hero-title-gradient font-bold tracking-normal"
+              style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: "0.95" }}
             >
-              Продукция <span className="text-red-500">DEI</span>
+              Продукция DEI
             </h1>
             <p className="mt-4 max-w-[520px] text-sm leading-relaxed text-zinc-400 sm:text-base">
               Собственное производство в Ростове-на-Дону. Сварочное оборудование, промышленное освещение, центраторы и расходники.
@@ -147,7 +143,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         <div className="mx-auto grid min-w-0 max-w-[1400px] gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="glass-card sticky top-28 rounded-2xl p-5">
+            <div className="premium-panel glass-card sticky top-28 rounded-2xl p-5">
               {Filters}
             </div>
           </aside>
@@ -155,7 +151,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="mb-5 min-w-0 rounded-lg border border-white/[0.07] bg-white/[0.025] p-2.5 backdrop-blur-xl sm:p-3">
+            <div className="premium-panel mb-5 min-w-0 rounded-lg border border-white/[0.07] p-2.5 backdrop-blur-xl sm:p-3">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
                 <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
                   <p className="text-sm text-zinc-500">
@@ -165,7 +161,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                   </p>
                   <button
                     onClick={() => setFiltersOpen((v) => !v)}
-                    className="glass-pill inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm text-zinc-300 lg:hidden"
+                    className="glass-pill inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm text-zinc-300 shadow-[0_14px_32px_-24px_rgba(248,113,113,0.85)] lg:hidden"
                     style={{ border: "1px solid rgba(255,255,255,0.08)" }}
                   >
                     Фильтры
@@ -223,7 +219,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
 
             {/* Фильтры (моб, раскрывающиеся) */}
             {filtersOpen && (
-              <div className="glass-card mb-5 rounded-lg p-4 lg:hidden">
+              <div className="premium-panel glass-card mb-5 rounded-lg p-4 lg:hidden">
                 {Filters}
               </div>
             )}
@@ -240,16 +236,18 @@ export default function CatalogClient({ products }: { products: Product[] }) {
               <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
                 {filtered.map((product, i) => (
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
-                    <div className="group glass-card hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300 hover:border-red-600/25">
+                    <div className="product-card-premium group glass-card hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300 hover:border-red-600/25">
                       <Link href={`/catalog/${product.slug}`} className="block">
                         <div className="relative aspect-[16/10] overflow-hidden">
-                          <img src={product.img} alt={product.name} className="h-full w-full object-cover img-zoom" />
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(248,113,113,0.18),transparent_48%)]" />
+                          <img src={product.img} alt={product.name} className="relative h-full w-full object-cover img-zoom" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/65 via-transparent to-black/10" />
                           <div className="absolute left-3 top-3 flex gap-1.5">
-                            <span className="glass-pill rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-red-400">
+                            <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-300">
                               {product.categoryLabel}
                             </span>
                             {product.naks && (
-                              <span className="glass-pill rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-emerald-400">
+                              <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-emerald-300">
                                 НАКС
                               </span>
                             )}
@@ -281,7 +279,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                         <div className="flex min-w-0 gap-2">
                           <AddToCartButton
                             product={product}
-                            className="min-w-0 flex-1 rounded-lg bg-red-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-red-500"
+                            className="energy-strip min-w-0 flex-1 rounded-lg bg-red-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-red-500"
                           />
                           <Link
                             href={`/catalog/${product.slug}`}
@@ -301,14 +299,14 @@ export default function CatalogClient({ products }: { products: Product[] }) {
             )}
 
             {/* Нестандартный заказ */}
-            <div className="glass-red mt-10 flex flex-col items-start gap-5 rounded-lg px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
+            <div className="premium-panel glass-red mt-10 flex flex-col items-start gap-5 rounded-lg px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
               <div className="min-w-0">
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>
               </div>
               <a
                 href="/contacts"
-                className="btn shrink-0 rounded-lg bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
+                className="energy-strip btn shrink-0 rounded-lg bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
               >
                 Оставить заявку
               </a>
