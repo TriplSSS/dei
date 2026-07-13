@@ -21,7 +21,6 @@ const navColumns = [
 export default function Footer() {
   return (
     <>
-      <div className="h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent" />
       <footer
         className="pt-14 pb-8 px-6 bg-[#09090b]"
       >

@@ -2,15 +2,32 @@
 
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
-import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
 import SideCircuits from "@/components/SideCircuits";
-import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence, MotionConfig, useScroll, useTransform } from "motion/react";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 
-const ease = [0.16, 1, 0.3, 1] as const;
+function HeroCoreVisual() {
+  return (
+    <div className="hero-core-visual" aria-hidden>
+      <div className="hero-core-ring hero-core-ring-1" />
+      <div className="hero-core-ring hero-core-ring-2" />
+      <div className="hero-core-ring hero-core-ring-3" />
+      <div className="hero-core-cube">
+        <span className="hero-core-face hero-core-face-front" />
+        <span className="hero-core-face hero-core-face-back" />
+        <span className="hero-core-face hero-core-face-right" />
+        <span className="hero-core-face hero-core-face-left" />
+        <span className="hero-core-face hero-core-face-top" />
+        <span className="hero-core-face hero-core-face-bottom" />
+      </div>
+      <div className="hero-core-beam hero-core-beam-1" />
+      <div className="hero-core-beam hero-core-beam-2" />
+      <div className="hero-core-beam hero-core-beam-3" />
+    </div>
+  );
+}
 
 /* ─── Hero ─── */
 function PinnedHero() {
@@ -35,21 +52,10 @@ function PinnedHero() {
           <div className="absolute inset-0 bg-[#09090b]" />
           <div className="ambient-red-grid absolute inset-[-8%] opacity-70" />
 
-          <div className="hero-product-frame absolute bottom-[7%] right-[-12%] h-[58dvh] max-h-[650px] w-[88vw] max-w-[780px] opacity-90 mix-blend-screen sm:right-[1%] md:h-[70dvh] md:w-[60vw]">
-            <Image
-              src="/products/proton-welder.jpg"
-              alt=""
-              fill
-              priority
-              sizes="(min-width: 768px) 58vw, 82vw"
-              className="object-contain"
-            />
-          </div>
+          <HeroCoreVisual />
 
           <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-[#09090b]/88 to-[#09090b]/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-[#09090b]/45" />
-          <div className="absolute left-0 right-0 top-[18%] h-px bg-gradient-to-r from-transparent via-red-500/35 to-transparent" />
-          <div className="absolute bottom-[18%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
           <div className="absolute pointer-events-none" style={{
             bottom: "-20%", left: "-15%",
@@ -82,9 +88,6 @@ function PinnedHero() {
 
         <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 flex h-full items-center px-6">
           <div className="mx-auto flex w-full max-w-[1400px] flex-col items-start">
-            <p className="hero-in hero-in-1 mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">
-              Интернет-магазин промышленного оборудования
-            </p>
             <h1 className="hero-in hero-in-1 hero-title-gradient mb-6 text-7xl font-extrabold leading-none tracking-normal md:text-9xl lg:text-[10rem]">
               DEI
             </h1>
@@ -103,22 +106,6 @@ function PinnedHero() {
               <Link href="/checkout" className="glass-pill inline-flex rounded-lg px-5 py-3 text-sm font-semibold text-zinc-300 shadow-[0_12px_34px_-18px_rgba(255,255,255,0.35)] transition-colors duration-200 hover:text-white btn">
                 Оформить заказ
               </Link>
-            </div>
-
-            <div className="hero-in hero-in-5 mt-8 grid w-full max-w-[620px] grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/[0.07] bg-white/[0.06] sm:grid-cols-4">
-              {["Протон", "Кобра"].map((item) => (
-                <Link key={item} href="/catalog" className="category-rail-link bg-[#0b0b0d]/80 px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white">
-                  {item}
-                </Link>
-              ))}
-            </div>
-
-            <div className="hero-in hero-in-5 mt-5 flex flex-wrap gap-2 text-[11px] text-zinc-500">
-              {["Счет на оплату", "Онлайн-оплата", "Поставка по РФ"].map((item) => (
-                <span key={item} className="rounded-md border border-white/[0.07] bg-white/[0.025] px-3 py-1.5">
-                  {item}
-                </span>
-              ))}
             </div>
 
             <Link href="/contacts" className="hero-in hero-in-5 mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors duration-200 hover:text-white">
@@ -144,12 +131,11 @@ function StatsBand() {
     { render: "РФ·СНГ", label: "поставки" },
   ];
   return (
-    <section className="relative border-y border-white/[0.06] bg-white/[0.015]">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
-      <div className="mx-auto max-w-[1400px] grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-white/[0.06]">
+    <section className="soft-section relative bg-white/[0.01] px-6 py-8">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map((s, i) => (
           <Reveal key={i} delay={i * 0.08}>
-            <div className="px-6 py-10 lg:py-14">
+            <div className="rounded-lg bg-white/[0.025] px-6 py-8 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.045)] lg:py-10">
               <p className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white tabular-nums">
                 {s.render}
               </p>
@@ -162,193 +148,6 @@ function StatsBand() {
   );
 }
 
-/* ─── Направления: интерактивный переключатель ─── */
-type DirectionItem = {
-  tab: string;
-  kicker: string;
-  title: string;
-  desc: string;
-  specs: { v: string; l: string }[];
-  price: string;
-  img: string;
-  fit: "cover" | "contain";
-};
-
-const directions: DirectionItem[] = [
-  {
-    tab: "Сварка",
-    kicker: "Тестовый товар",
-    title: "Сварочный аппарат Протон",
-    desc: "Первый тестовый товар каталога. Используем его для проверки карточки, корзины и оформления заказа.",
-    specs: [
-      { v: "220 В", l: "питание" },
-      { v: "1 шт.", l: "минимальный заказ" },
-      { v: "Тест", l: "статус" },
-    ],
-    price: "от 18 500 ₽",
-    img: "/products/proton-welder.jpg",
-    fit: "cover" as const,
-  },
-  {
-    tab: "Свет",
-    kicker: "Тестовый товар",
-    title: "Светодиодный светильник Кобра",
-    desc: "Второй тестовый товар каталога. Проверяем отображение светильника, корзину и оформление заказа.",
-    specs: [
-      { v: "LED", l: "тип" },
-      { v: "1 шт.", l: "минимальный заказ" },
-      { v: "Тест", l: "статус" },
-    ],
-    price: "от 8 200 ₽",
-    img: "/products/kobra-led.jpg",
-    fit: "cover" as const,
-  },
-];
-
-function Directions() {
-  const [active, setActive] = useState(0);
-  const d = directions[active];
-
-  return (
-    <MotionConfig reducedMotion="user">
-    <section id="catalog" className="py-16 md:py-24 px-6">
-      <div className="mx-auto max-w-[1200px]">
-        <Reveal>
-          <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Каталог</p>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
-                Что мы производим
-              </h2>
-            </div>
-
-            {/* Переключатель направлений */}
-            <div className="inline-flex self-start rounded-full glass-pill p-1">
-              {directions.map((dir, i) => (
-                <button
-                  key={dir.tab}
-                  onClick={() => setActive(i)}
-                  className={`relative rounded-full px-6 py-2.5 text-sm font-semibold transition-colors ${
-                    active === i ? "text-white" : "text-zinc-400 hover:text-zinc-200"
-                  }`}
-                >
-                  {active === i && (
-                    <motion.span
-                      layoutId="dir-pill"
-                      className="absolute inset-0 rounded-full bg-red-600"
-                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                    />
-                  )}
-                  <span className="relative z-10">{dir.tab}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-
-        {/* Панель активного направления */}
-        <div className="premium-panel glass-card overflow-hidden rounded-3xl">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
-          <div className="grid md:grid-cols-2">
-            {/* Данные */}
-            <div className="relative order-2 flex flex-col p-8 md:order-1 md:p-10 lg:p-12">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={active}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.28, ease }}
-                  className="flex flex-1 flex-col"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-[family-name:var(--font-inter)] text-[11px] uppercase tracking-[0.18em] text-red-400">
-                      {d.kicker}
-                    </p>
-                    <span className="rounded-md border border-emerald-400/15 bg-emerald-400/5 px-2 py-1 text-[10px] font-medium text-emerald-300">
-                      Под заказ
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-3xl font-extrabold leading-tight tracking-normal text-white md:text-4xl">
-                    {d.title}
-                  </h3>
-                  <p className="mt-4 max-w-[440px] text-sm md:text-base leading-relaxed text-zinc-400">
-                    {d.desc}
-                  </p>
-
-                  {/* Характеристики как числа */}
-                  <div className="mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.06]">
-                    {d.specs.map((s) => (
-                      <div key={s.l} className="store-metric p-4">
-                        <p className="text-2xl font-extrabold tracking-normal text-white tabular-nums md:text-3xl">{s.v}</p>
-                        <p className="mt-1 text-[11px] leading-snug text-zinc-500">{s.l}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto flex flex-wrap items-center gap-5 pt-10">
-                    <span className="text-2xl font-extrabold text-red-500 tabular-nums">{d.price}</span>
-                    <Link
-                      href="/catalog"
-                      className="energy-strip inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500 shadow-[0_8px_28px_-6px_rgba(220,38,38,0.5)]"
-                    >
-                      Смотреть в каталоге
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Фото */}
-            <div className="relative order-1 min-h-[260px] overflow-hidden md:order-2 md:min-h-[460px]">
-              {/* мягкое свечение под продуктом */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                style={{ background: "radial-gradient(55% 50% at 52% 46%, rgba(220,38,38,0.22) 0%, transparent 68%)" }}
-              />
-              <div className="absolute inset-x-8 top-8 h-px bg-gradient-to-r from-transparent via-red-400/40 to-transparent" />
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={active}
-                  src={d.img}
-                  alt={d.title}
-                  initial={{ opacity: 0, scale: 1.03 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease }}
-                  className={`absolute inset-0 h-full w-full ${
-                    d.fit === "contain" ? "object-contain p-4 md:p-6" : "object-cover"
-                  }`}
-                  style={
-                    d.fit === "contain"
-                      ? {
-                          // растворяем края фото в панель — без видимой рамки
-                          maskImage:
-                            "radial-gradient(ellipse 80% 84% at 50% 48%, #000 58%, transparent 94%)",
-                          WebkitMaskImage:
-                            "radial-gradient(ellipse 80% 84% at 50% 48%, #000 58%, transparent 94%)",
-                        }
-                      : undefined
-                  }
-                />
-              </AnimatePresence>
-              {/* растворение края в панель (только для фото-фонов) */}
-              {d.fit === "cover" && (
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e]/50 to-transparent md:bg-gradient-to-l" />
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    </MotionConfig>
-  );
-}
-
 /* ─── Почему DEI: full-bleed фон с параллаксом ─── */
 function WhyDEI() {
   const points = [
@@ -358,14 +157,8 @@ function WhyDEI() {
   ];
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0">
-        <ParallaxImage
-          src="https://images.unsplash.com/photo-1533581908700-82aca30ac82a?w=1920&h=1200&fit=crop&q=80"
-          alt="Производственная линия ДонЭлектроИнтел"
-          className="h-full"
-        />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/85 to-[#09090b]/70" />
+      <div className="ambient-red-grid absolute inset-[-10%] opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#09090b] via-[#09090b]/88 to-[#09090b]" />
 
       <div className="relative z-10 mx-auto max-w-[1400px] px-6 py-24 md:py-32">
         <Reveal>
@@ -435,7 +228,6 @@ function HowWeWork() {
               <div className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.015] p-7 h-full transition-colors duration-300 hover:border-red-600/30 hover:bg-white/[0.03]">
                 <div className="flex items-center gap-3">
                   <span className="font-extrabold tabular-nums text-red-500 text-lg">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="h-px flex-1 bg-white/10" />
                 </div>
                 <h3 className="mt-5 text-xl font-bold text-white group-hover:text-red-400 transition-colors duration-200">{title}</h3>
                 <p className="mt-2 text-sm text-zinc-500 leading-relaxed">{desc}</p>
@@ -484,7 +276,6 @@ export default function Home() {
     <>
       <PinnedHero />
       <StatsBand />
-      <Directions />
       <WhyDEI />
       <HowWeWork />
       <CTA />

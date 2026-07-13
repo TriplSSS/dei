@@ -35,15 +35,13 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
             {/* Изображение */}
             <Reveal direction="left" delay={0}>
-              <div className="premium-panel glass-card relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[0_36px_110px_-72px_rgba(220,38,38,0.9)]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(248,113,113,0.22),transparent_50%)]" />
+              <div className="product-photo-stage premium-panel glass-card relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[0_36px_110px_-72px_rgba(220,38,38,0.9)]">
                 <img
                   src={product.img}
                   alt={product.name}
-                  className="relative h-full w-full object-cover"
+                  className="product-photo-blend relative h-full w-full"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/72 via-transparent to-black/12" />
-                <div className="absolute inset-x-8 bottom-6 h-px bg-gradient-to-r from-transparent via-red-400/55 to-transparent" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(9,9,11,0.68),transparent_58%)]" />
                 <div className="absolute top-4 left-4 flex gap-2">
                   <span className="glass-pill rounded-md px-3 py-1 text-xs font-medium uppercase tracking-normal text-red-300">
                     {product.categoryLabel}
@@ -95,9 +93,9 @@ export default function ProductPageClient({ product, products }: { product: Prod
                   <div className="px-5 py-3 border-b border-white/[0.05]">
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Технические характеристики</p>
                   </div>
-                  <div className="divide-y divide-white/[0.04]">
+                  <div className="grid gap-1 p-1">
                     {product.specs.map((spec, i) => (
-                      <div key={i} className="flex items-center justify-between px-5 py-3">
+                      <div key={i} className="flex items-center justify-between rounded-lg bg-white/[0.018] px-4 py-3">
                         <span className="text-sm text-zinc-500">{spec.label}</span>
                         <span className="text-sm text-zinc-200 font-medium text-right max-w-[55%]">{spec.value}</span>
                       </div>
@@ -152,12 +150,10 @@ export default function ProductPageClient({ product, products }: { product: Prod
                 <Reveal key={p.slug} delay={i * 0.07} direction="blur">
                   <Link href={`/catalog/${p.slug}`} className="block group">
                     <div className="product-card-premium glass-card hover-lift rounded-2xl overflow-hidden">
-                      <div className="relative aspect-[4/3] overflow-hidden">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(248,113,113,0.18),transparent_48%)]" />
-                        <img src={p.img} alt={p.name} className="relative w-full h-full object-cover img-zoom" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/60 via-transparent to-transparent" />
+                      <div className="product-photo-stage relative aspect-[4/3] overflow-hidden">
+                        <img src={p.img} alt={p.name} className="product-photo-blend relative w-full h-full img-zoom" />
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(9,9,11,0.62),transparent_58%)]" />
                       </div>
-                      <div className="h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent" />
                       <div className="glass-inner p-4 flex items-center justify-between">
                         <div>
                           <p className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">{p.name}</p>

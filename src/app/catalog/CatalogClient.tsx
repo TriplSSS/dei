@@ -238,10 +238,9 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
                     <div className="product-card-premium group glass-card hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300 hover:border-red-600/25">
                       <Link href={`/catalog/${product.slug}`} className="block">
-                        <div className="relative aspect-[16/10] overflow-hidden">
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(248,113,113,0.18),transparent_48%)]" />
-                          <img src={product.img} alt={product.name} className="relative h-full w-full object-cover img-zoom" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/65 via-transparent to-black/10" />
+                        <div className="product-photo-stage relative aspect-[16/10] overflow-hidden">
+                          <img src={product.img} alt={product.name} className="product-photo-blend relative h-full w-full img-zoom" />
+                          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(9,9,11,0.62),transparent_56%)]" />
                           <div className="absolute left-3 top-3 flex gap-1.5">
                             <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-300">
                               {product.categoryLabel}
@@ -263,7 +262,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                         </Link>
                         <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">{product.description}</p>
 
-                        <div className="grid gap-1.5 border-t border-white/[0.05] pt-2">
+                        <div className="grid gap-1.5 pt-2">
                           {product.specs.slice(0, 2).map((spec) => (
                             <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-[11px] leading-none">
                               <span className="truncate text-zinc-600">{spec.label}</span>
@@ -272,7 +271,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                           ))}
                         </div>
 
-                        <div className="mt-auto flex items-baseline justify-between gap-3 border-t border-white/[0.05] pt-3">
+                        <div className="mt-auto flex items-baseline justify-between gap-3 pt-3">
                           <p className="text-base font-bold tabular-nums text-red-500 sm:text-lg">{product.price}</p>
                           <span className="shrink-0 text-[11px] text-zinc-600">под заказ</span>
                         </div>
