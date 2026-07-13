@@ -4,18 +4,14 @@ import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
-import ScrambleText from "@/components/ScrambleText";
 import ProductCard from "@/components/ProductCard";
 import SideCircuits from "@/components/SideCircuits";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence, MotionConfig, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
-
-function MorphBlob({ className = "" }: { className?: string }) {
-  return <div className={`pointer-events-none absolute blur-[80px] opacity-[0.18] ${className}`} />;
-}
 
 /* ─── Hero ─── */
 function PinnedHero() {
@@ -35,91 +31,92 @@ function PinnedHero() {
         className="sticky top-0 h-[100dvh] overflow-hidden"
       >
 
-        {/* Background — CSS, без фото */}
+        {/* Background */}
         <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
           <div className="absolute inset-0 bg-[#09090b]" />
 
-          {/* Красный glow снизу-слева — основной */}
+          <div className="absolute bottom-[8%] right-[-8%] h-[58dvh] max-h-[620px] w-[82vw] max-w-[720px] opacity-75 mix-blend-screen sm:right-[2%] md:h-[68dvh] md:w-[58vw]">
+            <Image
+              src="/products/dei-mig-250.jpg"
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 768px) 58vw, 82vw"
+              className="object-contain"
+            />
+          </div>
+
+          <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-[#09090b]/88 to-[#09090b]/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-[#09090b]/45" />
+
           <div className="absolute pointer-events-none" style={{
             bottom: "-20%", left: "-15%",
             width: "80vw", height: "80vw",
-            background: "radial-gradient(circle, rgba(220,38,38,0.22) 0%, rgba(185,28,28,0.08) 40%, transparent 68%)",
+            background: "radial-gradient(circle, rgba(220,38,38,0.12) 0%, rgba(185,28,28,0.05) 42%, transparent 68%)",
             filter: "blur(48px)",
           }} />
 
-          {/* Красный glow сверху-справа */}
-          <div className="absolute pointer-events-none" style={{
-            top: "-20%", right: "-20%",
-            width: "55vw", height: "55vw",
-            background: "radial-gradient(circle, rgba(153,27,27,0.16) 0%, transparent 60%)",
-            filter: "blur(72px)",
-          }} />
-
-          {/* Центральный тёмно-красный акцент */}
-          <div className="absolute pointer-events-none" style={{
-            top: "30%", left: "30%",
-            width: "40vw", height: "40vw",
-            background: "radial-gradient(circle, rgba(220,38,38,0.04) 0%, transparent 70%)",
-            filter: "blur(80px)",
-          }} />
-
-          {/* Dot-grid поверх */}
           <div className="absolute inset-0 pointer-events-none" style={{
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "44px 44px",
+            backgroundImage: "radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
             maskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
             WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 65% 45%, transparent 15%, black 75%)",
           }} />
 
-          {/* Боковые энергетические рельсы (ток по проводам) */}
-          <div className="sphere-in absolute inset-0 pointer-events-none">
+          <div className="sphere-in absolute inset-0 pointer-events-none opacity-40">
             <SideCircuits className="w-full h-full" />
           </div>
 
-          {/* Год-водяной знак */}
           <div
             aria-hidden
             className="absolute bottom-8 right-8 font-extrabold tabular-nums select-none leading-none"
-            style={{ fontSize: "clamp(5rem,13vw,11rem)", color: "rgba(255,255,255,0.022)", letterSpacing: "-0.05em" }}
+            style={{ fontSize: "6rem", color: "rgba(255,255,255,0.022)" }}
           >
             2006
           </div>
 
-          {/* Fade снизу */}
           <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#09090b] to-transparent pointer-events-none" />
         </motion.div>
 
-        {/* Morphing blobs */}
-        <MorphBlob className="w-[700px] h-[700px] bg-red-700 rounded-full morph-slow -left-48 -bottom-48" />
-        <MorphBlob className="w-[350px] h-[350px] bg-red-900 rounded-full morph right-16 top-16" />
-        <MorphBlob className="w-[180px] h-[180px] bg-red-800 rounded-full morph-fast left-[45%] top-[20%]" />
-
-        {/* Content — по центру, поверх сферы */}
-        <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 h-full flex items-center justify-center px-6">
-          <div className="flex flex-col items-center text-center max-w-[760px]">
-            <h1 className="hero-in hero-in-1 text-[clamp(4.5rem,17vw,14rem)] font-extrabold tracking-[-0.055em] leading-[0.85] mb-7">
-              <ScrambleText text="DEI" className="text-red-500" />
+        <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 flex h-full items-center px-6">
+          <div className="mx-auto flex w-full max-w-[1400px] flex-col items-start">
+            <p className="hero-in hero-in-1 mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">
+              Интернет-магазин промышленного оборудования
+            </p>
+            <h1 className="hero-in hero-in-1 mb-6 text-6xl font-extrabold leading-none tracking-normal text-white md:text-8xl lg:text-9xl">
+              DEI
             </h1>
 
-            <p className="hero-in hero-in-3 text-zinc-300 text-base md:text-lg leading-relaxed max-w-[480px] mb-9">
-              Производим сварочные инверторы и светодиодные светильники.
-              Аттестация НАКС. Поставки по РФ и СНГ.
+            <p className="hero-in hero-in-3 mb-8 max-w-[540px] text-base leading-relaxed text-zinc-300 md:text-lg">
+              Сварочные инверторы, светильники, центраторы и расходники для производства. Заказ через сайт, счет на оплату и онлайн-оплата.
             </p>
 
-            <div className="hero-in hero-in-4 flex items-center gap-4">
+            <div className="hero-in hero-in-4 flex flex-wrap items-center gap-3">
               <MagneticButton
-                href="#catalog"
-                className="bg-red-600 hover:bg-red-500 text-white px-7 py-3.5 font-semibold btn inline-block shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors"
+                href="/catalog"
+                className="inline-block bg-red-600 px-7 py-3.5 font-semibold text-white shadow-[0_8px_32px_-4px_rgba(220,38,38,0.5)] transition-colors hover:bg-red-500 btn"
               >
-                Каталог
+                Перейти в каталог
               </MagneticButton>
-              <a href="/contacts" className="text-zinc-400 hover:text-white text-sm font-medium inline-flex items-center gap-1.5 transition-colors duration-200">
-                Контакты
+              <Link href="/checkout" className="glass-pill inline-flex rounded-lg px-5 py-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:text-white btn">
+                Оформить заказ
+              </Link>
+            </div>
+
+            <div className="hero-in hero-in-5 mt-8 grid w-full max-w-[620px] grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/[0.07] bg-white/[0.06] sm:grid-cols-4">
+              {["Сварка", "Свет", "Центраторы", "Расходники"].map((item) => (
+                <Link key={item} href="/catalog" className="bg-[#0b0b0d]/80 px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.04] hover:text-white">
+                  {item}
+                </Link>
+              ))}
+            </div>
+
+            <Link href="/contacts" className="hero-in hero-in-5 mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors duration-200 hover:text-white">
+              Нужна консультация
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
-              </a>
-            </div>
+            </Link>
           </div>
         </motion.div>
 
@@ -334,27 +331,53 @@ function Products() {
   ];
 
   return (
-    <section className="py-20 px-6">
-      <div className="max-w-[1400px] mx-auto">
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-[1400px]">
         <Reveal>
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <p className="text-red-500 text-[11px] font-semibold tracking-[0.22em] uppercase mb-3">Ассортимент</p>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-[-0.04em] text-white leading-[0.9]">
-                Популярные<br />позиции
+          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-[720px]">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">Витрина магазина</p>
+              <h2 className="text-3xl font-extrabold leading-tight tracking-normal text-white md:text-5xl">
+                Популярные товары для производства
               </h2>
+              <p className="mt-4 max-w-[560px] text-sm leading-relaxed text-zinc-400">
+                Быстрый вход в основные категории: сварка, промышленный свет, центраторы и расходные материалы.
+              </p>
             </div>
-            <a href="/contacts" className="hidden md:inline-flex items-center gap-1.5 text-zinc-500 hover:text-white text-sm transition-colors duration-200">
-              Запросить прайс
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/catalog"
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500"
+              >
+                Открыть каталог
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </Link>
+              <Link href="/checkout" className="inline-flex rounded-lg border border-white/[0.08] px-5 py-3 text-sm font-semibold text-zinc-300 btn transition-colors hover:border-red-600/30 hover:text-white">
+                Оформить заказ
+              </Link>
+            </div>
           </div>
         </Reveal>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        <div className="mb-5 grid gap-px overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.06] md:grid-cols-3">
+          {[
+            ["10", "товаров в демо-каталоге"],
+            ["4", "основные группы"],
+            ["2", "способа оплаты"],
+          ].map(([value, label]) => (
+            <div key={label} className="bg-[#0b0b0d]/80 px-5 py-4">
+              <div className="text-2xl font-extrabold tabular-nums text-white">{value}</div>
+              <div className="mt-1 text-xs text-zinc-500">{label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {products.map((p, i) => (
-            <ProductCard key={i} product={p} index={i} />
+            <ProductCard key={p.name} product={p} index={i} />
           ))}
         </div>
       </div>
@@ -465,7 +488,6 @@ function HowWeWork() {
 function CTA() {
   return (
     <section className="py-24 px-6 relative overflow-hidden">
-      <MorphBlob className="w-[700px] h-[700px] bg-red-950 rounded-full morph-slow left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
       <div className="mx-auto max-w-[820px] relative text-center">
         <Reveal>
           <h2 className="text-4xl md:text-6xl font-extrabold tracking-[-0.045em] text-white leading-[0.92]">

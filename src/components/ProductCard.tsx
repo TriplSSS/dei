@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Reveal from "./Reveal";
 
 interface Product {
@@ -13,10 +14,10 @@ export default function ProductCard({ product, index }: { product: Product; inde
   return (
     <Reveal delay={index * 0.07} direction="blur">
       <div
-        className="group glass-card hover-lift rounded-2xl overflow-hidden cursor-default flex flex-col"
+        className="group glass-card flex cursor-default flex-col overflow-hidden rounded-lg"
         style={{
           transition:
-            "transform 300ms cubic-bezier(0.22,1,0.36,1), box-shadow 300ms ease, border-color 300ms ease",
+            "box-shadow 220ms ease, border-color 220ms ease, background-color 220ms ease",
         }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLDivElement).style.borderColor =
@@ -37,34 +38,32 @@ export default function ProductCard({ product, index }: { product: Product; inde
             alt={product.name}
             className="w-full h-full object-cover img-zoom"
           />
-          <div className="absolute inset-0 bg-red-900/0 group-hover:bg-red-900/10 transition-colors duration-300" />
+          <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
           {/* Категория поверх картинки */}
           <div className="absolute top-3 left-3">
-            <span className="glass-pill rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-red-400">
+            <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-400">
               {product.category}
             </span>
           </div>
         </div>
-        <div className="h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent" />
+        <div className="h-px bg-white/[0.06]" />
 
-        {/* Контент */}
-        <div className="glass-inner flex flex-col gap-3 p-4 flex-1">
-          <h3 className="font-semibold text-zinc-100 text-sm leading-snug group-hover:text-white transition-colors duration-200">
+        <div className="glass-inner flex flex-1 flex-col gap-3 p-4">
+          <h3 className="min-h-10 text-sm font-semibold leading-snug text-zinc-100 transition-colors duration-200 group-hover:text-white">
             {product.name}
           </h3>
 
-          <div className="flex items-center justify-between mt-auto pt-1">
-            <p className="text-red-500 font-bold text-base tabular-nums">
+          <div className="mt-auto flex items-center justify-between gap-3 border-t border-white/[0.05] pt-3">
+            <p className="text-base font-bold tabular-nums text-red-500">
               {product.price}
             </p>
 
-            {/* Кнопка "Запросить" */}
-            <a
-              href="/contacts"
-              className="btn glass-pill text-zinc-300 hover:text-white text-xs px-3 py-1.5 rounded-lg transition-colors duration-200"
+            <Link
+              href="/catalog"
+              className="btn rounded-md border border-white/[0.08] px-3 py-1.5 text-xs text-zinc-300 transition-colors duration-200 hover:border-red-600/30 hover:text-white"
             >
-              Запросить
-            </a>
+              В каталог
+            </Link>
           </div>
         </div>
       </div>
