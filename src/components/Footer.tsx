@@ -4,10 +4,8 @@ const navColumns = [
   {
     title: "Продукция",
     links: [
-      { href: "/catalog?category=welding", label: "Сварочные инверторы" },
-      { href: "/catalog?category=light", label: "LED-светильники" },
-      { href: "/catalog?category=centrators", label: "Центраторы" },
-      { href: "/catalog?category=consumables", label: "Электроды и расходники" },
+      { href: "/catalog?category=welding", label: "Сварочный аппарат Протон" },
+      { href: "/catalog?category=light", label: "Светодиодный светильник Кобра" },
     ],
   },
   {
@@ -39,8 +37,8 @@ export default function Footer() {
               DEI
             </Link>
             <p className="text-zinc-500 text-sm leading-relaxed max-w-[260px]">
-              ООО ДонЭлектроИнтел — сварочное оборудование, светодиодные
-              светильники и инструмент. Ростов-на-Дону.
+              ООО ДонЭлектроИнтел — сварочное оборудование и светодиодные
+              светильники. Ростов-на-Дону.
             </p>
           </div>
 

@@ -4,7 +4,6 @@ import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import ParallaxImage from "@/components/ParallaxImage";
 import MagneticButton from "@/components/MagneticButton";
-import ProductCard from "@/components/ProductCard";
 import SideCircuits from "@/components/SideCircuits";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +37,7 @@ function PinnedHero() {
 
           <div className="hero-product-frame absolute bottom-[7%] right-[-12%] h-[58dvh] max-h-[650px] w-[88vw] max-w-[780px] opacity-90 mix-blend-screen sm:right-[1%] md:h-[70dvh] md:w-[60vw]">
             <Image
-              src="/products/dei-mig-250.jpg"
+              src="/products/proton-welder.jpg"
               alt=""
               fill
               priority
@@ -91,7 +90,7 @@ function PinnedHero() {
             </h1>
 
             <p className="hero-in hero-in-3 mb-8 max-w-[540px] text-base leading-relaxed text-zinc-300 md:text-lg">
-              Сварочные инверторы, светильники, центраторы и расходники для производства. Заказ через сайт, счет на оплату и онлайн-оплата.
+              Два тестовых товара для проверки интернет-магазина: сварочный аппарат Протон и светодиодный светильник Кобра.
             </p>
 
             <div className="hero-in hero-in-4 flex flex-wrap items-center gap-3">
@@ -107,7 +106,7 @@ function PinnedHero() {
             </div>
 
             <div className="hero-in hero-in-5 mt-8 grid w-full max-w-[620px] grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/[0.07] bg-white/[0.06] sm:grid-cols-4">
-              {["Сварка", "Свет", "Центраторы", "Расходники"].map((item) => (
+              {["Протон", "Кобра"].map((item) => (
                 <Link key={item} href="/catalog" className="category-rail-link bg-[#0b0b0d]/80 px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white">
                   {item}
                 </Link>
@@ -164,33 +163,44 @@ function StatsBand() {
 }
 
 /* ─── Направления: интерактивный переключатель ─── */
-const directions = [
+type DirectionItem = {
+  tab: string;
+  kicker: string;
+  title: string;
+  desc: string;
+  specs: { v: string; l: string }[];
+  price: string;
+  img: string;
+  fit: "cover" | "contain";
+};
+
+const directions: DirectionItem[] = [
   {
     tab: "Сварка",
-    kicker: "MMA · TIG · MIG/MAG",
-    title: "Сварочное оборудование",
-    desc: "Инверторы ПРОТОН-ДЭИ собственной разработки. Аттестация НАКС. Для промышленности, строительства и нефтегазовой отрасли.",
+    kicker: "Тестовый товар",
+    title: "Сварочный аппарат Протон",
+    desc: "Первый тестовый товар каталога. Используем его для проверки карточки, корзины и оформления заказа.",
     specs: [
-      { v: "200 А", l: "макс. ток сварки" },
-      { v: "НАКС", l: "аттестация" },
-      { v: "3 года", l: "гарантия" },
+      { v: "220 В", l: "питание" },
+      { v: "1 шт.", l: "минимальный заказ" },
+      { v: "Тест", l: "статус" },
     ],
     price: "от 18 500 ₽",
-    img: "/products/dei-mig-250.jpg",
-    fit: "contain" as const,
+    img: "/products/proton-welder.jpg",
+    fit: "cover" as const,
   },
   {
     tab: "Свет",
-    kicker: "Цех · Склад · Улица",
-    title: "Светодиодные светильники",
-    desc: "Промышленные LED-решения для цехов, складов и производственных площадок. Собственное производство в Ростове-на-Дону.",
+    kicker: "Тестовый товар",
+    title: "Светодиодный светильник Кобра",
+    desc: "Второй тестовый товар каталога. Проверяем отображение светильника, корзину и оформление заказа.",
     specs: [
-      { v: "70%", l: "экономия энергии" },
-      { v: "IP65", l: "степень защиты" },
-      { v: "50 000 ч", l: "ресурс" },
+      { v: "LED", l: "тип" },
+      { v: "1 шт.", l: "минимальный заказ" },
+      { v: "Тест", l: "статус" },
     ],
     price: "от 8 200 ₽",
-    img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1200&h=1200&fit=crop&q=80",
+    img: "/products/kobra-led.jpg",
     fit: "cover" as const,
   },
 ];
@@ -339,85 +349,11 @@ function Directions() {
   );
 }
 
-/* ─── Популярные позиции ─── */
-function Products() {
-  const products = [
-    { name: "ПРОТОН-ДЭИ ВДИ 200", category: "Инверторы", price: "от 18 500 ₽", img: "/products/dei-mig-250.jpg" },
-    { name: "LED-DEI-120", category: "Светильники", price: "от 8 200 ₽", img: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=400&h=400&fit=crop&q=80" },
-    { name: "ЦЗН 159-426", category: "Центраторы", price: "от 24 000 ₽", img: "https://images.unsplash.com/photo-1605600659873-d808a13e4d2a?w=400&h=400&fit=crop&q=80" },
-    { name: "МР-3 d3.0", category: "Электроды", price: "от 1 200 ₽", img: "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?w=400&h=400&fit=crop&q=80" },
-  ];
-
-  return (
-    <section className="relative overflow-hidden px-6 py-20">
-      <div className="ambient-red-grid pointer-events-none absolute inset-x-0 top-10 h-[420px] opacity-45" />
-      <div className="relative mx-auto max-w-[1400px]">
-        <Reveal>
-          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-[720px]">
-              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">Витрина магазина</p>
-              <h2 className="text-3xl font-extrabold leading-tight tracking-normal text-white md:text-5xl">
-                Популярные товары для производства
-              </h2>
-              <p className="mt-4 max-w-[560px] text-sm leading-relaxed text-zinc-400">
-                Быстрый вход в основные категории: сварка, промышленный свет, центраторы и расходные материалы.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/catalog"
-                className="energy-strip inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500"
-              >
-                Открыть каталог
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </Link>
-              <Link href="/checkout" className="inline-flex rounded-lg border border-white/[0.08] px-5 py-3 text-sm font-semibold text-zinc-300 btn transition-colors hover:border-red-600/30 hover:text-white">
-                Оформить заказ
-              </Link>
-            </div>
-          </div>
-        </Reveal>
-
-        <div className="mb-5 grid gap-px overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.06] shadow-[0_20px_80px_-52px_rgba(220,38,38,0.65)] md:grid-cols-3">
-          {[
-            ["10+", "позиций в каталоге"],
-            ["4", "основные группы"],
-            ["2", "способа оплаты"],
-          ].map(([value, label]) => (
-            <div key={label} className="store-metric px-5 py-4">
-              <div className="text-2xl font-extrabold tabular-nums text-white">{value}</div>
-              <div className="mt-1 text-xs text-zinc-500">{label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {products.map((p, i) => (
-            <ProductCard key={p.name} product={p} index={i} />
-          ))}
-        </div>
-
-        <div className="mt-8 overflow-hidden rounded-lg border border-red-500/15 bg-red-500/[0.045] px-5 py-4">
-          <div className="energy-strip flex flex-col gap-2 text-sm text-zinc-300 sm:flex-row sm:items-center sm:justify-between">
-            <span>Не нашли нужную комплектацию? Подберем оборудование под задачу и подготовим счет.</span>
-            <Link href="/contacts" className="font-semibold text-red-300 transition-colors hover:text-red-200">
-              Связаться
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ─── Почему DEI: full-bleed фон с параллаксом ─── */
 function WhyDEI() {
   const points = [
     ["Собственное производство", "Полный цикл: от проектирования до готового изделия. Ростов-на-Дону."],
-    ["Аттестация НАКС", "Инвертор ПРОТОН-ДЭИ ВДИ 200. Запатентованные технологии."],
+    ["Каталог без дублей", "На сайте остается один каталог с двумя тестовыми товарами для проверки магазина."],
     ["Комплексный подход", "Выезд, расчёт, поставка, монтаж и консультирование при эксплуатации."],
   ];
   return (
@@ -549,7 +485,6 @@ export default function Home() {
       <PinnedHero />
       <StatsBand />
       <Directions />
-      <Products />
       <WhyDEI />
       <HowWeWork />
       <CTA />

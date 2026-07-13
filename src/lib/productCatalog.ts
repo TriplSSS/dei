@@ -20,8 +20,20 @@ export type ProductMutationResult = {
 };
 
 const PRODUCT_FILE_NAME = "products.jsonl";
-const CATEGORY_KEYS = new Set<ProductCategory>(["welding", "light", "centrators", "consumables"]);
+const CATEGORY_KEYS = new Set<ProductCategory>(["welding", "light"]);
 const AVAILABILITY_STATUSES = new Set<ProductAvailabilityStatus>(["in_stock", "on_order", "preorder", "out_of_stock"]);
+const LEGACY_PRODUCT_SLUGS = new Set([
+  "proton-dei-vdi-200",
+  "proton-dei-vdi-180",
+  "proton-dei-vdu-315",
+  "led-dei-120",
+  "led-dei-60-street",
+  "led-dei-40-warehouse",
+  "czn-159-426",
+  "csn-57-159",
+  "electrody-mr3",
+  "electrody-uoni",
+]);
 
 type SqlClient = ReturnType<typeof neon>;
 
@@ -288,6 +300,7 @@ async function listProductsFromJsonl() {
         try {
           const record = JSON.parse(line) as unknown;
           if (!isProductRecord(record)) return;
+          if (LEGACY_PRODUCT_SLUGS.has(record.product.slug)) return;
 
           if (record.deleted) {
             products.delete(record.product.slug);
@@ -319,6 +332,7 @@ async function listProductsFromDatabase(sql: SqlClient) {
   rows.forEach((row) => {
     const slug = normalizeText(row.slug);
     if (!slug) return;
+    if (LEGACY_PRODUCT_SLUGS.has(slug)) return;
 
     if (row.active === false) {
       products.delete(slug);

@@ -133,7 +133,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
               Продукция DEI
             </h1>
             <p className="mt-4 max-w-[520px] text-sm leading-relaxed text-zinc-400 sm:text-base">
-              Собственное производство в Ростове-на-Дону. Сварочное оборудование, промышленное освещение, центраторы и расходники.
+              Сейчас в каталоге два тестовых товара: сварочный аппарат Протон и светодиодный светильник Кобра.
             </p>
           </Reveal>
         </div>
