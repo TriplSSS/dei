@@ -40,11 +40,7 @@ export function ElectricHero() {
 
   return (
     <section ref={heroRef} className="dei-cinematic-hero" aria-labelledby="dei-hero-title">
-      <div className="dei-hero-panels" aria-hidden="true">
-        <span className="dei-hero-panel dei-hero-panel--left" />
-        <span className="dei-hero-panel dei-hero-panel--center" />
-        <span className="dei-hero-panel dei-hero-panel--right" />
-      </div>
+      <div className="dei-hero-panels" aria-hidden="true" />
       <div className="dei-hero-light" aria-hidden="true" />
 
       <div className="dei-hero-layout">

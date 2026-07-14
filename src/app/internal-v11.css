@@ -62,6 +62,10 @@
   margin-inline: auto;
 }
 
+.page-header-v11--centered .page-header-v11__meta {
+  justify-content: center;
+}
+
 .page-header-v11__description {
   max-width: 650px;
   margin-top: 1.35rem;
