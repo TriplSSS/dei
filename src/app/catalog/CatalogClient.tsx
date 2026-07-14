@@ -1,325 +1,154 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import Reveal from "@/components/Reveal";
-import InternalMasthead from "@/components/InternalMasthead";
-import AddToCartButton from "@/components/AddToCartButton";
+import PageHeader from "@/components/PageHeader";
+import ProductCard from "@/components/ProductCard";
 import { CATEGORIES, type Product } from "@/data/products";
 
-const ruble = (n: number) => n.toLocaleString("ru-RU") + " ₽";
-const CATEGORY_KEYS = CATEGORIES.map((c) => c.key as string);
+const ruble = (value: number) => `${value.toLocaleString("ru-RU")} ₽`;
+const CATEGORY_KEYS = CATEGORIES.map((category) => category.key as string);
 
 export default function CatalogClient({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category");
-  const priceMin = Math.min(...products.map((p) => p.priceNum));
-  const priceMax = Math.max(...products.map((p) => p.priceNum));
-  const [activeCategory, setActiveCategory] = useState(
-    initialCategory && CATEGORY_KEYS.includes(initialCategory) ? initialCategory : "all"
+  const requestedCategory = searchParams.get("category");
+  const minPrice = Math.min(...products.map((product) => product.priceNum));
+  const maxCatalogPrice = Math.max(...products.map((product) => product.priceNum));
+  const [category, setCategory] = useState(
+    requestedCategory && CATEGORY_KEYS.includes(requestedCategory) ? requestedCategory : "all"
   );
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"default" | "asc" | "desc">("default");
-  const [maxPrice, setMaxPrice] = useState(priceMax);
+  const [maxPrice, setMaxPrice] = useState(maxCatalogPrice);
   const [onlyNaks, setOnlyNaks] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [moreFilters, setMoreFilters] = useState(false);
 
-  const filtered = useMemo(() => {
-    let list = activeCategory === "all" ? products : products.filter((p) => p.category === activeCategory);
-    if (onlyNaks) list = list.filter((p) => p.naks);
-    list = list.filter((p) => p.priceNum <= maxPrice);
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q))
+  const filteredProducts = useMemo(() => {
+    let result = category === "all" ? products : products.filter((product) => product.category === category);
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (normalizedQuery) {
+      result = result.filter((product) =>
+        [product.name, product.description, ...product.tags].some((value) => value.toLowerCase().includes(normalizedQuery))
       );
     }
-    if (sort === "asc") list = [...list].sort((a, b) => a.priceNum - b.priceNum);
-    if (sort === "desc") list = [...list].sort((a, b) => b.priceNum - a.priceNum);
-    return list;
-  }, [activeCategory, search, sort, maxPrice, onlyNaks, products]);
+    result = result.filter((product) => product.priceNum <= maxPrice);
+    if (onlyNaks) result = result.filter((product) => product.naks);
+    if (sort === "asc") result = [...result].sort((a, b) => a.priceNum - b.priceNum);
+    if (sort === "desc") result = [...result].sort((a, b) => b.priceNum - a.priceNum);
 
-  const countByCat = (key: string) =>
-    key === "all" ? products.length : products.filter((p) => p.category === key).length;
-  const activeCategoryLabel = CATEGORIES.find((cat) => cat.key === activeCategory)?.label ?? "Все";
-  const hasPriceFilter = maxPrice < priceMax;
-  const activeFilterCount = (activeCategory !== "all" ? 1 : 0) + (hasPriceFilter ? 1 : 0) + (onlyNaks ? 1 : 0);
-  const hasCatalogState = activeFilterCount > 0 || search.trim().length > 0 || sort !== "default";
+    return result;
+  }, [category, maxPrice, onlyNaks, products, query, sort]);
 
-  const reset = () => {
-    setActiveCategory("all");
-    setSearch("");
+  const resetFilters = () => {
+    setCategory("all");
+    setQuery("");
     setSort("default");
-    setMaxPrice(priceMax);
+    setMaxPrice(maxCatalogPrice);
     setOnlyNaks(false);
   };
 
-  const Filters = (
-    <div className="catalog-filters flex flex-col gap-6 lg:gap-8">
-      {/* Категории */}
-      <div>
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Категории</p>
-        <div className="flex flex-col gap-1">
-          {CATEGORIES.map((cat) => (
-            <button
-              type="button"
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
-              className={`flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-                activeCategory === cat.key
-                  ? "bg-red-600/15 text-white"
-                  : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
-              }`}
-            >
-              <span>{cat.label}</span>
-              <span className="text-xs tabular-nums text-zinc-600">{countByCat(cat.key)}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Цена */}
-      <div>
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Цена до</p>
-        <input
-          type="range"
-          aria-label="Максимальная цена"
-          min={priceMin}
-          max={priceMax}
-          step={100}
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(Number(e.target.value))}
-          className="w-full accent-red-600"
-        />
-        <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 tabular-nums">
-          <span>{ruble(priceMin)}</span>
-          <span className="font-semibold text-red-400">до {ruble(maxPrice)}</span>
-        </div>
-      </div>
-
-      {/* НАКС */}
-      <div>
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Аттестация</p>
-        <label className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-300">
-          <input
-            type="checkbox"
-            aria-label="Только товары с аттестацией НАКС"
-            checked={onlyNaks}
-            onChange={(e) => setOnlyNaks(e.target.checked)}
-            className="h-4 w-4 accent-red-600"
-          />
-          Только с аттестацией НАКС
-        </label>
-      </div>
-
-      <button type="button" onClick={reset} className="self-start text-xs text-zinc-500 hover:text-red-400 transition-colors">
-        Сбросить фильтры
-      </button>
-    </div>
-  );
+  const activeExtraFilters = Number(maxPrice < maxCatalogPrice) + Number(onlyNaks);
 
   return (
-    <>
-      <InternalMasthead
-        index="00"
-        eyebrow="Каталог оборудования"
-        title="Оборудование, отобранное по рабочим параметрам"
-        summary="Сварочные аппараты и промышленное освещение DEI. В каждой позиции — ключевые характеристики, комплектация и прямой запрос инженеру."
-        facts={[
-          { label: "Категорий", value: String(CATEGORIES.length - 1).padStart(2, "0") },
-          { label: "Позиций", value: String(products.length).padStart(2, "0") },
-          { label: "Поставка", value: "ПО РОССИИ" },
-        ]}
+    <div className="catalog-page-v11">
+      <PageHeader
+        centered
+        eyebrow="Каталог DEI"
+        title="Оборудование и материалы"
+        description="Сварочное оборудование и промышленное освещение. Подберём комплектацию, подготовим счёт и организуем поставку."
       />
 
-      <section className="catalog-v10">
-        <div className="catalog-v10__layout">
-          {/* ── Сайдбар (десктоп) ── */}
-          <aside className="hidden lg:block">
-            <div className="catalog-filter-panel catalog-v10__filters sticky top-24 p-4">
-              {Filters}
-            </div>
-          </aside>
-
-          {/* ── Основная колонка ── */}
-          <div className="min-w-0">
-            {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="catalog-toolbar catalog-v10__toolbar min-w-0 p-2.5">
-              <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
-                <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
-                  <p className="text-sm text-zinc-500">
-                    Показано{" "}
-                    <span className="font-semibold text-zinc-200 tabular-nums">{filtered.length}</span>
-                    <span className="text-zinc-600"> / {products.length}</span>
-                  </p>
+      <section className="catalog-section-v11" aria-label="Каталог товаров">
+        <div className="catalog-section-v11__inner">
+          <div className="catalog-controls-v11">
+            <div className="catalog-categories-v11" role="group" aria-label="Категории товаров">
+              {CATEGORIES.map((item) => {
+                const count = item.key === "all" ? products.length : products.filter((product) => product.category === item.key).length;
+                return (
                   <button
+                    key={item.key}
                     type="button"
-                    onClick={() => setFiltersOpen((v) => !v)}
-                    aria-expanded={filtersOpen}
-                    aria-controls="catalog-mobile-filters"
-                    className="glass-pill inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm text-zinc-300 shadow-[0_14px_32px_-24px_rgba(248,113,113,0.85)] lg:hidden"
+                    className={category === item.key ? "is-active" : ""}
+                    aria-pressed={category === item.key}
+                    onClick={() => setCategory(item.key)}
                   >
-                    Фильтры
-                    {activeFilterCount > 0 && (
-                      <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
-                        {activeFilterCount}
-                      </span>
-                    )}
+                    {item.label}<span>{count}</span>
                   </button>
-                </div>
-
-                <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_7.75rem] gap-2 md:ml-auto md:flex md:items-center">
-                  <input
-                    type="text"
-                    aria-label="Поиск по каталогу"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Поиск по каталогу…"
-                    className="dei-control min-w-0 px-3.5 py-2 text-sm md:w-64 md:flex-none"
-                  />
-                  <select
-                    value={sort}
-                    aria-label="Сортировка товаров"
-                    onChange={(e) => setSort(e.target.value as typeof sort)}
-                    className="dei-control w-full cursor-pointer px-3 py-2 text-sm md:w-auto"
-                  >
-                    <option value="default" style={{ background: "#09090b" }}>Сортировка</option>
-                    <option value="asc" style={{ background: "#09090b" }}>Дешевле</option>
-                    <option value="desc" style={{ background: "#09090b" }}>Дороже</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
-                <span className="rounded-md border border-white/[0.06] bg-black/20 px-2 py-1 text-zinc-500">
-                  {activeCategoryLabel}
-                </span>
-                {hasPriceFilter && (
-                  <span className="rounded-md border border-white/[0.06] bg-black/20 px-2 py-1 text-zinc-500">
-                    до {ruble(maxPrice)}
-                  </span>
-                )}
-                {onlyNaks && (
-                  <span className="rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-1 text-emerald-300">
-                    НАКС
-                  </span>
-                )}
-                {hasCatalogState && (
-                  <button type="button" onClick={reset} className="ml-auto rounded-md px-2 py-1 text-zinc-500 transition-colors hover:text-red-400">
-                    Сбросить
-                  </button>
-                )}
-              </div>
+                );
+              })}
             </div>
 
-            {/* Фильтры (моб, раскрывающиеся) */}
-            {filtersOpen && (
-              <div id="catalog-mobile-filters" className="catalog-filter-panel mb-5 p-4 lg:hidden">
-                {Filters}
-              </div>
-            )}
-
-            {/* Сетка */}
-            {filtered.length === 0 ? (
-              <div className="catalog-empty py-16 text-center">
-                <p className="text-zinc-500">Ничего не найдено</p>
-                <button type="button" onClick={reset} className="mt-3 text-sm text-red-500 hover:text-red-400 transition-colors">
-                  Сбросить фильтры
-                </button>
-              </div>
-            ) : (
-              <div className="catalog-product-list">
-                {filtered.map((product, i) => (
-                  <Reveal key={product.slug} delay={Math.min(i, 6) * 0.035}>
-                    <article className="catalog-product-sheet group">
-                      <Link href={`/catalog/${product.slug}`} className="catalog-product-sheet__visual">
-                        <div className="product-photo-stage relative h-full min-h-[240px] overflow-hidden">
-                          <Image
-                            src={product.img}
-                            alt={product.name}
-                            fill
-                            loading={i === 0 ? "eager" : "lazy"}
-                            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 30vw"
-                            className="product-photo-blend img-zoom"
-                          />
-                          <div className="catalog-product-sheet__tags absolute left-3 top-3 flex gap-1.5">
-                            <span>
-                              {product.categoryLabel}
-                            </span>
-                            {product.naks && (
-                              <span>
-                                НАКС
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-
-                      <div className="catalog-product-sheet__body">
-                        <span className="catalog-product-sheet__index">PRODUCT / {String(i + 1).padStart(2, "0")}</span>
-                        <Link href={`/catalog/${product.slug}`} className="min-w-0">
-                          <h2 className="catalog-product-sheet__title">
-                            {product.name}
-                          </h2>
-                        </Link>
-                        <p className="catalog-product-sheet__description">{product.description}</p>
-
-                        <div className="catalog-product-sheet__specs">
-                          {product.specs.slice(0, 2).map((spec) => (
-                            <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-xs leading-none">
-                              <span className="truncate text-zinc-600">{spec.label}</span>
-                              <span className="shrink-0 font-medium text-zinc-300">{spec.value}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="catalog-product-sheet__price">
-                          <p>{product.price}</p>
-                          <span className="shrink-0 text-[11px] text-zinc-600">под заказ</span>
-                        </div>
-                        <div className="catalog-product-sheet__actions">
-                          <AddToCartButton
-                            product={product}
-                            className="energy-strip min-w-0 flex-1 bg-red-600 py-3 text-center text-xs font-semibold text-white hover:bg-red-500"
-                          />
-                          <Link
-                            href={`/catalog/${product.slug}`}
-                            className="btn flex shrink-0 items-center justify-center border border-white/10 px-4 text-zinc-400 transition-colors hover:text-white"
-                            aria-label="Подробнее"
-                          >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  </Reveal>
-                ))}
-              </div>
-            )}
-
-            {/* Нестандартный заказ */}
-            <div className="catalog-bespoke catalog-v10__request mt-10 flex flex-col items-start gap-5 px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
-              <div className="min-w-0">
-                <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
-                <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>
-              </div>
-              <Link
-                href="/contacts"
-                className="energy-strip btn shrink-0 rounded-lg bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
+            <div className="catalog-search-v11">
+              <label>
+                <span className="sr-only">Поиск по названию</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" /><path d="m20 20-3.2-3.2" />
+                </svg>
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Поиск по названию…" />
+              </label>
+              <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)} aria-label="Сортировка товаров">
+                <option value="default">По умолчанию</option>
+                <option value="asc">Сначала дешевле</option>
+                <option value="desc">Сначала дороже</option>
+              </select>
+              <button
+                type="button"
+                className={`catalog-filter-toggle-v11${moreFilters ? " is-active" : ""}`}
+                aria-expanded={moreFilters}
+                aria-controls="catalog-extra-filters"
+                onClick={() => setMoreFilters((value) => !value)}
               >
-                Оставить заявку
-              </Link>
+                Фильтры{activeExtraFilters > 0 && <span>{activeExtraFilters}</span>}
+              </button>
             </div>
+
+            {moreFilters && (
+              <div id="catalog-extra-filters" className="catalog-extra-filters-v11">
+                <label>
+                  <span>Цена до <strong>{ruble(maxPrice)}</strong></span>
+                  <input type="range" min={minPrice} max={maxCatalogPrice} step={100} value={maxPrice} onChange={(event) => setMaxPrice(Number(event.target.value))} />
+                </label>
+                <label className="catalog-check-v11">
+                  <input type="checkbox" checked={onlyNaks} onChange={(event) => setOnlyNaks(event.target.checked)} />
+                  <span>Только с аттестацией НАКС</span>
+                </label>
+                <button type="button" onClick={resetFilters}>Сбросить всё</button>
+              </div>
+            )}
+          </div>
+
+          <div className="catalog-result-v11">
+            <p>Найдено товаров: <strong>{filteredProducts.length}</strong></p>
+            {(query || category !== "all" || activeExtraFilters > 0) && <button type="button" onClick={resetFilters}>Очистить фильтры</button>}
+          </div>
+
+          {filteredProducts.length > 0 ? (
+            <div className="catalog-grid-v11">
+              {filteredProducts.map((product, index) => (
+                <ProductCard key={product.slug} product={product} priority={index === 0} featured={index === 0} />
+              ))}
+            </div>
+          ) : (
+            <div className="catalog-empty-v11">
+              <span>0 товаров</span>
+              <h2>По этим параметрам ничего не найдено</h2>
+              <p>Попробуйте изменить категорию, цену или поисковый запрос.</p>
+              <button type="button" onClick={resetFilters}>Сбросить фильтры</button>
+            </div>
+          )}
+
+          <div className="catalog-help-v11">
+            <div>
+              <span>Индивидуальный подбор</span>
+              <h2>Не нашли нужную комплектацию?</h2>
+              <p>Опишите задачу — инженер предложит оборудование и рассчитает стоимость поставки.</p>
+            </div>
+            <Link href="/contacts">Оставить заявку <span aria-hidden="true">↗</span></Link>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

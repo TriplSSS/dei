@@ -1,5 +1,8 @@
-import Reveal from "@/components/Reveal";
-import InternalMasthead from "@/components/InternalMasthead";
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import PageHeader from "@/components/PageHeader";
 
 type DocItem = {
   title: string;
@@ -9,208 +12,88 @@ type DocItem = {
   available: boolean;
 };
 
+type DocumentFilter = "all" | "cert" | "passport";
+
 const TYPE_LABELS: Record<DocItem["type"], string> = {
-  naks:        "Аттестат НАКС",
-  cert:        "Сертификат",
-  patent:      "Патент",
-  passport:    "Техпаспорт",
+  naks: "Аттестат НАКС",
+  cert: "Сертификат",
+  patent: "Патент",
+  passport: "Техпаспорт",
   declaration: "Декларация",
 };
 
-const TYPE_COLORS: Record<DocItem["type"], string> = {
-  naks:        "text-red-400 border-red-500/25",
-  cert:        "text-zinc-400 border-white/10",
-  patent:      "text-zinc-400 border-white/10",
-  passport:    "text-zinc-400 border-white/10",
-  declaration: "text-zinc-400 border-white/10",
-};
-
 const DOCS: DocItem[] = [
-  {
-    title: "Аттестат НАКС — ПРОТОН-ДЭИ ВДИ 200",
-    subtitle: "Национальное Агентство Контроля Сварки. Допуск к сварке ответственных конструкций, нефтегазового оборудования и трубопроводов.",
-    type: "naks",
-    year: "2018",
-    available: true,
-  },
-  {
-    title: "Сертификат соответствия — ВДИ 200",
-    subtitle: "Соответствие ГОСТ Р МЭК 60974-1. Сварочное оборудование для дуговой сварки.",
-    type: "cert",
-    year: "2022",
-    available: true,
-  },
-  {
-    title: "Сертификат соответствия — LED-DEI серия",
-    subtitle: "Соответствие ТР ТС 004/2011 и ТР ТС 020/2011. Низковольтное оборудование и электромагнитная совместимость.",
-    type: "cert",
-    year: "2023",
-    available: true,
-  },
-  {
-    title: "Патент на изобретение — силовая схема инвертора",
-    subtitle: "Запатентованное схемотехническое решение, обеспечивающее стабилизацию дуги в диапазоне ±15% напряжения питания.",
-    type: "patent",
-    year: "2016",
-    available: false,
-  },
-  {
-    title: "Технический паспорт — ПРОТОН-ДЭИ ВДИ 200",
-    subtitle: "Полное руководство по эксплуатации, техническому обслуживанию и устранению неисправностей.",
-    type: "passport",
-    year: "2024",
-    available: true,
-  },
-  {
-    title: "Технический паспорт — ПРОТОН-ДЭИ ВДУ 315",
-    subtitle: "Руководство по эксплуатации полуавтомата MIG/MAG.",
-    type: "passport",
-    year: "2023",
-    available: true,
-  },
-  {
-    title: "Технический паспорт — LED-DEI-120",
-    subtitle: "Технические характеристики и инструкция по монтажу промышленного светильника.",
-    type: "passport",
-    year: "2024",
-    available: true,
-  },
-  {
-    title: "Декларация о соответствии — центраторы ЦЗН",
-    subtitle: "Соответствие требованиям безопасности ТР ТС 010/2011. Машины и оборудование.",
-    type: "declaration",
-    year: "2021",
-    available: true,
-  },
+  { title: "Аттестат НАКС — ПРОТОН-ДЭИ ВДИ 200", subtitle: "Допуск к сварке ответственных конструкций, нефтегазового оборудования и трубопроводов.", type: "naks", year: "2018", available: true },
+  { title: "Сертификат соответствия — ВДИ 200", subtitle: "Соответствие ГОСТ Р МЭК 60974-1. Оборудование для дуговой сварки.", type: "cert", year: "2022", available: true },
+  { title: "Сертификат соответствия — LED-DEI", subtitle: "Соответствие ТР ТС 004/2011 и ТР ТС 020/2011.", type: "cert", year: "2023", available: true },
+  { title: "Патент — силовая схема инвертора", subtitle: "Запатентованное схемотехническое решение стабилизации сварочной дуги.", type: "patent", year: "2016", available: false },
+  { title: "Технический паспорт — ПРОТОН-ДЭИ ВДИ 200", subtitle: "Эксплуатация, техническое обслуживание и устранение неисправностей.", type: "passport", year: "2024", available: true },
+  { title: "Технический паспорт — ПРОТОН-ДЭИ ВДУ 315", subtitle: "Руководство по эксплуатации полуавтомата MIG/MAG.", type: "passport", year: "2023", available: true },
+  { title: "Технический паспорт — LED-DEI-120", subtitle: "Характеристики и инструкция по монтажу промышленного светильника.", type: "passport", year: "2024", available: true },
+  { title: "Декларация — центраторы ЦЗН", subtitle: "Соответствие требованиям безопасности ТР ТС 010/2011.", type: "declaration", year: "2021", available: true },
 ];
 
-function DocIcon({ type }: { type: DocItem["type"] }) {
-  if (type === "naks") return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      <polyline points="9 12 11 14 15 10"/>
-    </svg>
-  );
-  if (type === "patent") return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <circle cx="12" cy="8" r="6"/>
-      <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
-    </svg>
-  );
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-      <polyline points="10 9 9 9 8 9"/>
-    </svg>
-  );
+function DocumentIcon({ type }: { type: DocItem["type"] }) {
+  if (type === "naks") return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>;
+  if (type === "patent") return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="m15.5 12.9 1.5 9.1-5-3-5 3 1.5-9.1"/></svg>;
+  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>;
 }
 
 export default function DocumentsClient() {
+  const [filter, setFilter] = useState<DocumentFilter>("all");
+  const visibleDocuments = DOCS.filter((document) => {
+    if (filter === "cert") return document.type === "cert" || document.type === "naks" || document.type === "declaration";
+    if (filter === "passport") return document.type === "passport";
+    return true;
+  });
+
   return (
-    <>
-      <InternalMasthead
-        index="03"
+    <div className="internal-page-v11 documents-page-v11">
+      <PageHeader
+        centered
         eyebrow="Документы"
-        title="Технический архив и подтверждение соответствия"
-        summary="Аттестаты НАКС, сертификаты, патенты и эксплуатационная документация на оборудование DEI."
-        facts={[
-          { label: "Разделов", value: "05" },
-          { label: "Документов", value: String(DOCS.length).padStart(2, "0") },
-          { label: "Выдача", value: "ПО ЗАПРОСУ" },
+        title="Сертификаты и документация"
+        description="Аттестаты, сертификаты соответствия, патенты и технические паспорта на оборудование DEI."
+        meta={[
+          { label: "В каталоге", value: `${DOCS.length} документов` },
+          { label: "Формат", value: "электронная копия" },
+          { label: "Получение", value: "по запросу" },
         ]}
       />
 
-      <section className="documents-archive section-shell pb-24 md:pb-32">
-        <div className="documents-archive__layout">
-          <aside className="documents-archive__aside">
-            <span>ARCHIVE / DEI</span>
-            <p>Документы предоставляются в актуальной редакции после проверки назначения и комплектации оборудования.</p>
-          </aside>
-          <div className="documents-archive__content">
-          <Reveal direction="up" delay={0}>
-            <div className="documents-feature mb-8 p-7 md:p-10">
-              <div className="flex items-start gap-5">
-                <div className="shrink-0 flex h-11 w-11 items-center justify-center border border-red-500/30 text-red-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <polyline points="9 12 11 14 15 10"/>
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xs font-medium uppercase tracking-widest text-red-400">Аттестат НАКС</span>
-                    <span className="border border-white/10 px-2 py-0.5 text-[10px] text-zinc-500">Действующий</span>
-                  </div>
-                  <h2 className="text-lg font-semibold text-white mb-1">ПРОТОН-ДЭИ ВДИ 200 — аттестован НАКС</h2>
-                  <p className="text-zinc-400 text-sm leading-relaxed">
-                    Единственный в модельном ряду инвертор, прошедший полную аттестацию Национального Агентства Контроля Сварки.
-                    Допущен к сварке трубопроводов нефтегазовой отрасли, ответственных металлоконструкций и оборудования под давлением.
-                  </p>
-                  <a
-                    href="/contacts"
-                    className="inline-flex items-center gap-2 text-red-400 hover:text-red-300 text-sm mt-4 transition-colors"
-                  >
-                    Запросить копию аттестата →
-                  </a>
-                </div>
-              </div>
-            </div>
-          </Reveal>
+      <main className="internal-shell-v11 documents-content-v11">
+        <section className="documents-feature-v11">
+          <div className="documents-feature-v11__icon"><DocumentIcon type="naks" /></div>
+          <div><span>Главный документ · действует</span><h2>ПРОТОН-ДЭИ ВДИ 200 аттестован НАКС</h2><p>Оборудование допущено к сварке трубопроводов нефтегазовой отрасли, ответственных металлоконструкций и оборудования под давлением.</p></div>
+          <Link href="/contacts">Запросить копию <span aria-hidden="true">↗</span></Link>
+        </section>
 
-          <div className="documents-list" aria-label="Реестр документов">
-            {DOCS.map((doc, i) => (
-              <Reveal key={doc.title} direction="up" delay={i * 0.04}>
-                <article className="document-row group grid gap-5 px-5 py-6 md:grid-cols-[48px_minmax(0,1fr)_120px] md:px-7">
-                  <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center border ${TYPE_COLORS[doc.type]}`}>
-                    <DocIcon type={doc.type} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className={`border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${TYPE_COLORS[doc.type]}`}>
-                        {TYPE_LABELS[doc.type]}
-                      </span>
-                      <span className="text-[10px] text-zinc-600">{doc.year}</span>
-                    </div>
-                    <p className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">{doc.title}</p>
-                    <p className="text-xs text-zinc-500 mt-1 leading-relaxed">{doc.subtitle}</p>
-                  </div>
-
-                  <div className="document-row__action shrink-0">
-                    {doc.available ? (
-                      <a
-                        href="/contacts"
-                        className="btn whitespace-nowrap border-b border-white/20 px-1 py-1.5 text-xs text-zinc-400 transition-colors hover:border-red-500 hover:text-white"
-                      >
-                        Запросить
-                      </a>
-                    ) : (
-                      <span className="text-xs text-zinc-700 px-3 py-1.5 whitespace-nowrap">По запросу</span>
-                    )}
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+        <div className="documents-toolbar-v11">
+          <div>
+            <button type="button" className={filter === "all" ? "is-active" : undefined} aria-pressed={filter === "all"} onClick={() => setFilter("all")}>Все документы</button>
+            <button type="button" className={filter === "cert" ? "is-active" : undefined} aria-pressed={filter === "cert"} onClick={() => setFilter("cert")}>Сертификаты</button>
+            <button type="button" className={filter === "passport" ? "is-active" : undefined} aria-pressed={filter === "passport"} onClick={() => setFilter("passport")}>Техпаспорта</button>
           </div>
-
-          <Reveal direction="up" delay={0.1} className="mt-10">
-            <div className="flex flex-col items-start justify-between gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-center">
-              <p className="text-zinc-500 text-sm mb-4">
-                Нужен документ, которого нет в списке? Отправьте запрос — подготовим в течение 1 рабочего дня.
-              </p>
-              <a
-                href="/contacts"
-                className="btn inline-flex shrink-0 items-center gap-2 bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
-              >
-                Запросить документ
-              </a>
-            </div>
-          </Reveal>
-          </div>
+          <span>{visibleDocuments.length} файлов</span>
         </div>
-      </section>
-    </>
+
+        <section className="documents-grid-v11" aria-label="Список документов">
+          {visibleDocuments.map((document) => (
+            <article key={document.title} className="document-card-v11">
+              <div className="document-card-v11__top"><span className="document-card-v11__icon"><DocumentIcon type={document.type} /></span><span className="document-card-v11__year">{document.year}</span></div>
+              <p className="document-card-v11__type">{TYPE_LABELS[document.type]}</p>
+              <h2>{document.title}</h2>
+              <p>{document.subtitle}</p>
+              {document.available ? <Link href="/contacts">Запросить документ <span aria-hidden="true">↗</span></Link> : <span className="document-card-v11__pending">Подготовим по запросу</span>}
+            </article>
+          ))}
+        </section>
+
+        <section className="page-cta-v11">
+          <div><span>Не нашли нужный файл?</span><h2>Подготовим актуальный документ в течение рабочего дня</h2></div>
+          <Link href="/contacts">Отправить запрос <span aria-hidden="true">↗</span></Link>
+        </section>
+      </main>
+    </div>
   );
 }

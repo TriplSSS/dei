@@ -1,102 +1,64 @@
-import Reveal from "@/components/Reveal";
-import InternalMasthead from "@/components/InternalMasthead";
+import Link from "next/link";
+import PageHeader from "@/components/PageHeader";
 
 const PHONE = "+7 (988) 580-76-30";
 const PHONE_HREF = "tel:+79885807630";
-const MAP_URL =
-  "https://yandex.ru/maps/?text=%D0%BF%D0%B5%D1%80.%20%D0%9D%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D1%8B%D0%B9%2014%2F2%2C%20%D0%A0%D0%BE%D1%81%D1%82%D0%BE%D0%B2-%D0%BD%D0%B0-%D0%94%D0%BE%D0%BD%D1%83";
-
-const contactRows = [
-  { label: "Телефон", value: PHONE, href: PHONE_HREF },
-  { label: "Режим работы", value: "Пн–Пт: 9:00 — 18:00" },
-  {
-    label: "Адрес",
-    value: "пер. Нарядный, 14/2, Ростов-на-Дону",
-  },
-];
+const MAP_URL = "https://yandex.ru/maps/?text=%D0%BF%D0%B5%D1%80.%20%D0%9D%D0%B0%D1%80%D1%8F%D0%B4%D0%BD%D1%8B%D0%B9%2014%2F2%2C%20%D0%A0%D0%BE%D1%81%D1%82%D0%BE%D0%B2-%D0%BD%D0%B0-%D0%94%D0%BE%D0%BD%D1%83";
 
 export default function ContactsClient() {
   return (
-    <>
-      <InternalMasthead
-        index="05"
+    <div className="internal-page-v11 contacts-page-v11">
+      <PageHeader
+        centered
         eyebrow="Контакты"
-        title="Начнём с технической задачи"
-        summary="Опишите объект, условия эксплуатации или нужную комплектацию. Инженер уточнит вводные и предложит следующий шаг."
-        facts={[
-          { label: "Ответ", value: "ДО 1 ЧАСА" },
-          { label: "График", value: "09:00–18:00" },
-          { label: "Часовой пояс", value: "МСК" },
+        title="Давайте обсудим вашу задачу"
+        description="Позвоните напрямую или подготовьте короткое описание объекта. Инженер уточнит параметры и предложит следующий шаг."
+        meta={[
+          { label: "Ответ", value: "обычно до 1 часа" },
+          { label: "График", value: "Пн–Пт, 09:00–18:00" },
+          { label: "Часовой пояс", value: "Москва" },
         ]}
       />
 
-      <section className="contact-directory section-shell pb-24 md:pb-32">
-        <div className="contact-directory__grid">
-          <Reveal direction="left">
-            <div className="contact-directory__primary">
-              <div className="contact-directory__status"><span /> Инженерный отдел на связи</div>
-              <p className="section-kicker">Прямой контакт</p>
-              <a
-                href={PHONE_HREF}
-                className="contact-directory__phone"
-              >
-                {PHONE}
-              </a>
+      <main className="internal-shell-v11 contacts-content-v11">
+        <section className="contacts-grid-v11">
+          <article className="contacts-primary-v11">
+            <span className="contacts-status-v11"><i />Отдел продаж на связи</span>
+            <p>Телефон</p>
+            <a href={PHONE_HREF} className="contacts-primary-v11__phone">{PHONE}</a>
+            <span>Звонок — самый быстрый способ уточнить наличие, комплектацию и сроки.</span>
+            <a href={PHONE_HREF} className="contacts-primary-v11__button">Позвонить сейчас</a>
+          </article>
 
-              <dl className="contact-directory__rows">
-                {contactRows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="contact-directory__row grid gap-2 py-5 sm:grid-cols-[140px_1fr]"
-                  >
-                    <dt className="text-xs uppercase tracking-[0.14em] text-zinc-600">
-                      {row.label}
-                    </dt>
-                    <dd className="text-sm leading-relaxed text-zinc-300">
-                      {row.href ? (
-                        <a href={row.href} className="transition-colors hover:text-white">
-                          {row.value}
-                        </a>
-                      ) : (
-                        row.value
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </Reveal>
+          <article className="contact-card-v11">
+            <span className="v11-kicker">Адрес</span>
+            <h2>Ростов-на-Дону</h2>
+            <p>пер. Нарядный, 14/2<br />Офис и производство DEI</p>
+            <a href={MAP_URL} target="_blank" rel="noreferrer">Открыть в Яндекс Картах <span aria-hidden="true">↗</span></a>
+          </article>
 
-          <Reveal direction="right" delay={0.08}>
-            <div className="contact-directory__location">
-              <div className="contact-directory__diagram" aria-hidden="true"><span /><span /><span /></div>
-              <div className="relative flex min-h-[350px] flex-col justify-between">
-                <div>
-                  <p className="section-kicker">Офис и производство</p>
-                  <p className="mt-6 max-w-md text-[clamp(2.4rem,5vw,4.5rem)] font-semibold leading-[0.92] tracking-[-0.055em] text-white">
-                    Ростов-на-Дону
-                  </p>
-                </div>
+          <article className="contact-card-v11">
+            <span className="v11-kicker">Режим работы</span>
+            <h2>Пн–Пт</h2>
+            <p>09:00–18:00<br />Суббота и воскресенье — выходные</p>
+            <Link href="/catalog">Перейти в каталог <span aria-hidden="true">↗</span></Link>
+          </article>
+        </section>
 
-                <div className="max-w-sm">
-                  <p className="text-lg leading-relaxed text-zinc-300">
-                    пер. Нарядный, 14/2
-                  </p>
-                  <a
-                    href={MAP_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="contact-directory__map-link"
-                  >
-                    Открыть в Яндекс Картах
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </>
+        <section className="contacts-process-v11">
+          <div className="section-head-v11"><div><span className="v11-kicker">Как начать</span><h2>Три шага до предложения</h2></div><p>Достаточно базовой информации — остальное уточним вместе.</p></div>
+          <div className="contacts-process-v11__grid">
+            <article><span>01</span><h3>Опишите задачу</h3><p>Что нужно сваривать или освещать, где будет работать оборудование.</p></article>
+            <article><span>02</span><h3>Уточним параметры</h3><p>Зададим несколько вопросов по режиму, мощности и комплектации.</p></article>
+            <article><span>03</span><h3>Подготовим расчёт</h3><p>Предложим вариант, подтвердим стоимость и срок поставки.</p></article>
+          </div>
+        </section>
+
+        <section className="page-cta-v11">
+          <div><span>Уже знаете, что нужно?</span><h2>Добавьте товары в корзину — подготовим счёт</h2></div>
+          <Link href="/catalog">Открыть каталог <span aria-hidden="true">↗</span></Link>
+        </section>
+      </main>
+    </div>
   );
 }

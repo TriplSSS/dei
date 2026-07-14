@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
+import PageHeader from "@/components/PageHeader";
 
 const ruble = (n: number) => n.toLocaleString("ru-RU") + " ₽";
 
@@ -125,8 +126,8 @@ export default function CheckoutClient() {
       order.onlinePayment?.status === "created" ? order.onlinePayment.confirmationUrl : undefined;
 
     return (
-      <section className="checkout-page section-shell pb-28 pt-36">
-        <div className="checkout-success mx-auto max-w-[680px] p-6 text-center md:p-10" aria-live="polite">
+      <section className="checkout-success-page-v11">
+        <div className="checkout-success-v11" aria-live="polite">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center border border-white/10">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400">
               <path d="M20 6 9 17l-5-5" />
@@ -202,26 +203,25 @@ export default function CheckoutClient() {
   }
 
   return (
-    <div className="checkout-v10 section-shell pb-24 pt-36">
-      <div className="checkout-v10__frame">
-        <nav className="checkout-v10__breadcrumbs">
+    <div className="internal-page-v11 checkout-page-v11">
+      <PageHeader
+        centered
+        eyebrow="Оформление заказа"
+        title="Заявка на поставку"
+        description="Проверьте состав заказа, выберите способ оплаты и оставьте контакты. Итоговые условия подтвердит менеджер."
+      />
+      <div className="internal-shell-v11 checkout-content-v11">
+        <nav className="checkout-breadcrumbs-v11">
           <Link href="/catalog" className="transition-colors hover:text-zinc-400">Каталог</Link>
           <span>/</span>
           <span className="text-zinc-400">Оформление заказа</span>
         </nav>
 
-        <header className="checkout-v10__header">
-          <div>
-            <p className="page-kicker">Заявка на поставку</p>
-            <h1>Оформление заказа</h1>
-            <p>Передайте контактные данные и выберите способ оплаты. Наличие, итоговую стоимость и срок поставки подтвердит менеджер.</p>
-          </div>
-          <ol className="checkout-steps" aria-label="Этапы оформления заказа">
+        <ol className="checkout-steps-v11" aria-label="Этапы оформления заказа">
             <li className="is-complete"><span>01</span> Корзина</li>
             <li className="is-active" aria-current="step"><span>02</span> Данные</li>
             <li><span>03</span> Подтверждение</li>
-          </ol>
-        </header>
+        </ol>
 
         {items.length === 0 ? (
           <div className="checkout-empty py-20 text-center">
@@ -231,8 +231,8 @@ export default function CheckoutClient() {
             </Link>
           </div>
         ) : (
-          <div className="checkout-v10__layout">
-            <form onSubmit={submit} className="checkout-form checkout-v10__form" aria-busy={busy}>
+          <div className="checkout-layout-v11">
+            <form onSubmit={submit} className="checkout-form-v11" aria-busy={busy}>
               <section className="checkout-v10__section">
                 <div className="checkout-v10__section-head"><span>01</span><h2>Способ оплаты</h2></div>
                 <p id="payment-method-label" className="mb-2 block text-xs font-medium text-zinc-400">Способ оплаты *</p>
@@ -302,7 +302,7 @@ export default function CheckoutClient() {
               </button>
             </form>
 
-            <aside className="checkout-summary checkout-v10__summary p-6">
+            <aside className="checkout-summary-v11">
               <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Ваш заказ</p>
               <div className="flex flex-col gap-3">
                 {items.map((it, index) => (

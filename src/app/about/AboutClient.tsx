@@ -1,11 +1,10 @@
 import Link from "next/link";
-import Reveal from "@/components/Reveal";
-import InternalMasthead from "@/components/InternalMasthead";
+import PageHeader from "@/components/PageHeader";
 
 const principles = [
-  ["Инженерная точность", "Решения оцениваются по рабочим параметрам, надёжности и условиям эксплуатации."],
-  ["Контроль качества", "Подход сформирован опытом работы с требованиями оборонной промышленности."],
-  ["Ответственность", "Сопровождаем заказчика от первичного расчёта до запуска оборудования."],
+  { icon: "01", title: "Инженерный подход", text: "Сначала разбираемся в задаче и условиях эксплуатации, затем предлагаем оборудование." },
+  { icon: "02", title: "Контроль качества", text: "Проверяем ключевые рабочие параметры и отвечаем за соответствие комплектации." },
+  { icon: "03", title: "Поддержка", text: "Остаёмся на связи после поставки и помогаем с запуском оборудования." },
 ];
 
 const timeline = [
@@ -18,92 +17,60 @@ const timeline = [
 
 export default function AboutClient() {
   return (
-    <>
-      <InternalMasthead
-        index="01"
-        eyebrow="Компания"
-        title="Инженерная культура, проверенная производством"
-        summary="ДонЭлектроИнтел объединяет собственные разработки, практический опыт и ответственность за результат — от расчёта до запуска оборудования."
-        facts={[
-          { label: "Основание", value: "2006" },
-          { label: "Профиль", value: "B2B / INDUSTRIAL" },
-          { label: "География", value: "РОССИЯ" },
+    <div className="internal-page-v11 about-page-v11">
+      <PageHeader
+        centered
+        eyebrow="О компании"
+        title="Делаем оборудование, которое работает"
+        description="ДонЭлектроИнтел — российская инженерная компания из Ростова-на-Дону. Разрабатываем, производим и поставляем оборудование с 2006 года."
+        meta={[
+          { label: "На рынке", value: "с 2006 года" },
+          { label: "Формат", value: "B2B и частные заказчики" },
+          { label: "Поставка", value: "по России" },
         ]}
       />
 
-      <section className="about-origin-section section-shell">
-        <Reveal>
-          <div className="about-origin">
-            <div className="about-origin__statement">
-              <span>Основа компании</span>
-              <p>Техника должна решать задачу в реальных условиях, а не только соответствовать цифрам в каталоге.</p>
-            </div>
-            <div className="about-origin__facts">
-              <div><span>01</span><p>Собственная инженерная экспертиза</p></div>
-              <div><span>02</span><p>Контроль производственных параметров</p></div>
-              <div><span>03</span><p>Поддержка после поставки</p></div>
-            </div>
+      <main className="internal-shell-v11 about-content-v11">
+        <section className="about-story-v11">
+          <div className="about-story-v11__copy">
+            <span className="v11-kicker">Кто мы</span>
+            <h2>От реальной задачи — к рабочему решению</h2>
+            <p>Мы не ограничиваемся продажей готовой позиции. Уточняем режим работы, условия объекта и требования к результату, чтобы оборудование не оказалось случайным выбором.</p>
+            <p>Собственная инженерная экспертиза помогает говорить с производством на одном языке и предлагать решения без лишних обещаний.</p>
+            <Link href="/catalog">Смотреть оборудование <span aria-hidden="true">↗</span></Link>
           </div>
-        </Reveal>
-      </section>
+          <div className="about-story-v11__visual" aria-hidden="true">
+            <div className="about-story-v11__mark">DEI</div>
+            <span>Ростов-на-Дону</span>
+            <strong>2006</strong>
+          </div>
+        </section>
 
-      <section className="about-principles dei-page-section section-space">
-        <div className="section-shell">
-          <Reveal>
-            <p className="section-kicker">Принципы</p>
-            <h2 className="section-title mt-5 max-w-[760px]">Технологичность начинается с дисциплины</h2>
-          </Reveal>
-          <div className="about-principles__list mt-14">
-            {principles.map(([title, text], index) => (
-              <Reveal key={title} delay={index * 0.07}>
-                <article className="about-principle">
-                  <span className="text-xs text-red-500">0{index + 1}</span>
-                  <h3 className="mt-8 text-xl font-medium text-white">{title}</h3>
-                  <p className="mt-3 max-w-[350px] text-sm leading-relaxed text-zinc-500">{text}</p>
-                </article>
-              </Reveal>
+        <section className="about-principles-v11">
+          <div className="section-head-v11"><div><span className="v11-kicker">Наш подход</span><h2>Три принципа работы</h2></div><p>Понятный процесс от первого обращения до поставки.</p></div>
+          <div className="about-principles-v11__grid">
+            {principles.map((item) => (
+              <article key={item.title}>
+                <span>{item.icon}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </article>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="about-history dei-page-section section-space">
-        <div className="section-shell grid gap-14 lg:grid-cols-[0.72fr_1.28fr]">
-          <Reveal>
-            <div className="lg:sticky lg:top-28">
-              <p className="section-kicker">История</p>
-              <h2 className="section-title mt-5">Этапы развития</h2>
-            </div>
-          </Reveal>
-          <div className="about-timeline">
-            {timeline.map(([year, text], index) => (
-              <Reveal key={year} delay={index * 0.05}>
-                <div className="about-timeline__row grid gap-4 px-5 py-6 sm:grid-cols-[100px_1fr]">
-                  <span className="text-xl font-medium tabular-nums text-white">{year}</span>
-                  <p className="max-w-[620px] text-sm leading-relaxed text-zinc-500">{text}</p>
-                </div>
-              </Reveal>
-            ))}
+        <section className="about-timeline-v11">
+          <div className="section-head-v11"><div><span className="v11-kicker">История</span><h2>Как развивалась компания</h2></div></div>
+          <div className="about-timeline-v11__list">
+            {timeline.map(([year, text]) => <article key={year}><time>{year}</time><p>{text}</p></article>)}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="about-closing dei-page-section section-space">
-        <div className="section-shell">
-          <Reveal>
-            <div className="about-closing__panel grid gap-10 p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
-              <div>
-                <p className="section-kicker">Сегодня</p>
-                <h2 className="section-title mt-5 max-w-[800px]">Производим, подбираем и сопровождаем оборудование</h2>
-                <p className="mt-6 max-w-[650px] text-base leading-relaxed text-zinc-500">
-                  Работаем с предприятиями и частными заказчиками: уточняем задачу, рассчитываем решение и остаёмся на связи после поставки.
-                </p>
-              </div>
-              <Link href="/contacts" className="energy-strip btn bg-red-600 px-7 py-3.5 text-center text-sm font-semibold text-white hover:bg-red-500">Связаться с нами</Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </>
+        <section className="page-cta-v11">
+          <div><span>Готовы обсудить задачу?</span><h2>Подберём оборудование и подготовим расчёт</h2></div>
+          <Link href="/contacts">Связаться с нами <span aria-hidden="true">↗</span></Link>
+        </section>
+      </main>
+    </div>
   );
 }

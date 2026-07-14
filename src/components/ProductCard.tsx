@@ -1,56 +1,56 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
-import Reveal from "./Reveal";
+import Link from "next/link";
+import AddToCartButton from "@/components/AddToCartButton";
+import type { Product } from "@/data/products";
 
-interface Product {
-  name: string;
-  category: string;
-  price: string;
-  img: string;
-}
+type ProductCardProps = {
+  product: Product;
+  priority?: boolean;
+  featured?: boolean;
+};
 
-export default function ProductCard({ product, index }: { product: Product; index: number }) {
+export default function ProductCard({ product, priority = false, featured = false }: ProductCardProps) {
+  const [quantity, setQuantity] = useState(1);
+
   return (
-    <Reveal delay={index * 0.07} direction="blur">
-      <div className="product-card-premium group flex cursor-default flex-col overflow-hidden">
-        <div className="product-photo-stage relative aspect-[4/3] overflow-hidden">
-          <Image
-            src={product.img}
-            alt={product.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="product-photo-blend img-zoom object-cover"
-          />
-          <div className="absolute top-3 left-3">
-            <span className="inline-flex items-center border border-white/15 bg-black/70 px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-zinc-300">
-              {product.category}
-            </span>
-          </div>
-          <div className="absolute bottom-3 right-3 border border-white/[0.08] bg-black/70 px-2 py-1 text-[10px] font-medium text-zinc-300">
-            В наличии / под заказ
-          </div>
+    <article className="product-card-v11">
+      <Link href={`/catalog/${product.slug}`} className="product-card-v11__media" aria-label={product.name}>
+        <Image
+          src={product.img}
+          alt={product.name}
+          fill
+          priority={priority}
+          sizes="(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 380px"
+          className="product-card-v11__image product-photo-blend"
+        />
+        <div className="product-card-v11__badges">
+          {featured && <span className="is-accent">Выбор DEI</span>}
+          {product.naks && <span>НАКС</span>}
         </div>
-        <div className="flex flex-1 flex-col gap-3 p-5">
-          <h3 className="min-h-10 text-sm font-semibold leading-snug text-zinc-100 transition-colors duration-200 group-hover:text-white">
-            {product.name}
-          </h3>
+        <span className="product-card-v11__availability"><i />Под заказ</span>
+      </Link>
 
-          <div className="mt-auto flex items-center justify-between gap-3 pt-3">
-            <p className="text-base font-bold tabular-nums text-red-500">
-              {product.price}
-            </p>
+      <div className="product-card-v11__body">
+        <p className="product-card-v11__category">{product.categoryLabel}</p>
+        <Link href={`/catalog/${product.slug}`}>
+          <h2>{product.name}</h2>
+        </Link>
+        <p className="product-card-v11__description">{product.description}</p>
+        <div className="product-card-v11__price">{product.price}</div>
 
-            <Link
-              href="/catalog"
-              className="btn border-b border-white/20 px-1 py-1.5 text-xs text-zinc-300 transition-colors duration-200 hover:border-red-500 hover:text-white"
-            >
-              В каталог
-            </Link>
+        <div className="product-card-v11__actions">
+          <div className="product-card-v11__quantity" aria-label="Количество">
+            <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Уменьшить количество">−</button>
+            <output aria-live="polite">{quantity}</output>
+            <button type="button" onClick={() => setQuantity((value) => value + 1)} aria-label="Увеличить количество">+</button>
           </div>
+          <AddToCartButton product={product} qty={quantity} className="product-card-v11__cart" label="В корзину" />
+          <Link href={`/catalog/${product.slug}`} className="product-card-v11__details" aria-label={`Подробнее: ${product.name}`}>↗</Link>
         </div>
       </div>
-    </Reveal>
+    </article>
   );
 }
