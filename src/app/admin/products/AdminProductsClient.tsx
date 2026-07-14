@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type {
   Product,
@@ -61,6 +62,27 @@ type CategoryFormState = {
   description: string;
   sortOrder: string;
 };
+
+type AdminSection = "products" | "categories" | "orders" | "analytics" | "import";
+type EditorPanel = "product" | "category" | null;
+type AdminIconName = "box" | "tag" | "orders" | "analytics" | "import" | "home" | "menu" | "close" | "plus" | "refresh" | "lock" | "arrow" | "search" | "external" | "image";
+type AdminSectionDefinition = {
+  id: AdminSection;
+  label: string;
+  title: string;
+  description: string;
+  code: string;
+  icon: AdminIconName;
+  development?: boolean;
+};
+
+const ADMIN_SECTIONS: AdminSectionDefinition[] = [
+  { id: "products", label: "Товары", title: "Управление товарами", description: "Редактируйте ассортимент, цены, фотографии и описания.", code: "PRODUCTS", icon: "box" },
+  { id: "categories", label: "Категории", title: "Категории каталога", description: "Управляйте структурой и порядком разделов каталога.", code: "CATEGORIES", icon: "tag" },
+  { id: "orders", label: "Заказы", title: "Заказы", description: "Раздел будет подключён вместе с системой заявок и оплат.", code: "ORDERS", icon: "orders", development: true },
+  { id: "analytics", label: "Аналитика", title: "Аналитика", description: "Сводка по просмотрам, обращениям и товарам появится после запуска сайта.", code: "ANALYTICS", icon: "analytics", development: true },
+  { id: "import", label: "Импорт", title: "Импорт данных", description: "Массовая загрузка товаров будет добавлена после наполнения основного каталога.", code: "IMPORT", icon: "import", development: true },
+];
 
 const emptyCategoryForm: CategoryFormState = {
   originalKey: "",
@@ -236,6 +258,19 @@ function categoryToForm(category: ProductCategory): CategoryFormState {
   };
 }
 
+function availabilityLabel(status?: ProductAvailabilityStatus) {
+  if (status === "in_stock") return "В наличии";
+  if (status === "preorder") return "Предзаказ";
+  if (status === "out_of_stock") return "Нет в наличии";
+  return "Под заказ";
+}
+
+function availabilityClass(status?: ProductAvailabilityStatus) {
+  if (status === "in_stock") return "is-ready";
+  if (status === "out_of_stock") return "is-muted";
+  return "is-order";
+}
+
 export default function AdminProductsClient() {
   const [token, setToken] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
@@ -248,7 +283,11 @@ export default function AdminProductsClient() {
   const [query, setQuery] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"products" | "categories">("products");
+  const [activeSection, setActiveSection] = useState<AdminSection>("products");
+  const [editorPanel, setEditorPanel] = useState<EditorPanel>(null);
+  const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const [productDirty, setProductDirty] = useState(false);
+  const [categoryDirty, setCategoryDirty] = useState(false);
   const [form, setForm] = useState<FormState>(() => createEmptyProduct());
   const [categoryForm, setCategoryForm] = useState<CategoryFormState>(emptyCategoryForm);
 
@@ -270,6 +309,7 @@ export default function AdminProductsClient() {
     const value = event.target instanceof HTMLInputElement && event.target.type === "checkbox"
       ? event.target.checked
       : event.target.value;
+    setProductDirty(true);
     setForm((current) => ({ ...current, [field]: value }));
   };
 
@@ -327,6 +367,7 @@ export default function AdminProductsClient() {
       if (!response.ok) throw new Error("Товар не сохранен.");
 
       setMessage(data.message);
+      setProductDirty(false);
       await loadCatalog(undefined, true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось сохранить товар.");
@@ -352,6 +393,8 @@ export default function AdminProductsClient() {
 
       setMessage(data.message);
       setForm(createEmptyProduct(categories[0]?.key));
+      setProductDirty(false);
+      setEditorPanel(null);
       await loadCatalog(undefined, true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось скрыть товар.");
@@ -379,6 +422,7 @@ export default function AdminProductsClient() {
       if (!response.ok || !data.url) throw new Error("Изображение не загружено.");
 
       setForm((current) => ({ ...current, img: data.url || current.img }));
+      setProductDirty(true);
       setMessage(data.message);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось загрузить изображение.");
@@ -411,6 +455,7 @@ export default function AdminProductsClient() {
       if (!response.ok) throw new Error("Категория не сохранена.");
 
       setMessage(data.message);
+      setCategoryDirty(false);
       setCategoryForm({ ...categoryForm, originalKey: payload.key, key: payload.key });
       await loadCatalog(undefined, true);
     } catch (err) {
@@ -437,6 +482,8 @@ export default function AdminProductsClient() {
 
       setMessage(data.message);
       setCategoryForm(emptyCategoryForm);
+      setCategoryDirty(false);
+      setEditorPanel(null);
       await loadCatalog(undefined, true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось удалить категорию.");
@@ -445,163 +492,359 @@ export default function AdminProductsClient() {
     }
   };
 
+  const currentSection = ADMIN_SECTIONS.find((section) => section.id === activeSection) || ADMIN_SECTIONS[0];
+  const featuredProducts = products.filter((product) => product.featured).length;
+  const inStockProducts = products.filter((product) => product.availabilityStatus === "in_stock").length;
+  const assignedCategories = categories.filter((category) =>
+    products.some((product) => product.category === category.key)
+  ).length;
+
+  const editorHasUnsavedChanges = editorPanel === "product" ? productDirty : editorPanel === "category" ? categoryDirty : false;
+
+  const closeEditor = () => {
+    if (editorHasUnsavedChanges && !window.confirm("Закрыть редактор без сохранения изменений?")) return;
+    setEditorPanel(null);
+  };
+
+  const selectSection = (section: AdminSection) => {
+    if (editorHasUnsavedChanges && !window.confirm("Перейти в другой раздел без сохранения изменений?")) return;
+    setActiveSection(section);
+    setEditorPanel(null);
+    setMobileNavigationOpen(false);
+    setError("");
+    setMessage("");
+  };
+
+  const createProduct = () => {
+    setForm(createEmptyProduct(categories[0]?.key));
+    setProductDirty(false);
+    setEditorPanel("product");
+  };
+
+  const editProduct = (product: Product) => {
+    setForm(productToForm(product));
+    setProductDirty(false);
+    setEditorPanel("product");
+  };
+
+  const createCategory = () => {
+    setCategoryForm(emptyCategoryForm);
+    setCategoryDirty(false);
+    setEditorPanel("category");
+  };
+
+  const editCategory = (category: ProductCategory) => {
+    setCategoryForm(categoryToForm(category));
+    setCategoryDirty(false);
+    setEditorPanel("category");
+  };
+
   return (
-    <div className="dei-admin-page admin-products-page px-4 pb-24 sm:px-6">
-      <div className="admin-products-shell mx-auto max-w-[1280px]">
-        <header className="admin-dashboard-header">
-          <div>
-            <p className="admin-v10__index">DEI / CONTENT CONTROL</p>
-            <h1>Каталог и категории</h1>
-            <p>Товары, фотографии, цены, описания и структура каталога редактируются в одном месте.</p>
+    <div className="admin-console">
+      <button
+        type="button"
+        className={`admin-console__scrim${mobileNavigationOpen ? " is-visible" : ""}`}
+        onClick={() => setMobileNavigationOpen(false)}
+        aria-label="Закрыть меню"
+        tabIndex={mobileNavigationOpen ? 0 : -1}
+      />
+
+      <aside className={`admin-console__sidebar${mobileNavigationOpen ? " is-open" : ""}`} id="admin-navigation" inert={editorPanel ? true : undefined}>
+        <div className="admin-console__brand">
+          <Link href="/" aria-label="DEI — открыть сайт"><strong>DEI</strong></Link>
+          <span>Панель управления</span>
+        </div>
+
+        <nav className="admin-console__nav" aria-label="Разделы панели управления">
+          <p>Управление</p>
+          {ADMIN_SECTIONS.map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              className={activeSection === section.id ? "is-active" : ""}
+              aria-current={activeSection === section.id ? "page" : undefined}
+              onClick={() => selectSection(section.id)}
+            >
+              <AdminIcon name={section.icon} />
+              <span>{section.label}</span>
+              {section.id === "products" && loaded && <small>{products.length}</small>}
+              {section.id === "categories" && loaded && <small>{categories.length}</small>}
+              {section.development && <em>Скоро</em>}
+            </button>
+          ))}
+        </nav>
+
+        <div className="admin-console__sidebar-footer">
+          <div className={`admin-console__connection${loaded ? " is-online" : ""}`}>
+            <span />
+            <div>
+              <strong>{loaded ? "Каталог подключён" : "Требуется доступ"}</strong>
+              <small>{loaded ? (localMode ? "Локальное хранилище" : "Серверное хранилище") : "Авторизуйтесь для работы"}</small>
+            </div>
           </div>
-          <form onSubmit={loadCatalog} className="admin-v10__auth">
-            <input
-              type="password"
-              value={token}
-              onChange={(event) => setToken(event.target.value)}
-              placeholder="Пароль (локально не нужен)"
-              autoComplete="current-password"
-              aria-label="Пароль администратора"
-            />
-            <button type="submit" disabled={loading}>{loading ? "Загрузка…" : loaded ? "Обновить" : "Открыть админку"}</button>
-          </form>
+          <Link href="/" className="admin-console__site-link"><AdminIcon name="home" />Открыть сайт</Link>
+          {loaded && <button type="button" className="admin-console__logout" onClick={() => { setLoaded(false); setProducts([]); setCategories([]); setEditorPanel(null); }}>Сменить доступ</button>}
+        </div>
+      </aside>
+
+      <main className="admin-console__main" inert={editorPanel ? true : undefined}>
+        <header className="admin-console__topbar">
+          <button
+            type="button"
+            className="admin-console__menu-button"
+            onClick={() => setMobileNavigationOpen((current) => !current)}
+            aria-expanded={mobileNavigationOpen}
+            aria-controls="admin-navigation"
+          >
+            <AdminIcon name="menu" />
+            <span>Меню</span>
+          </button>
+          <div className="admin-console__breadcrumb"><span>DEI Control</span><b>/</b><strong>{currentSection.label}</strong></div>
+          <div className="admin-console__top-status"><span className={loaded ? "is-online" : ""} />{loaded ? "Система готова" : "Закрытый контур"}</div>
         </header>
 
-        {loaded && (
-          <div className="admin-overview">
-            <div><span>Товары</span><strong>{products.length}</strong></div>
-            <div><span>Категории</span><strong>{categories.length}</strong></div>
-            <div><span>Хранилище</span><strong>{localMode ? "Локально" : "Сервер"}</strong></div>
-          </div>
-        )}
+        <div className="admin-console__content">
+          {error && <div className="admin-console__notice is-error" role="alert"><span>!</span>{error}</div>}
+          {message && <div className="admin-console__notice is-success" role="status" aria-live="polite"><span>✓</span>{message}</div>}
 
-        {error && <div className="admin-feedback is-error" role="alert">{error}</div>}
-        {message && <div className="admin-feedback is-success" role="status">{message}</div>}
+          {!loaded ? (
+            <section className="admin-access" aria-labelledby="admin-access-title">
+              <div className="admin-access__signal" aria-hidden="true"><AdminIcon name="lock" /></div>
+              <p>DEI / SECURE ACCESS</p>
+              <h1 id="admin-access-title">Управление каталогом</h1>
+              <p className="admin-access__lead">Введите пароль администратора. На локальном сервере пароль не требуется — просто нажмите кнопку входа.</p>
+              <form onSubmit={loadCatalog} className="admin-access__form">
+                <label>
+                  <span>Пароль администратора</span>
+                  <input
+                    type="password"
+                    value={token}
+                    onChange={(event) => setToken(event.target.value)}
+                    placeholder="Введите пароль"
+                    autoComplete="current-password"
+                    autoFocus
+                  />
+                </label>
+                <button type="submit" disabled={loading}>{loading ? "Проверяем доступ…" : "Войти в панель"}<AdminIcon name="arrow" /></button>
+              </form>
+              <small>Доступ к изменению товаров защищён серверным токеном.</small>
+            </section>
+          ) : (
+            <>
+              <section className="admin-page-heading">
+                <div>
+                  <p>DEI / {currentSection.code}</p>
+                  <h1>{currentSection.title}</h1>
+                  <span>{currentSection.description}</span>
+                </div>
+                {activeSection === "products" && <button type="button" className="admin-primary-action" onClick={createProduct}><AdminIcon name="plus" />Добавить товар</button>}
+                {activeSection === "categories" && <button type="button" className="admin-primary-action" onClick={createCategory}><AdminIcon name="plus" />Добавить категорию</button>}
+              </section>
 
-        {loaded && (
-          <>
-            <nav className="admin-tabs" aria-label="Разделы каталога">
-              <button type="button" aria-pressed={activeTab === "products"} className={activeTab === "products" ? "is-active" : ""} onClick={() => setActiveTab("products")}>Товары <span>{products.length}</span></button>
-              <button type="button" aria-pressed={activeTab === "categories"} className={activeTab === "categories" ? "is-active" : ""} onClick={() => setActiveTab("categories")}>Категории <span>{categories.length}</span></button>
-            </nav>
-
-            {activeTab === "products" ? (
-              <div className="admin-workbench grid gap-6 lg:grid-cols-[minmax(0,1fr)_480px]">
-                <section className="admin-list-column min-w-0">
-                  <div className="admin-search-panel">
-                    <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Поиск по товару или категории" aria-label="Поиск товаров" />
-                    <button type="button" onClick={() => setForm(createEmptyProduct(categories[0]?.key))}>+ Новый товар</button>
+              {activeSection === "products" && (
+                <section className="admin-section-stack" aria-label="Управление товарами">
+                  <div className="admin-metrics">
+                    <article><span>Всего товаров</span><strong>{products.length}</strong><small>В каталоге сайта</small></article>
+                    <article><span>В наличии</span><strong>{inStockProducts}</strong><small>Готовы к поставке</small></article>
+                    <article><span>Рекомендуемые</span><strong>{featuredProducts}</strong><small>Выделены в каталоге</small></article>
+                    <article><span>Хранилище</span><strong className="is-word">{localMode ? "Локально" : "Сервер"}</strong><small>Источник данных</small></article>
                   </div>
 
-                  <div className="admin-product-list">
-                    {filteredProducts.length === 0 && <div className="admin-empty">Товары не найдены.</div>}
-                    {filteredProducts.map((product) => (
-                      <button
-                        key={product.slug}
-                        type="button"
-                        onClick={() => setForm(productToForm(product))}
-                        className={`admin-product-row${form.slug === product.slug ? " is-active" : ""}`}
-                      >
-                        <div className="admin-product-thumb">
-                          <Image src={product.img} alt="" fill sizes="76px" className="object-contain" />
-                        </div>
-                        <div className="admin-product-row__copy">
-                          <span>{product.categoryLabel}</span>
-                          <strong>{product.name}</strong>
-                          <small>{product.slug}</small>
-                        </div>
-                        <div className="admin-product-row__price"><strong>{product.price}</strong><span>Редактировать ↗</span></div>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-
-                <aside className="admin-editor">
-                  <div className="admin-editor__head"><div><span>{form.slug ? "Редактирование" : "Новый товар"}</span><h2>Карточка товара</h2></div><button type="button" onClick={() => setForm(createEmptyProduct(categories[0]?.key))}>Очистить</button></div>
-
-                  <form onSubmit={saveCurrentProduct} className="admin-editor__form">
-                    <div className="admin-image-editor">
-                      <div className="admin-image-editor__preview">
-                        {form.img.startsWith("/") ? <Image src={form.img} alt={form.name || "Фото товара"} fill sizes="420px" className="object-contain" /> : <span>{form.img ? "Для предпросмотра загрузите файл в админке" : "Фото товара"}</span>}
+                  <div className="admin-panel">
+                    <div className="admin-panel__toolbar">
+                      <div>
+                        <h2>Товары <span>{filteredProducts.length}</span></h2>
+                        <p>Фото, описание, цена и статус публикации.</p>
                       </div>
-                      <div className="admin-image-editor__actions">
-                        <label className="admin-upload-button">
-                          {uploading ? "Загрузка…" : "Загрузить фото"}
-                          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadImage} disabled={uploading} />
+                      <div className="admin-panel__tools">
+                        <label className="admin-search">
+                          <AdminIcon name="search" />
+                          <span className="sr-only">Поиск товаров</span>
+                          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Поиск по названию…" />
                         </label>
-                        <small>JPG, PNG или WEBP до 8 МБ</small>
+                        <button type="button" className="admin-icon-button" onClick={() => void loadCatalog()} disabled={loading} aria-label="Обновить каталог"><AdminIcon name="refresh" /></button>
                       </div>
                     </div>
 
-                    <FormSection title="Основное">
-                      <Field label="Slug" value={form.slug} onChange={setField("slug")} placeholder="product-name" required />
-                      <Field label="Название" value={form.name} onChange={setField("name")} required />
-                      <div className="admin-field-grid"><Field label="Короткое имя" value={form.shortName} onChange={setField("shortName")} required /><Field label="Артикул / SKU" value={form.sku} onChange={setField("sku")} /></div>
-                      <label className="admin-field"><span>Категория</span><select value={form.category} onChange={setField("category")} required>{categories.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></label>
-                    </FormSection>
-
-                    <FormSection title="Цена и наличие">
-                      <div className="admin-field-grid"><Field label="Цена на сайте" value={form.price} onChange={setField("price")} placeholder="от 18 500 ₽" required /><Field label="Цена числом" value={form.priceNum} onChange={setField("priceNum")} type="number" required /></div>
-                      <div className="admin-field-grid"><Field label="Старая цена" value={form.oldPrice} onChange={setField("oldPrice")} type="number" /><Field label="Оптовая цена" value={form.wholesalePrice} onChange={setField("wholesalePrice")} type="number" /></div>
-                      <label className="admin-field"><span>Статус наличия</span><select value={form.availabilityStatus} onChange={setField("availabilityStatus")}>{AVAILABILITY_OPTIONS.map((option) => <option key={option.value || "empty"} value={option.value}>{option.label}</option>)}</select></label>
-                      <div className="admin-field-grid"><Field label="Остаток" value={form.stockQuantity} onChange={setField("stockQuantity")} type="number" /><Field label="Срок поставки" value={form.leadTime} onChange={setField("leadTime")} placeholder="2–5 дней" /></div>
-                    </FormSection>
-
-                    <FormSection title="Фото и описание">
-                      <Field label="Путь к изображению" value={form.img} onChange={setField("img")} placeholder="/uploads/products/photo.webp" required />
-                      <TextArea label="Краткое описание" value={form.description} onChange={setField("description")} rows={3} required />
-                      <TextArea label="Полное описание" value={form.fullDescription} onChange={setField("fullDescription")} rows={5} required />
-                      <TextArea label="Характеристики" value={form.specsText} onChange={setField("specsText")} rows={5} hint="Одна строка: Метка: значение" />
-                      <TextArea label="Теги" value={form.tagsText} onChange={setField("tagsText")} rows={2} hint="Через запятую" />
-                    </FormSection>
-
-                    <FormSection title="Дополнительно">
-                      <div className="admin-field-grid"><Field label="Бренд" value={form.brand} onChange={setField("brand")} /><Field label="Производитель" value={form.manufacturer} onChange={setField("manufacturer")} /></div>
-                      <div className="admin-field-grid"><Field label="Модель" value={form.model} onChange={setField("model")} /><Field label="Серия" value={form.series} onChange={setField("series")} /></div>
-                      <div className="admin-field-grid"><Field label="НДС, %" value={form.vatRate} onChange={setField("vatRate")} type="number" /><Field label="Минимальный заказ" value={form.minOrderQuantity} onChange={setField("minOrderQuantity")} type="number" /></div>
-                      <div className="admin-field-grid"><Field label="Единица продажи" value={form.saleUnit} onChange={setField("saleUnit")} /><Checkbox label="Цена с НДС" checked={form.vatIncluded} onChange={setField("vatIncluded")} /></div>
-                      <div className="admin-field-grid"><Checkbox label="НАКС" checked={form.naks} onChange={setField("naks")} /><Checkbox label="Рекомендуемый" checked={form.featured} onChange={setField("featured")} /></div>
-                    </FormSection>
-
-                    <FormSection title="SEO">
-                      <Field label="SEO title" value={form.seoTitle} onChange={setField("seoTitle")} />
-                      <TextArea label="SEO description" value={form.seoDescription} onChange={setField("seoDescription")} rows={3} />
-                    </FormSection>
-
-                    <div className="admin-editor__footer"><button type="submit" disabled={saving || uploading}>{saving ? "Сохранение…" : "Сохранить товар"}</button><button type="button" disabled={!form.slug || saving} onClick={deleteCurrentProduct}>Скрыть</button></div>
-                  </form>
-                </aside>
-              </div>
-            ) : (
-              <div className="admin-category-layout">
-                <section className="admin-category-list">
-                  <div className="admin-section-head"><div><span>Структура каталога</span><h2>Категории товаров</h2></div><button type="button" onClick={() => setCategoryForm(emptyCategoryForm)}>+ Новая категория</button></div>
-                  <div className="admin-category-grid">
-                    {categories.map((category, index) => {
-                      const count = products.filter((product) => product.category === category.key).length;
-                      return <button key={category.key} type="button" aria-pressed={categoryForm.key === category.key} className={categoryForm.key === category.key ? "is-active" : ""} onClick={() => setCategoryForm(categoryToForm(category))}><span>{String(index + 1).padStart(2, "0")}</span><strong>{category.label}</strong><p>{category.description || "Описание категории пока не заполнено."}</p><small>{count} товар(а/ов)</small></button>;
-                    })}
+                    <div className="admin-table-wrap">
+                      <table className="admin-data-table">
+                        <thead><tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Наличие</th><th>На сайте</th><th><span className="sr-only">Действия</span></th></tr></thead>
+                        <tbody>
+                          {filteredProducts.map((product) => (
+                            <tr key={product.slug}>
+                              <td>
+                                <div className="admin-product-cell">
+                                  <span className="admin-product-cell__image"><Image src={product.img} alt="" fill sizes="48px" className="object-contain" /></span>
+                                  <span><strong>{product.shortName || product.name}</strong><small>{product.sku || product.slug}</small></span>
+                                </div>
+                              </td>
+                              <td><span className="admin-table-secondary">{product.categoryLabel}</span></td>
+                              <td><strong className="admin-table-price">{product.price}</strong></td>
+                              <td><span className={`admin-status ${availabilityClass(product.availabilityStatus)}`}><i />{availabilityLabel(product.availabilityStatus)}</span></td>
+                              <td><Link href={`/catalog/${product.slug}`} className="admin-public-link" aria-label={`Открыть ${product.shortName || product.name} на сайте`}><AdminIcon name="external" /></Link></td>
+                              <td><button type="button" className="admin-edit-button" onClick={() => editProduct(product)}>Изменить</button></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {filteredProducts.length === 0 && <div className="admin-table-empty"><AdminIcon name="box" /><strong>Ничего не найдено</strong><span>Измените запрос или добавьте новый товар.</span></div>}
+                    </div>
                   </div>
                 </section>
+              )}
 
-                <aside className="admin-category-editor">
-                  <div className="admin-editor__head"><div><span>{categoryForm.originalKey ? "Редактирование" : "Новая категория"}</span><h2>Категория</h2></div><button type="button" onClick={() => setCategoryForm(emptyCategoryForm)}>Очистить</button></div>
-                  <form onSubmit={saveCategory} className="admin-editor__form">
-                    <Field label="Ключ латиницей" value={categoryForm.key} onChange={(event) => setCategoryForm((current) => ({ ...current, key: event.target.value }))} placeholder="welding-machines" required disabled={Boolean(categoryForm.originalKey)} />
-                    <Field label="Название" value={categoryForm.label} onChange={(event) => setCategoryForm((current) => ({ ...current, label: event.target.value }))} required />
-                    <TextArea label="Описание" value={categoryForm.description} onChange={(event) => setCategoryForm((current) => ({ ...current, description: event.target.value }))} rows={4} />
-                    <Field label="Порядок сортировки" value={categoryForm.sortOrder} onChange={(event) => setCategoryForm((current) => ({ ...current, sortOrder: event.target.value }))} type="number" placeholder="10" />
-                    {categoryForm.originalKey && <div className="admin-category-usage"><span>Используется в товарах</span><strong>{selectedCategoryUsage}</strong></div>}
-                    <div className="admin-editor__footer"><button type="submit" disabled={saving}>{saving ? "Сохранение…" : "Сохранить категорию"}</button><button type="button" disabled={!categoryForm.originalKey || saving || selectedCategoryUsage > 0} onClick={deleteCategory}>Удалить</button></div>
-                  </form>
-                </aside>
-              </div>
+              {activeSection === "categories" && (
+                <section className="admin-section-stack" aria-label="Управление категориями">
+                  <div className="admin-metrics admin-metrics--three">
+                    <article><span>Всего категорий</span><strong>{categories.length}</strong><small>Разделы каталога</small></article>
+                    <article><span>С товарами</span><strong>{assignedCategories}</strong><small>Активные разделы</small></article>
+                    <article><span>Пустые</span><strong>{categories.length - assignedCategories}</strong><small>Можно наполнить</small></article>
+                  </div>
+
+                  <div className="admin-panel">
+                    <div className="admin-panel__toolbar">
+                      <div><h2>Категории <span>{categories.length}</span></h2><p>Структура, подписи и порядок разделов каталога.</p></div>
+                    </div>
+                    <div className="admin-table-wrap">
+                      <table className="admin-data-table admin-category-table">
+                        <thead><tr><th>Название</th><th>Ключ</th><th>Товаров</th><th>Сортировка</th><th><span className="sr-only">Действия</span></th></tr></thead>
+                        <tbody>
+                          {categories.map((category) => {
+                            const count = products.filter((product) => product.category === category.key).length;
+                            return (
+                              <tr key={category.key}>
+                                <td><div className="admin-category-cell"><span><AdminIcon name="tag" /></span><div><strong>{category.label}</strong><small>{category.description || "Описание пока не заполнено"}</small></div></div></td>
+                                <td><code>{category.key}</code></td>
+                                <td><strong>{count}</strong></td>
+                                <td><span className="admin-table-secondary">{category.sortOrder ?? "—"}</span></td>
+                                <td><button type="button" className="admin-edit-button" onClick={() => editCategory(category)}>Изменить</button></td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {currentSection.development && <DevelopmentSection section={currentSection} />}
+            </>
+          )}
+        </div>
+      </main>
+
+      {editorPanel && (
+        <div className="admin-drawer-layer" onKeyDown={(event) => { if (event.key === "Escape") closeEditor(); }}>
+          <button type="button" className="admin-drawer-layer__backdrop" onClick={closeEditor} aria-label="Закрыть редактор" />
+          <aside className="admin-drawer" role="dialog" aria-modal="true" aria-labelledby="admin-editor-title">
+            <header className="admin-drawer__header">
+              <div><span>{editorPanel === "product" ? (form.slug ? "Редактирование товара" : "Новый товар") : (categoryForm.originalKey ? "Редактирование категории" : "Новая категория")}</span><h2 id="admin-editor-title">{editorPanel === "product" ? "Карточка товара" : "Категория"}</h2></div>
+              <button type="button" className="admin-icon-button" onClick={closeEditor} aria-label="Закрыть" autoFocus><AdminIcon name="close" /></button>
+            </header>
+
+            {editorPanel === "product" ? (
+              <form onSubmit={saveCurrentProduct} className="admin-drawer__form">
+                <div className="admin-image-editor">
+                  <div className="admin-image-editor__preview">
+                    {form.img.startsWith("/") ? <Image src={form.img} alt={form.name || "Фото товара"} fill sizes="520px" className="object-contain" /> : <span><AdminIcon name="image" />{form.img ? "Для предпросмотра загрузите файл" : "Фото товара"}</span>}
+                  </div>
+                  <div className="admin-image-editor__actions">
+                    <label className="admin-upload-button">{uploading ? "Загрузка…" : "Загрузить фото"}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadImage} disabled={uploading} /></label>
+                    <small>JPG, PNG или WEBP до 8 МБ</small>
+                  </div>
+                </div>
+
+                <FormSection title="Основное">
+                  <Field label="Slug" value={form.slug} onChange={setField("slug")} placeholder="product-name" required disabled={products.some((product) => product.slug === form.slug)} />
+                  <Field label="Название" value={form.name} onChange={setField("name")} required />
+                  <div className="admin-field-grid"><Field label="Короткое имя" value={form.shortName} onChange={setField("shortName")} required /><Field label="Артикул / SKU" value={form.sku} onChange={setField("sku")} /></div>
+                  <label className="admin-field"><span>Категория</span><select value={form.category} onChange={setField("category")} required>{categories.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></label>
+                </FormSection>
+
+                <FormSection title="Цена и наличие">
+                  <div className="admin-field-grid"><Field label="Цена на сайте" value={form.price} onChange={setField("price")} placeholder="от 18 500 ₽" required /><Field label="Цена числом" value={form.priceNum} onChange={setField("priceNum")} type="number" required /></div>
+                  <div className="admin-field-grid"><Field label="Старая цена" value={form.oldPrice} onChange={setField("oldPrice")} type="number" /><Field label="Оптовая цена" value={form.wholesalePrice} onChange={setField("wholesalePrice")} type="number" /></div>
+                  <label className="admin-field"><span>Статус наличия</span><select value={form.availabilityStatus} onChange={setField("availabilityStatus")}>{AVAILABILITY_OPTIONS.map((option) => <option key={option.value || "empty"} value={option.value}>{option.label}</option>)}</select></label>
+                  <div className="admin-field-grid"><Field label="Остаток" value={form.stockQuantity} onChange={setField("stockQuantity")} type="number" /><Field label="Срок поставки" value={form.leadTime} onChange={setField("leadTime")} placeholder="2–5 дней" /></div>
+                </FormSection>
+
+                <FormSection title="Фото и описание">
+                  <Field label="Путь к изображению" value={form.img} onChange={setField("img")} placeholder="/uploads/products/photo.webp" required />
+                  <TextArea label="Краткое описание" value={form.description} onChange={setField("description")} rows={3} required />
+                  <TextArea label="Полное описание" value={form.fullDescription} onChange={setField("fullDescription")} rows={5} required />
+                  <TextArea label="Характеристики" value={form.specsText} onChange={setField("specsText")} rows={5} hint="Одна строка: Метка: значение" />
+                  <TextArea label="Теги" value={form.tagsText} onChange={setField("tagsText")} rows={2} hint="Через запятую" />
+                </FormSection>
+
+                <FormSection title="Дополнительно">
+                  <div className="admin-field-grid"><Field label="Бренд" value={form.brand} onChange={setField("brand")} /><Field label="Производитель" value={form.manufacturer} onChange={setField("manufacturer")} /></div>
+                  <div className="admin-field-grid"><Field label="Модель" value={form.model} onChange={setField("model")} /><Field label="Серия" value={form.series} onChange={setField("series")} /></div>
+                  <div className="admin-field-grid"><Field label="НДС, %" value={form.vatRate} onChange={setField("vatRate")} type="number" /><Field label="Минимальный заказ" value={form.minOrderQuantity} onChange={setField("minOrderQuantity")} type="number" /></div>
+                  <div className="admin-field-grid"><Field label="Единица продажи" value={form.saleUnit} onChange={setField("saleUnit")} /><Checkbox label="Цена с НДС" checked={form.vatIncluded} onChange={setField("vatIncluded")} /></div>
+                  <div className="admin-field-grid"><Checkbox label="НАКС" checked={form.naks} onChange={setField("naks")} /><Checkbox label="Рекомендуемый" checked={form.featured} onChange={setField("featured")} /></div>
+                </FormSection>
+
+                <FormSection title="SEO">
+                  <Field label="SEO title" value={form.seoTitle} onChange={setField("seoTitle")} />
+                  <TextArea label="SEO description" value={form.seoDescription} onChange={setField("seoDescription")} rows={3} />
+                </FormSection>
+
+                <div className="admin-drawer__footer"><button type="button" className="is-danger" disabled={!form.slug || saving} onClick={deleteCurrentProduct}>Скрыть товар</button><button type="submit" disabled={saving || uploading}>{saving ? "Сохранение…" : "Сохранить товар"}</button></div>
+              </form>
+            ) : (
+              <form onSubmit={saveCategory} className="admin-drawer__form admin-drawer__form--category">
+                <FormSection title="Параметры категории">
+                  <Field label="Ключ латиницей" value={categoryForm.key} onChange={(event) => { setCategoryDirty(true); setCategoryForm((current) => ({ ...current, key: event.target.value })); }} placeholder="welding-machines" required disabled={Boolean(categoryForm.originalKey)} />
+                  <Field label="Название" value={categoryForm.label} onChange={(event) => { setCategoryDirty(true); setCategoryForm((current) => ({ ...current, label: event.target.value })); }} required />
+                  <TextArea label="Описание" value={categoryForm.description} onChange={(event) => { setCategoryDirty(true); setCategoryForm((current) => ({ ...current, description: event.target.value })); }} rows={5} />
+                  <Field label="Порядок сортировки" value={categoryForm.sortOrder} onChange={(event) => { setCategoryDirty(true); setCategoryForm((current) => ({ ...current, sortOrder: event.target.value })); }} type="number" placeholder="10" />
+                </FormSection>
+                {categoryForm.originalKey && <div className="admin-category-usage"><span>Используется в товарах</span><strong>{selectedCategoryUsage}</strong></div>}
+                <div className="admin-drawer__footer"><button type="button" className="is-danger" disabled={!categoryForm.originalKey || saving || selectedCategoryUsage > 0} onClick={deleteCategory}>Удалить</button><button type="submit" disabled={saving}>{saving ? "Сохранение…" : "Сохранить категорию"}</button></div>
+              </form>
             )}
-          </>
-        )}
-      </div>
+          </aside>
+        </div>
+      )}
     </div>
   );
+}
+
+function DevelopmentSection({ section }: { section: AdminSectionDefinition }) {
+  return (
+    <section className="admin-development" aria-labelledby={`admin-${section.id}-title`}>
+      <div className="admin-development__icon"><AdminIcon name={section.icon} /></div>
+      <span>Следующий этап</span>
+      <h2 id={`admin-${section.id}-title`}>В разработке</h2>
+      <p>{section.description}</p>
+      <div className="admin-development__timeline" aria-hidden="true"><i className="is-ready" /><i /><i /></div>
+      <small>Сейчас приоритет — быстро наполнить каталог и запустить сайт как витрину.</small>
+    </section>
+  );
+}
+
+function AdminIcon({ name }: { name: AdminIconName }) {
+  let content: React.ReactNode;
+
+  if (name === "box") content = <><path d="m4 7 8-4 8 4-8 4-8-4Z" /><path d="M4 7v10l8 4 8-4V7M12 11v10" /></>;
+  else if (name === "tag") content = <><path d="M20 13 13 20l-9-9V4h7l9 9Z" /><circle cx="8.5" cy="8.5" r="1.25" /></>;
+  else if (name === "orders") content = <><path d="M5 4h14v16H5z" /><path d="M8 8h8M8 12h8M8 16h5" /></>;
+  else if (name === "analytics") content = <><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>;
+  else if (name === "import") content = <><path d="M12 3v12M7 10l5 5 5-5" /><path d="M5 20h14" /></>;
+  else if (name === "home") content = <><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10M9 20v-6h6v6" /></>;
+  else if (name === "menu") content = <><path d="M4 7h16M4 12h16M4 17h16" /></>;
+  else if (name === "close") content = <><path d="m6 6 12 12M18 6 6 18" /></>;
+  else if (name === "plus") content = <><path d="M12 5v14M5 12h14" /></>;
+  else if (name === "refresh") content = <><path d="M20 7v5h-5" /><path d="M19 12a7 7 0 1 0-2 5" /></>;
+  else if (name === "lock") content = <><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" /></>;
+  else if (name === "arrow") content = <><path d="M5 12h14M14 7l5 5-5 5" /></>;
+  else if (name === "search") content = <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>;
+  else if (name === "external") content = <><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6H5V6h6" /></>;
+  else if (name === "image") content = <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m3 16 5-5 4 4 3-3 6 6" /></>;
+  else content = null;
+
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{content}</svg>;
 }
 
 function Field({ label, value, onChange, placeholder, type = "text", required = false, disabled = false }: { label: string; value: string; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; placeholder?: string; type?: string; required?: boolean; disabled?: boolean }) {
