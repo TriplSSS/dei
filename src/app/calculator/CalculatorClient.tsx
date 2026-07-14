@@ -73,43 +73,28 @@ export default function CalculatorClient() {
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative pt-36 pb-12 px-6 overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 right-1/4 w-[600px] h-[400px] rounded-full"
-          style={{ background: "radial-gradient(ellipse, rgba(220,38,38,0.05) 0%, transparent 70%)" }}
-        />
-        <div className="max-w-[900px] mx-auto">
+      <section className="page-intro">
+        <div className="page-intro-inner">
           <Reveal direction="up">
-            <div className="inline-flex items-center gap-2 glass-pill rounded-full px-4 py-1.5 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-xs font-medium text-zinc-400 tracking-widest uppercase">Инструмент</span>
-            </div>
+            <p className="page-kicker">Инженерный расчёт</p>
           </Reveal>
-          <Reveal direction="left" delay={0.05}>
-            <h1
-              className="font-bold tracking-tight text-white mb-4"
-              style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)", lineHeight: "0.95", letterSpacing: "-0.03em" }}
-            >
-              Калькулятор <span className="text-red-500">освещения</span>
-            </h1>
+          <Reveal direction="up" delay={0.06}>
+            <h1 className="page-title">Калькулятор освещения</h1>
           </Reveal>
-          <Reveal direction="up" delay={0.1}>
-            <p className="text-zinc-400 text-lg max-w-[520px] leading-relaxed">
+          <Reveal direction="up" delay={0.12}>
+            <p className="page-lead">
               Рассчитайте необходимое количество светильников для вашего объекта по нормативному методу.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* ── Калькулятор ── */}
-      <section className="pb-24 px-6">
-        <div className="max-w-[900px] mx-auto grid lg:grid-cols-[1fr_360px] gap-6">
+      <section className="section-shell pb-24 md:pb-32">
+        <div className="grid max-w-[1000px] gap-6 lg:grid-cols-[1fr_360px]">
 
           {/* Форма */}
           <Reveal direction="left" delay={0.05}>
-            <div className="glass-card rounded-2xl p-6 lg:p-8 flex flex-col gap-6">
+            <div className="surface flex flex-col gap-8 p-6 lg:p-8">
 
               {/* Размеры */}
               <div>
@@ -127,7 +112,7 @@ export default function CalculatorClient() {
                         min="1" max="500"
                         value={value}
                         onChange={e => set(e.target.value)}
-                        className="w-full glass-inner rounded-xl px-3 py-2.5 text-zinc-200 text-sm outline-none focus:border-red-600/50 transition-colors tabular-nums"
+                        className="w-full border border-white/10 bg-black/20 px-3 py-2.5 text-sm tabular-nums text-zinc-200 outline-none transition-colors focus:border-red-600/50"
                         style={{ border: "1px solid rgba(255,255,255,0.07)" }}
                       />
                     </div>
@@ -143,10 +128,10 @@ export default function CalculatorClient() {
                     <button
                       key={rt.key}
                       onClick={() => setRoomType(rt.key)}
-                      className={`text-left px-4 py-3 rounded-xl btn transition-all duration-200 ${
+                      className={`btn border px-4 py-3 text-left transition-colors duration-200 ${
                         roomType === rt.key
-                          ? "bg-red-600/15 border border-red-500/30 text-white"
-                          : "glass-inner border border-transparent text-zinc-400 hover:text-zinc-200"
+                          ? "border-red-500/45 bg-red-600/10 text-white"
+                          : "border-white/10 bg-white/[0.015] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
                       }`}
                     >
                       <p className="text-sm font-medium leading-tight">{rt.label}</p>
@@ -164,10 +149,10 @@ export default function CalculatorClient() {
                     <button
                       key={m.name}
                       onClick={() => setModel(m.name)}
-                      className={`flex items-center justify-between px-4 py-3 rounded-xl btn transition-all duration-200 ${
+                      className={`btn flex items-center justify-between border px-4 py-3 transition-colors duration-200 ${
                         model === m.name
-                          ? "bg-red-600/15 border border-red-500/30 text-white"
-                          : "glass-inner border border-transparent text-zinc-400 hover:text-zinc-200"
+                          ? "border-red-500/45 bg-red-600/10 text-white"
+                          : "border-white/10 bg-white/[0.015] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
                       }`}
                     >
                       <span className="text-sm font-medium">{m.name}</span>
@@ -186,15 +171,11 @@ export default function CalculatorClient() {
               {result ? (
                 <>
                   {/* Главный результат */}
-                  <div className="glass-red rounded-2xl p-6 text-center relative overflow-hidden">
-                    <div
-                      aria-hidden
-                      className="absolute inset-0 pointer-events-none"
-                      style={{ background: "radial-gradient(circle at 50% 0%, rgba(220,38,38,0.15) 0%, transparent 70%)" }}
-                    />
+                  <div className="surface relative overflow-hidden p-7 text-center">
+                    <div className="absolute inset-x-0 top-0 h-px bg-red-500" aria-hidden />
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-2">Необходимо светильников</p>
                     <p
-                      className="font-bold text-red-400 tabular-nums"
+                      className="font-semibold text-white tabular-nums"
                       style={{ fontSize: "5rem", lineHeight: "1" }}
                     >
                       {result.count}
@@ -203,7 +184,7 @@ export default function CalculatorClient() {
                   </div>
 
                   {/* Детали */}
-                  <div className="glass-card rounded-2xl overflow-hidden">
+                  <div className="surface overflow-hidden">
                     {[
                       { label: "Площадь",         value: `${result.area} м²` },
                       { label: "Суммарная мощность", value: `${result.totalPower} Вт` },
@@ -224,14 +205,14 @@ export default function CalculatorClient() {
                     </p>
                     <a
                       href="/contacts"
-                      className="block w-full bg-red-600 hover:bg-red-500 text-white font-semibold py-3.5 rounded-xl btn text-sm text-center transition-colors"
+                      className="btn block w-full bg-red-600 py-3.5 text-center text-sm font-semibold text-white transition-colors hover:bg-red-500"
                     >
                       Получить точный расчёт
                     </a>
                   </div>
                 </>
               ) : (
-                <div className="glass-card rounded-2xl p-8 text-center text-zinc-600 text-sm">
+                <div className="surface p-8 text-center text-sm text-zinc-600">
                   Введите размеры помещения
                 </div>
               )}

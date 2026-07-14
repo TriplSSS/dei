@@ -1,191 +1,85 @@
-"use client";
-
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import ParallaxImage from "@/components/ParallaxImage";
 
-const stats = [
-  { value: `${new Date().getFullYear() - 2006}+`, label: "лет опыта" },
-  { value: "НАКС", label: "аттестация" },
-  { value: "РФ·СНГ", label: "поставки" },
-  { value: "24/7", label: "поддержка" },
+const principles = [
+  ["Инженерная точность", "Решения оцениваются по рабочим параметрам, надёжности и условиям эксплуатации."],
+  ["Контроль качества", "Подход сформирован опытом работы с требованиями оборонной промышленности."],
+  ["Ответственность", "Сопровождаем заказчика от первичного расчёта до запуска оборудования."],
 ];
 
 const timeline = [
-  { year: "2006", text: "Основание компании офицерами запаса, инженерами оборонной промышленности" },
-  { year: "2010", text: "Запуск производства светодиодных светильников в Ростове-на-Дону" },
-  { year: "2014", text: "Разработка сварочного инвертора ПРОТОН-ДЭИ ВДИ 200" },
-  { year: "2018", text: "Аттестация оборудования в НАКС. Расширение географии поставок" },
-  { year: "2024", text: "Модернизация производственной линии и выход на рынки СНГ" },
+  ["2006", "Основание компании инженерами с опытом работы в оборонной промышленности."],
+  ["2010", "Запуск направления промышленного светодиодного освещения."],
+  ["2014", "Разработка сварочного инвертора ПРОТОН-ДЭИ ВДИ 200."],
+  ["2018", "Аттестация оборудования НАКС и расширение географии поставок."],
+  ["2024", "Модернизация производства и развитие продуктовой линейки."],
 ];
 
 export default function AboutClient() {
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative pt-36 pb-24 px-6 overflow-hidden">
-        {/* фоновые блики */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 70%)" }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-10 right-0 w-[400px] h-[400px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%)" }}
-        />
-
-        <div className="max-w-[1400px] mx-auto">
-          {/* пилюля-лейбл */}
-          <Reveal direction="up" delay={0}>
-            <div className="inline-flex items-center gap-2 glass-pill rounded-full px-4 py-1.5 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-xs font-medium text-zinc-400 tracking-widest uppercase">
-                О компании
-              </span>
-            </div>
-          </Reveal>
-
-          {/* заголовок */}
-          <Reveal direction="left" delay={0.05}>
-            <h1
-              className="font-bold tracking-tight text-white"
-              style={{ fontSize: "clamp(2.6rem, 6vw, 5.5rem)", lineHeight: "0.9", letterSpacing: "-0.03em" }}
-            >
-              ДонЭлектро
-              <br />
-              <span className="text-red-500">Интел</span>
-            </h1>
-          </Reveal>
-
-          {/* подзаголовок */}
-          <Reveal direction="left" delay={0.12}>
-            <p className="mt-8 text-zinc-400 text-lg leading-relaxed max-w-[560px]">
-              Компанию создали в&nbsp;2006&nbsp;году офицеры запаса и&nbsp;инженеры, которые ранее
-              контролировали качество разработки и&nbsp;производства космических двигателей и&nbsp;спутниковых
-              систем связи.
+      <section className="page-intro pb-12">
+        <div className="page-intro-inner">
+          <Reveal>
+            <p className="page-kicker">О компании</p>
+            <h1 className="page-title max-w-[1050px]">Инженерная культура с 2006 года</h1>
+            <p className="page-lead">
+              ДонЭлектроИнтел объединяет производственный опыт, собственные разработки и практический подход к задачам заказчика.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* ── Параллакс-баннер ── */}
-      <Reveal direction="scale" delay={0}>
-        <section className="relative h-[320px] md:h-[460px] overflow-hidden">
-          <ParallaxImage
-            src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1800&h=600&fit=crop&q=80"
-            alt="Производство ДонЭлектроИнтел"
-            className="h-full"
-          />
-          {/* затемнение + красная граница снизу */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-black/30 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-600/40 to-transparent" />
-        </section>
-      </Reveal>
+      <section className="section-shell pb-20">
+        <Reveal>
+          <div className="glass-card grid min-h-[360px] overflow-hidden rounded-[28px] lg:grid-cols-[1fr_1.25fr]">
+            <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_30%_20%,rgba(239,45,63,.14),transparent_55%)] p-8 sm:p-12">
+              <span className="text-xs uppercase tracking-[0.16em] text-zinc-600">ДонЭлектроИнтел</span>
+              <span className="text-[clamp(6rem,16vw,13rem)] font-bold leading-[0.7] tracking-[-0.09em] text-white">DEI</span>
+            </div>
+            <div className="flex items-end border-t border-white/[0.09] p-8 sm:p-12 lg:border-l lg:border-t-0">
+              <p className="max-w-[620px] text-xl leading-relaxed text-zinc-300 sm:text-2xl">
+                Компания создана инженерами, которые ранее отвечали за качество разработки и производства сложных технических систем.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </section>
 
-      {/* ── Наш подход ── */}
-      <section className="py-24 px-6">
-        <div className="max-w-[1400px] mx-auto">
-          <Reveal direction="up">
-            <h2
-              className="font-bold tracking-tight text-white mb-12"
-              style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", lineHeight: "0.95", letterSpacing: "-0.03em" }}
-            >
-              Наш <span className="text-red-500">подход</span>
-            </h2>
+      <section className="section-space border-t border-white/[0.07]">
+        <div className="section-shell">
+          <Reveal>
+            <p className="section-kicker">Принципы</p>
+            <h2 className="section-title mt-5 max-w-[760px]">Технологичность начинается с дисциплины</h2>
           </Reveal>
-
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-            {/* текст */}
-            <Reveal direction="left" delay={0.05}>
-              <div className="glass-card rounded-2xl p-8 lg:p-10 h-full">
-                <p className="text-zinc-300 leading-relaxed mb-5 text-[15px]">
-                  За основу взята система качества разработки и&nbsp;производства оборонной промышленности.
-                  В&nbsp;модельном ряде есть собственные запатентованные конструктивные решения и&nbsp;технологии.
-                </p>
-                <p className="text-zinc-400 leading-relaxed text-[15px]">
-                  Мы&nbsp;придерживаемся комплексного подхода к&nbsp;обслуживанию клиентов: выезд к&nbsp;заказчику
-                  для разбора объекта, расчёт и&nbsp;рекомендации, поставка, монтаж, консультирование в&nbsp;процессе
-                  эксплуатации.
-                </p>
-
-                {/* мини-сетка фич */}
-                <div className="grid grid-cols-2 gap-3 mt-6">
-                  <div className="flex items-center gap-2 glass-pill rounded-xl px-3 py-2.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    <span className="text-xs text-zinc-400">Выезд к заказчику</span>
-                  </div>
-                  <div className="flex items-center gap-2 glass-pill rounded-xl px-3 py-2.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <span className="text-xs text-zinc-400">НАКС аттестация</span>
-                  </div>
-                </div>
-
-                {/* декоративная линия */}
-                <div className="mt-8 h-px bg-gradient-to-r from-red-600/40 via-red-600/10 to-transparent" />
-                <p className="mt-4 text-xs text-zinc-600 tracking-widest uppercase">
-                  Официальный производитель · Ростов-на-Дону
-                </p>
-              </div>
-            </Reveal>
-
-            {/* статистика */}
-            <Reveal direction="right" delay={0.1}>
-              <div className="grid grid-cols-2 gap-4">
-                {stats.map((s, i) => (
-                  <div
-                    key={i}
-                    className="glass-inner rounded-2xl py-7 px-5 text-center hover-lift cursor-default"
-                    style={{ transitionDelay: `${i * 40}ms` }}
-                  >
-                    <p
-                      className="font-bold text-red-500 tabular-nums mb-1.5"
-                      style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)" }}
-                    >
-                      {s.value}
-                    </p>
-                    <p className="text-xs text-zinc-500 tracking-wider uppercase">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+          <div className="principle-grid mt-14">
+            {principles.map(([title, text], index) => (
+              <Reveal key={title} delay={index * 0.07}>
+                <article className="principle-item">
+                  <span className="text-xs text-red-500">0{index + 1}</span>
+                  <h3 className="mt-8 text-xl font-medium text-white">{title}</h3>
+                  <p className="mt-3 max-w-[350px] text-sm leading-relaxed text-zinc-500">{text}</p>
+                </article>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── История развития ── */}
-      <section className="py-24 px-6">
-        <div className="max-w-[1000px] mx-auto">
-          <Reveal direction="up">
-            <h2
-              className="font-bold tracking-tight text-white mb-16"
-              style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", lineHeight: "0.95", letterSpacing: "-0.03em" }}
-            >
-              История <span className="text-red-500">развития</span>
-            </h2>
+      <section className="section-space border-t border-white/[0.07]">
+        <div className="section-shell grid gap-14 lg:grid-cols-[0.72fr_1.28fr]">
+          <Reveal>
+            <div className="lg:sticky lg:top-28">
+              <p className="section-kicker">История</p>
+              <h2 className="section-title mt-5">Этапы развития</h2>
+            </div>
           </Reveal>
-
-          <div className="glass-card rounded-2xl overflow-hidden">
-            {timeline.map((t, i) => (
-              <Reveal key={i} direction={i % 2 === 0 ? "left" : "right"} delay={i * 0.07}>
-                <div
-                  className="group flex items-start gap-6 lg:gap-10 px-7 lg:px-10 py-7 border-b border-white/[0.05] last:border-b-0 transition-colors duration-300 hover:bg-white/[0.025]"
-                >
-                  {/* год */}
-                  <span
-                    className="shrink-0 font-bold tabular-nums text-red-600/35 group-hover:text-red-500/70 transition-colors duration-500"
-                    style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.4rem)", lineHeight: 1, minWidth: "5rem" }}
-                  >
-                    {t.year}
-                  </span>
-
-                  {/* разделитель */}
-                  <div className="shrink-0 mt-2 w-px self-stretch bg-gradient-to-b from-red-600/30 via-red-600/10 to-transparent" />
-
-                  {/* текст */}
-                  <p className="text-zinc-400 text-[15px] leading-relaxed pt-0.5 group-hover:text-zinc-300 transition-colors duration-300">
-                    {t.text}
-                  </p>
+          <div className="glass-card overflow-hidden rounded-[22px] p-2">
+            {timeline.map(([year, text], index) => (
+              <Reveal key={year} delay={index * 0.05}>
+                <div className="grid gap-4 rounded-[14px] border-b border-white/[0.07] px-5 py-6 transition-colors hover:bg-white/[0.035] sm:grid-cols-[100px_1fr]">
+                  <span className="text-xl font-medium tabular-nums text-white">{year}</span>
+                  <p className="max-w-[620px] text-sm leading-relaxed text-zinc-500">{text}</p>
                 </div>
               </Reveal>
             ))}
@@ -193,77 +87,18 @@ export default function AboutClient() {
         </div>
       </section>
 
-      {/* ── Основатели ── */}
-      <section className="pb-28 px-6">
-        <div className="max-w-[1000px] mx-auto">
-          <Reveal direction="up">
-            <h2
-              className="font-bold tracking-tight text-white mb-10"
-              style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", lineHeight: "0.95", letterSpacing: "-0.03em" }}
-            >
-              Основатели
-            </h2>
-          </Reveal>
-
-          <Reveal direction="up" delay={0.08}>
-            <div className="glass-red rounded-2xl p-8 lg:p-12 relative overflow-hidden">
-              {/* декоративное свечение */}
-              <div
-                aria-hidden
-                className="absolute -right-20 -top-20 w-64 h-64 rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%)" }}
-              />
-
-              <div className="relative">
-                {/* иконка-акцент */}
-                <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl glass-pill mb-6">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#DC2626"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                </div>
-
-                <p className="text-zinc-200 text-lg leading-relaxed max-w-[680px] mb-6">
-                  Компанию основали офицеры запаса и&nbsp;инженеры оборонной промышленности — люди с&nbsp;опытом
-                  контроля качества в&nbsp;разработке и&nbsp;производстве космических двигателей и&nbsp;спутниковых
-                  систем связи.
+      <section className="section-space border-t border-white/[0.07]">
+        <div className="section-shell">
+          <Reveal>
+            <div className="glass-card grid gap-10 rounded-[26px] p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div>
+                <p className="section-kicker">Сегодня</p>
+                <h2 className="section-title mt-5 max-w-[800px]">Производим, подбираем и сопровождаем оборудование</h2>
+                <p className="mt-6 max-w-[650px] text-base leading-relaxed text-zinc-500">
+                  Работаем с предприятиями и частными заказчиками: уточняем задачу, рассчитываем решение и остаёмся на связи после поставки.
                 </p>
-                <p className="text-zinc-400 text-[15px] leading-relaxed max-w-[620px]">
-                  Этот фундамент определил ДНК компании: строгие стандарты производства, инженерная точность
-                  в&nbsp;каждом изделии и&nbsp;культура ответственности перед заказчиком.
-                </p>
-
-                <div className="mt-8 flex flex-wrap gap-3">
-                  {["Оборонная инженерия", "Космические технологии", "Контроль качества"].map((tag) => (
-                    <span
-                      key={tag}
-                      className="glass-pill rounded-full px-4 py-1.5 text-xs text-zinc-400 tracking-wide"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <a
-                  href="/contacts"
-                  className="inline-flex items-center gap-2 text-red-500 hover:text-red-400 text-sm font-medium mt-6 transition-colors duration-200"
-                >
-                  Связаться с нами →
-                </a>
               </div>
+              <Link href="/contacts" className="energy-strip btn bg-red-600 px-7 py-3.5 text-center text-sm font-semibold text-white hover:bg-red-500">Связаться с нами</Link>
             </div>
           </Reveal>
         </div>

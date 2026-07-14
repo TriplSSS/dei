@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import AddToCartButton from "@/components/AddToCartButton";
 import { type Product } from "@/data/products";
@@ -15,10 +16,9 @@ export default function ProductPageClient({ product, products }: { product: Prod
   return (
     <>
       {/* ── Хлебные крошки ── */}
-      <div className="relative px-6 pb-0 pt-28">
-        <div aria-hidden className="ambient-red-grid pointer-events-none absolute inset-x-0 top-0 h-[360px] opacity-45" />
-        <div className="max-w-[1400px] mx-auto">
-          <nav className="relative flex items-center gap-2 text-xs text-zinc-600" aria-label="Breadcrumb">
+      <div className="px-4 pb-0 pt-28 sm:px-6">
+        <div className="mx-auto max-w-[1180px]">
+          <nav className="flex items-center gap-2 text-xs text-zinc-700" aria-label="Навигационная цепочка">
             <Link href="/" className="hover:text-zinc-400 transition-colors">Главная</Link>
             <span>/</span>
             <Link href="/catalog" className="hover:text-zinc-400 transition-colors">Каталог</Link>
@@ -29,25 +29,27 @@ export default function ProductPageClient({ product, products }: { product: Prod
       </div>
 
       {/* ── Основной контент ── */}
-      <section className="relative px-6 pb-20 pt-8">
-        <div className="relative max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+      <section className="px-4 pb-24 pt-8 sm:px-6">
+        <div className="mx-auto max-w-[1180px]">
+          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
 
             {/* Изображение */}
             <Reveal direction="left" delay={0}>
-              <div className="product-photo-stage premium-panel glass-card relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[0_36px_110px_-72px_rgba(220,38,38,0.9)]">
-                <img
+              <div className="product-photo-stage relative aspect-[4/3] overflow-hidden rounded-lg border border-white/[0.09]">
+                <Image
                   src={product.img}
                   alt={product.name}
-                  className="product-photo-blend relative h-full w-full"
+                  fill
+                  priority
+                  sizes="(max-width: 1023px) 100vw, 560px"
+                  className="product-photo-blend"
                 />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(9,9,11,0.68),transparent_58%)]" />
                 <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="glass-pill rounded-md px-3 py-1 text-xs font-medium uppercase tracking-normal text-red-300">
+                  <span className="rounded border border-white/[0.1] bg-black/50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-zinc-300">
                     {product.categoryLabel}
                   </span>
                   {product.naks && (
-                    <span className="glass-pill rounded-md px-3 py-1 text-xs font-medium uppercase tracking-normal text-emerald-300">
+                    <span className="rounded border border-emerald-400/20 bg-black/50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-300">
                       НАКС
                     </span>
                   )}
@@ -60,21 +62,19 @@ export default function ProductPageClient({ product, products }: { product: Prod
               <div className="flex flex-col gap-6">
                 {/* Заголовок */}
                 <div>
-                  <h1
-                    className="font-bold hero-title-gradient tracking-normal"
-                    style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)", lineHeight: "1" }}
-                  >
+                  <p className="page-kicker mb-4">{product.categoryLabel}</p>
+                  <h1 className="text-[clamp(2.25rem,4.5vw,4.5rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-white">
                     {product.name}
                   </h1>
-                  <p className="mt-3 text-zinc-400 text-base leading-relaxed">{product.fullDescription}</p>
+                  <p className="mt-5 max-w-[580px] text-base leading-relaxed text-zinc-400">{product.fullDescription}</p>
                 </div>
 
                 {/* Цена + покупка */}
-                <div className="premium-panel glass-red rounded-xl px-5 py-4">
+                <div className="surface rounded-lg px-5 py-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-zinc-500 uppercase tracking-widest mb-0.5">Стоимость</p>
-                      <p className="text-red-400 font-bold text-2xl tabular-nums">{product.price}</p>
+                      <p className="text-2xl font-semibold tabular-nums text-white">{product.price}</p>
                     </div>
                     {/* количество */}
                     <div className="flex items-center rounded-lg border border-white/[0.1] bg-black/20 shadow-[0_16px_38px_-28px_rgba(255,255,255,0.5)]">
@@ -89,13 +89,13 @@ export default function ProductPageClient({ product, products }: { product: Prod
                 </div>
 
                 {/* Технические характеристики */}
-                <div className="premium-panel glass-card rounded-2xl overflow-hidden">
+                <div className="surface overflow-hidden rounded-lg">
                   <div className="px-5 py-3 border-b border-white/[0.05]">
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Технические характеристики</p>
                   </div>
                   <div className="grid gap-1 p-1">
-                    {product.specs.map((spec, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg bg-white/[0.018] px-4 py-3">
+                    {product.specs.map((spec) => (
+                      <div key={spec.label} className="flex items-center justify-between rounded-lg bg-white/[0.018] px-4 py-3">
                         <span className="text-sm text-zinc-500">{spec.label}</span>
                         <span className="text-sm text-zinc-200 font-medium text-right max-w-[55%]">{spec.value}</span>
                       </div>
@@ -104,9 +104,9 @@ export default function ProductPageClient({ product, products }: { product: Prod
                 </div>
 
                 {/* Теги */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-white/[0.08] pt-4">
                   {product.tags.map(tag => (
-                    <span key={tag} className="glass-pill rounded-md px-3 py-1 text-xs text-zinc-500 tracking-normal">
+                    <span key={tag} className="text-xs text-zinc-600">
                       {tag}
                     </span>
                   ))}
@@ -117,11 +117,11 @@ export default function ProductPageClient({ product, products }: { product: Prod
                   <AddToCartButton
                     product={product}
                     qty={qty}
-                    className="energy-strip flex-1 bg-red-600 hover:bg-red-500 text-white font-semibold py-3.5 rounded-xl text-sm text-center"
+                    className="btn flex-1 bg-red-600 py-3.5 text-center text-sm font-semibold text-white hover:bg-red-500"
                   />
                   <a
                     href="tel:+79885807630"
-                    className="glass-pill hover:text-white text-zinc-400 font-medium py-3.5 px-5 rounded-xl btn text-sm text-center transition-colors"
+                    className="btn border border-white/[0.12] px-5 py-3.5 text-center text-sm font-medium text-zinc-400 hover:text-white"
                   >
                     Позвонить
                   </a>
@@ -134,8 +134,8 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
       {/* ── Похожие товары ── */}
       {related.length > 0 && (
-        <section className="relative px-6 pb-24">
-          <div className="max-w-[1400px] mx-auto">
+        <section className="px-4 pb-24 sm:px-6">
+          <div className="mx-auto max-w-[1180px]">
             <Reveal direction="up">
               <h2
                 className="mb-8 font-bold tracking-normal text-white"
@@ -149,10 +149,9 @@ export default function ProductPageClient({ product, products }: { product: Prod
               {related.map((p, i) => (
                 <Reveal key={p.slug} delay={i * 0.07} direction="blur">
                   <Link href={`/catalog/${p.slug}`} className="block group">
-                    <div className="product-card-premium glass-card hover-lift rounded-2xl overflow-hidden">
+                    <div className="product-card-premium hover-lift overflow-hidden rounded-lg">
                       <div className="product-photo-stage relative aspect-[4/3] overflow-hidden">
-                        <img src={p.img} alt={p.name} className="product-photo-blend relative w-full h-full img-zoom" />
-                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(9,9,11,0.62),transparent_58%)]" />
+                        <Image src={p.img} alt={p.name} fill sizes="(max-width: 639px) 100vw, 33vw" className="product-photo-blend img-zoom" />
                       </div>
                       <div className="glass-inner p-4 flex items-center justify-between">
                         <div>

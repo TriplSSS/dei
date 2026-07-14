@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import AddToCartButton from "@/components/AddToCartButton";
@@ -121,29 +122,28 @@ export default function CatalogClient({ products }: { products: Product[] }) {
   return (
     <>
       {/* ── Шапка ── */}
-      <section className="relative overflow-hidden px-4 pb-8 pt-32 sm:px-6 md:pb-10 md:pt-36">
-        <div aria-hidden className="ambient-red-grid pointer-events-none absolute inset-x-0 top-0 h-[520px] opacity-60" />
-        <div className="mx-auto max-w-[1400px]">
+      <section className="page-intro">
+        <div className="page-intro-inner">
           <Reveal>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-red-500">Каталог</p>
-            <h1
-              className="hero-title-gradient font-bold tracking-normal"
-              style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: "0.95" }}
-            >
-              Продукция DEI
-            </h1>
-            <p className="mt-4 max-w-[520px] text-sm leading-relaxed text-zinc-400 sm:text-base">
-              Сейчас в каталоге два тестовых товара: сварочный аппарат Протон и светодиодный светильник Кобра.
+            <p className="page-kicker">Каталог DEI</p>
+            <h1 className="page-title">Каталог оборудования</h1>
+            <p className="page-lead">
+              Оборудование для сварочных работ и освещения производственных площадок. Поможем подобрать комплектацию под вашу задачу и подготовим предложение.
             </p>
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-xs text-zinc-600">
+              <span><b className="mr-1 text-white">{products.length}</b> позиции</span>
+              <span>Подбор специалистом</span>
+              <span>Поставка по России</span>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      <section className="px-4 pb-24 sm:px-6">
+      <section className="px-4 pb-28 sm:px-6">
         <div className="mx-auto grid min-w-0 max-w-[1400px] gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="premium-panel glass-card sticky top-28 rounded-2xl p-5">
+            <div className="surface sticky top-24 rounded-lg p-5">
               {Filters}
             </div>
           </aside>
@@ -151,7 +151,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="premium-panel mb-5 min-w-0 rounded-lg border border-white/[0.07] p-2.5 backdrop-blur-xl sm:p-3">
+            <div className="surface mb-5 min-w-0 rounded-lg p-2.5 sm:p-3">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
                 <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
                   <p className="text-sm text-zinc-500">
@@ -233,14 +233,19 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                 </button>
               </div>
             ) : (
-              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+              <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
                 {filtered.map((product, i) => (
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
-                    <div className="product-card-premium group glass-card hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300 hover:border-red-600/25">
+                    <div className="product-card-premium group hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300">
                       <Link href={`/catalog/${product.slug}`} className="block">
                         <div className="product-photo-stage relative aspect-[16/10] overflow-hidden">
-                          <img src={product.img} alt={product.name} className="product-photo-blend relative h-full w-full img-zoom" />
-                          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(9,9,11,0.62),transparent_56%)]" />
+                          <Image
+                            src={product.img}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 540px"
+                            className="product-photo-blend img-zoom"
+                          />
                           <div className="absolute left-3 top-3 flex gap-1.5">
                             <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-300">
                               {product.categoryLabel}
@@ -254,17 +259,17 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                         </div>
                       </Link>
 
-                      <div className="flex min-w-0 flex-1 flex-col gap-2 p-3 sm:p-4">
+                      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4 sm:p-5">
                         <Link href={`/catalog/${product.slug}`} className="min-w-0">
-                          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white">
+                          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white sm:text-lg">
                             {product.name}
                           </h3>
                         </Link>
-                        <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">{product.description}</p>
+                        <p className="line-clamp-2 text-sm leading-relaxed text-zinc-500">{product.description}</p>
 
-                        <div className="grid gap-1.5 pt-2">
+                        <div className="grid gap-2 border-t border-white/[0.06] pt-3">
                           {product.specs.slice(0, 2).map((spec) => (
-                            <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-[11px] leading-none">
+                            <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-xs leading-none">
                               <span className="truncate text-zinc-600">{spec.label}</span>
                               <span className="shrink-0 font-medium text-zinc-300">{spec.value}</span>
                             </div>
@@ -272,7 +277,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                         </div>
 
                         <div className="mt-auto flex items-baseline justify-between gap-3 pt-3">
-                          <p className="text-base font-bold tabular-nums text-red-500 sm:text-lg">{product.price}</p>
+                          <p className="text-lg font-bold tabular-nums text-red-500 sm:text-xl">{product.price}</p>
                           <span className="shrink-0 text-[11px] text-zinc-600">под заказ</span>
                         </div>
                         <div className="flex min-w-0 gap-2">
@@ -298,7 +303,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
             )}
 
             {/* Нестандартный заказ */}
-            <div className="premium-panel glass-red mt-10 flex flex-col items-start gap-5 rounded-lg px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
+              <div className="surface mt-10 flex flex-col items-start gap-5 rounded-lg px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
               <div className="min-w-0">
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>

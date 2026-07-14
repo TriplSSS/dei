@@ -1,102 +1,53 @@
 import Link from "next/link";
 
-const navColumns = [
-  {
-    title: "Продукция",
-    links: [
-      { href: "/catalog?category=welding", label: "Сварочный аппарат Протон" },
-      { href: "/catalog?category=light", label: "Светодиодный светильник Кобра" },
-    ],
-  },
-  {
-    title: "Компания",
-    links: [
-      { href: "/", label: "Главная" },
-      { href: "/about", label: "О компании" },
-      { href: "/contacts", label: "Контакты" },
-    ],
-  },
+const links = [
+  { href: "/catalog", label: "Каталог" },
+  { href: "/calculator", label: "Калькулятор" },
+  { href: "/documents", label: "Документы" },
+  { href: "/about", label: "О компании" },
+  { href: "/contacts", label: "Контакты" },
 ];
 
 export default function Footer() {
   return (
-    <>
-      <footer
-        className="pt-14 pb-8 px-6 bg-[#09090b]"
-      >
-      <div className="max-w-[1400px] mx-auto">
-        {/* Верхняя сетка */}
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-12">
-          {/* Логотип + описание */}
+    <footer className="relative z-10 mt-12 px-4 pb-5 pt-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="glass-card grid gap-12 rounded-[28px] p-7 md:grid-cols-[1.4fr_1fr_1fr] md:p-10">
           <div>
-            <Link
-              href="/"
-              className="inline-block text-3xl font-bold tracking-tight text-white mb-4 transition-opacity duration-200 hover:opacity-80"
-            >
-              DEI
-            </Link>
-            <p className="text-zinc-500 text-sm leading-relaxed max-w-[260px]">
-              ООО ДонЭлектроИнтел — сварочное оборудование и светодиодные
-              светильники. Ростов-на-Дону.
+            <Link href="/" className="text-3xl font-bold tracking-[-0.05em] text-white">DEI</Link>
+            <p className="mt-4 max-w-[360px] text-sm leading-relaxed text-zinc-500">
+              Оборудование для сварочных работ и промышленного освещения. Ростов-на-Дону, с 2006 года.
             </p>
           </div>
 
-          {/* Навигационные колонки */}
-          {navColumns.map((col) => (
-            <div key={col.title}>
-              <h4 className="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest mb-4">
-                {col.title}
-              </h4>
-              <ul className="space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      className="text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Контакты */}
           <div>
-            <h4 className="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest mb-4">
-              Контакты
-            </h4>
-            <a
-              href="tel:+79885807630"
-              className="block text-sm text-zinc-400 mb-3 transition-colors duration-200 hover:text-[#DC2626]"
-            >
+            <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-600">Разделы</p>
+            <div className="grid gap-2.5">
+              {links.map((link) => (
+                <Link key={link.href} href={link.href} className="text-sm text-zinc-400 transition-colors hover:text-white">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-600">Контакты</p>
+            <a href="tel:+79885807630" className="text-base font-medium text-white transition-colors hover:text-red-400">
               +7 (988) 580-76-30
             </a>
-            <address className="not-italic text-sm text-zinc-500 leading-relaxed">
-              пер. Нарядный, 14/2
-              <br />
-              Ростов-на-Дону, 344065
+            <address className="mt-3 not-italic text-sm leading-relaxed text-zinc-500">
+              пер. Нарядный, 14/2<br />Ростов-на-Дону, 344065
             </address>
           </div>
         </div>
 
-        {/* Нижняя строка */}
-        <div
-          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-          className="pt-6 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-zinc-600"
-        >
+        <div className="mt-5 flex flex-col gap-3 px-2 text-xs text-zinc-700 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2006–{new Date().getFullYear()} ДонЭлектроИнтел</span>
-          <Link
-            href="/contacts"
-            className="transition-colors duration-200 hover:text-zinc-400"
-          >
-            Написать нам →
-          </Link>
+          <Link href="/contacts" className="transition-colors hover:text-zinc-400">Связаться с компанией</Link>
           <span>Все права защищены</span>
         </div>
       </div>
     </footer>
-    </>
   );
 }

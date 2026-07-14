@@ -9,8 +9,9 @@ import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/CartDrawer";
 
 const inter = Inter({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["cyrillic", "latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -50,13 +51,17 @@ const organizationJsonLd = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" className={`${inter.variable} antialiased`}>
-      <body className="bg-[#09090b] text-zinc-400 font-[family-name:var(--font-inter)]">
+      <body className="font-[family-name:var(--font-inter)]">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        <div className="site-atmosphere" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <CartProvider>
-          <div className="grain" />
           <SmoothScroll />
           <Nav />
           <main>{children}</main>

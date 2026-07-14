@@ -6,6 +6,7 @@ export default function CartButton() {
   const { count, open } = useCart();
   return (
     <button
+      type="button"
       onClick={open}
       aria-label={`Корзина, ${count} шт.`}
       className="relative w-9 h-9 flex items-center justify-center rounded-full glass-pill text-zinc-300 hover:text-white btn transition-colors"

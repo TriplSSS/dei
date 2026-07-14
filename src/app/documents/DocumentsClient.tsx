@@ -1,5 +1,3 @@
-"use client";
-
 import Reveal from "@/components/Reveal";
 
 type DocItem = {
@@ -19,11 +17,11 @@ const TYPE_LABELS: Record<DocItem["type"], string> = {
 };
 
 const TYPE_COLORS: Record<DocItem["type"], string> = {
-  naks:        "text-emerald-400 border-emerald-400/20 bg-emerald-900/10",
-  cert:        "text-blue-400 border-blue-400/20 bg-blue-900/10",
-  patent:      "text-purple-400 border-purple-400/20 bg-purple-900/10",
-  passport:    "text-zinc-400 border-zinc-400/20 bg-zinc-900/10",
-  declaration: "text-amber-400 border-amber-400/20 bg-amber-900/10",
+  naks:        "text-red-400 border-red-500/25",
+  cert:        "text-zinc-400 border-white/10",
+  patent:      "text-zinc-400 border-white/10",
+  passport:    "text-zinc-400 border-white/10",
+  declaration: "text-zinc-400 border-white/10",
 };
 
 const DOCS: DocItem[] = [
@@ -112,52 +110,28 @@ function DocIcon({ type }: { type: DocItem["type"] }) {
 export default function DocumentsClient() {
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative pt-36 pb-16 px-6 overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-32 right-0 w-[500px] h-[500px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(220,38,38,0.05) 0%, transparent 70%)" }}
-        />
-        <div className="max-w-[1000px] mx-auto">
+      <section className="page-intro">
+        <div className="page-intro-inner">
           <Reveal direction="up">
-            <div className="inline-flex items-center gap-2 glass-pill rounded-full px-4 py-1.5 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-xs font-medium text-zinc-400 tracking-widest uppercase">Документы</span>
-            </div>
+            <p className="page-kicker">Документы</p>
           </Reveal>
-
-          <Reveal direction="left" delay={0.05}>
-            <h1
-              className="font-bold tracking-tight text-white mb-4"
-              style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)", lineHeight: "0.95", letterSpacing: "-0.03em" }}
-            >
-              Сертификаты и <span className="text-red-500">документация</span>
-            </h1>
+          <Reveal direction="up" delay={0.06}>
+            <h1 className="page-title">Сертификаты и документация</h1>
           </Reveal>
-
-          <Reveal direction="up" delay={0.1}>
-            <p className="text-zinc-400 text-lg max-w-[560px] leading-relaxed">
+          <Reveal direction="up" delay={0.12}>
+            <p className="page-lead">
               Аттестаты НАКС, сертификаты соответствия, патенты и технические паспорта на всю продукцию DEI.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* ── Список документов ── */}
-      <section className="pb-24 px-6">
-        <div className="max-w-[1000px] mx-auto">
-
-          {/* Ключевой документ — НАКС */}
+      <section className="section-shell pb-24 md:pb-32">
+        <div className="max-w-[1000px]">
           <Reveal direction="up" delay={0}>
-            <div className="glass-red rounded-2xl p-7 mb-8 relative overflow-hidden">
-              <div
-                aria-hidden
-                className="absolute -right-16 -top-16 w-48 h-48 rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, rgba(220,38,38,0.15) 0%, transparent 70%)" }}
-              />
-              <div className="relative flex items-start gap-5">
-                <div className="shrink-0 w-12 h-12 rounded-xl glass-pill flex items-center justify-center text-emerald-400">
+            <div className="surface mb-8 p-7 md:p-10">
+              <div className="flex items-start gap-5">
+                <div className="shrink-0 flex h-11 w-11 items-center justify-center border border-red-500/30 text-red-400">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     <polyline points="9 12 11 14 15 10"/>
@@ -165,8 +139,8 @@ export default function DocumentsClient() {
                 </div>
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xs font-medium uppercase tracking-widest text-emerald-400">Аттестат НАКС</span>
-                    <span className="glass-pill rounded-full px-2 py-0.5 text-[10px] text-emerald-400">Действующий</span>
+                    <span className="text-xs font-medium uppercase tracking-widest text-red-400">Аттестат НАКС</span>
+                    <span className="border border-white/10 px-2 py-0.5 text-[10px] text-zinc-500">Действующий</span>
                   </div>
                   <h2 className="text-lg font-semibold text-white mb-1">ПРОТОН-ДЭИ ВДИ 200 — аттестован НАКС</h2>
                   <p className="text-zinc-400 text-sm leading-relaxed">
@@ -184,21 +158,16 @@ export default function DocumentsClient() {
             </div>
           </Reveal>
 
-          {/* Остальные документы */}
-          <div className="glass-card rounded-2xl overflow-hidden">
+          <div className="surface overflow-hidden">
             {DOCS.map((doc, i) => (
-              <Reveal key={i} direction="up" delay={i * 0.04}>
-                <div className="group flex items-start gap-5 px-6 py-5 border-b border-white/[0.04] last:border-b-0 hover:bg-white/[0.02] transition-colors duration-200">
-
-                  {/* Иконка */}
-                  <div className={`shrink-0 mt-0.5 w-9 h-9 rounded-xl flex items-center justify-center border ${TYPE_COLORS[doc.type]}`}>
+              <Reveal key={doc.title} direction="up" delay={i * 0.04}>
+                <div className="group flex items-start gap-5 border-b border-white/[0.07] px-5 py-6 transition-colors duration-200 last:border-b-0 hover:bg-white/[0.015] md:px-7">
+                  <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center border ${TYPE_COLORS[doc.type]}`}>
                     <DocIcon type={doc.type} />
                   </div>
-
-                  {/* Контент */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className={`text-[10px] font-medium uppercase tracking-wider rounded-full px-2 py-0.5 border ${TYPE_COLORS[doc.type]}`}>
+                      <span className={`border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${TYPE_COLORS[doc.type]}`}>
                         {TYPE_LABELS[doc.type]}
                       </span>
                       <span className="text-[10px] text-zinc-600">{doc.year}</span>
@@ -207,12 +176,11 @@ export default function DocumentsClient() {
                     <p className="text-xs text-zinc-500 mt-1 leading-relaxed">{doc.subtitle}</p>
                   </div>
 
-                  {/* Кнопка запроса */}
                   <div className="shrink-0">
                     {doc.available ? (
                       <a
                         href="/contacts"
-                        className="btn glass-pill text-zinc-400 hover:text-white text-xs px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                        className="btn whitespace-nowrap border-b border-white/20 px-1 py-1.5 text-xs text-zinc-400 transition-colors hover:border-red-500 hover:text-white"
                       >
                         Запросить
                       </a>
@@ -225,15 +193,14 @@ export default function DocumentsClient() {
             ))}
           </div>
 
-          {/* CTA */}
           <Reveal direction="up" delay={0.1} className="mt-10">
-            <div className="text-center">
+            <div className="flex flex-col items-start justify-between gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-center">
               <p className="text-zinc-500 text-sm mb-4">
                 Нужен документ, которого нет в списке? Отправьте запрос — подготовим в течение 1 рабочего дня.
               </p>
               <a
                 href="/contacts"
-                className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold px-6 py-3 rounded-xl btn text-sm transition-colors"
+                className="btn inline-flex shrink-0 items-center gap-2 bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
               >
                 Запросить документ
               </a>
