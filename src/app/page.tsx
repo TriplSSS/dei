@@ -34,18 +34,15 @@ function Hero() {
       <div className="minimal-hero-grid">
         <div>
           <h1 className="hero-in hero-in-1 minimal-hero-title">
-            Оборудование, которое держит <em>производство в движении</em>
+            DEI
           </h1>
-          <p className="hero-in hero-in-2 minimal-hero-copy">
-            Сварочные системы и промышленное освещение — от инженерного подбора до запуска на вашем объекте.
-          </p>
 
-          <div className="hero-in hero-in-3 mt-8 flex flex-wrap gap-3">
+          <div className="hero-in hero-in-2 mt-8 flex flex-wrap gap-3">
             <MagneticButton href="/catalog" className="energy-strip btn bg-red-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-red-500">
-              Открыть каталог
+              Каталог
             </MagneticButton>
             <Link href="/contacts" className="glass-pill btn px-6 py-3.5 text-sm font-medium text-zinc-300 hover:border-white/[0.24] hover:text-white">
-              Обсудить задачу
+              Связаться с нами
             </Link>
           </div>
         </div>

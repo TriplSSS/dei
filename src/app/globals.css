@@ -329,7 +329,7 @@ img { -webkit-user-drag: none; user-select: none; }
 .minimal-hero {
   position: relative;
   isolation: isolate;
-  min-height: min(940px, 100svh);
+  min-height: 100svh;
   display: flex;
   align-items: center;
   padding: 8rem 1.5rem 3.5rem;
@@ -371,10 +371,10 @@ img { -webkit-user-drag: none; user-select: none; }
 .minimal-hero-title {
   max-width: 830px;
   color: #f4f4f3;
-  font-size: clamp(3.35rem, 5.45vw, 6.25rem);
-  font-weight: 645;
-  letter-spacing: -.072em;
-  line-height: .89;
+  font-size: clamp(7rem, 14vw, 13rem);
+  font-weight: 700;
+  letter-spacing: -.095em;
+  line-height: .72;
   text-wrap: balance;
 }
 .minimal-hero-title em {
@@ -698,7 +698,7 @@ img { -webkit-user-drag: none; user-select: none; }
 }
 
 @media (max-width: 900px) {
-  .minimal-hero { min-height: auto; padding-top: 9rem; padding-bottom: 4rem; }
+  .minimal-hero { min-height: 100svh; padding-top: 9rem; padding-bottom: 4rem; }
   .minimal-hero-grid { grid-template-columns: 1fr; gap: 1.5rem; }
   .hero-reactor { min-height: 430px; }
   .reactor-stage { width: 350px; min-width: 350px; }
@@ -715,7 +715,7 @@ img { -webkit-user-drag: none; user-select: none; }
   .page-title { font-size: clamp(2.55rem, 13vw, 4.2rem); }
   .section-shell { padding-inline: 1rem; }
   .minimal-hero { padding: 7.4rem 1rem 3.5rem; }
-  .minimal-hero-title { font-size: clamp(3rem, 14.4vw, 4.6rem); }
+  .minimal-hero-title { font-size: clamp(6.5rem, 34vw, 10rem); }
   .minimal-hero-copy { margin-top: 1.45rem; }
   .hero-reactor { min-height: 350px; margin-inline: -1rem; }
   .reactor-stage { width: 286px; min-width: 286px; }
