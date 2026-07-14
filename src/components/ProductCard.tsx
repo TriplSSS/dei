@@ -1,9 +1,5 @@
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import AddToCartButton from "@/components/AddToCartButton";
 import type { Product } from "@/data/products";
 
 type ProductCardProps = {
@@ -13,8 +9,6 @@ type ProductCardProps = {
 };
 
 export default function ProductCard({ product, priority = false, featured = false }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(1);
-
   return (
     <article className="product-card-v11">
       <Link href={`/catalog/${product.slug}`} className="product-card-v11__media" aria-label={product.name}>
@@ -42,12 +36,10 @@ export default function ProductCard({ product, priority = false, featured = fals
         <div className="product-card-v11__price">{product.price}</div>
 
         <div className="product-card-v11__actions">
-          <div className="product-card-v11__quantity" aria-label="Количество">
-            <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Уменьшить количество">−</button>
-            <output aria-live="polite">{quantity}</output>
-            <button type="button" onClick={() => setQuantity((value) => value + 1)} aria-label="Увеличить количество">+</button>
-          </div>
-          <AddToCartButton product={product} qty={quantity} className="product-card-v11__cart" label="В корзину" />
+          <span className="product-card-v11__development">
+            <i aria-hidden="true" />
+            В разработке
+          </span>
           <Link href={`/catalog/${product.slug}`} className="product-card-v11__details" aria-label={`Подробнее: ${product.name}`}>↗</Link>
         </div>
       </div>

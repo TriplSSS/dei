@@ -60,7 +60,7 @@ const process = [
     title: "Поставка",
     short: "Согласовываем комплект и сроки",
     text: "Подтверждаем состав, наличие, срок подготовки и способ доставки. Оплата и окончательные условия согласовываются с менеджером — на сайте нет онлайн-оплаты.",
-    result: "Результат: подтверждённая заявка",
+    result: "Результат: согласованная комплектация",
   },
   {
     number: "04",
@@ -264,7 +264,7 @@ export function HomeStory() {
             </motion.div>
             <div className={styles.ctaActions}>
               <a href="tel:+79885807630" className={styles.ctaPrimary}>Позвонить <span>+7 (988) 580-76-30</span></a>
-              <Link href="/contacts" className={styles.ctaSecondary}>Оставить заявку <span aria-hidden="true">↗</span></Link>
+              <Link href="/contacts" className={styles.ctaSecondary}>Контакты DEI <span aria-hidden="true">↗</span></Link>
             </div>
           </div>
         </section>

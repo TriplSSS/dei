@@ -29,7 +29,7 @@ export default function Footer() {
             <Link href="/catalog">Оборудование</Link>
             <Link href="/documents">Сертификаты</Link>
             <Link href="/calculator">Расчёт освещения</Link>
-            <Link href="/checkout">Заявка на подбор</Link>
+            <Link href="/checkout">Онлайн-заказ — в разработке</Link>
           </div>
 
           <div className="site-footer-v11__contacts">

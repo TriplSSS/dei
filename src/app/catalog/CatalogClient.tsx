@@ -145,7 +145,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
               <h2>Не нашли нужную комплектацию?</h2>
               <p>Опишите задачу — инженер предложит оборудование и рассчитает стоимость поставки.</p>
             </div>
-            <Link href="/contacts">Оставить заявку <span aria-hidden="true">↗</span></Link>
+            <Link href="/contacts">Связаться с DEI <span aria-hidden="true">↗</span></Link>
           </div>
         </div>
       </section>

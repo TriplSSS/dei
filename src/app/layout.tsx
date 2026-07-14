@@ -6,8 +6,6 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import BackToTop from "@/components/BackToTop";
-import { CartProvider } from "@/context/CartContext";
-import CartDrawer from "@/components/CartDrawer";
 import { SiteLoader } from "@/components/SiteLoader";
 
 const inter = Inter({
@@ -64,14 +62,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <span />
           <span />
         </div>
-        <CartProvider>
-          <SmoothScroll />
-          <Nav />
-          <main>{children}</main>
-          <Footer />
-          <BackToTop />
-          <CartDrawer />
-        </CartProvider>
+        <SmoothScroll />
+        <Nav />
+        <main>{children}</main>
+        <Footer />
+        <BackToTop />
       </body>
     </html>
   );

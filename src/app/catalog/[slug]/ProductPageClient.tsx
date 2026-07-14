@@ -1,14 +1,9 @@
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import AddToCartButton from "@/components/AddToCartButton";
 import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/data/products";
 
 export default function ProductPageClient({ product, products }: { product: Product; products: Product[] }) {
-  const [quantity, setQuantity] = useState(1);
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
 
   return (
@@ -30,21 +25,18 @@ export default function ProductPageClient({ product, products }: { product: Prod
             <span className="product-gallery-v11__hint">Изображение товара</span>
           </div>
 
-          <aside className="product-buy-v11" aria-label="Информация о товаре и заказ">
+          <aside className="product-buy-v11" aria-label="Информация о товаре">
             <p className="product-buy-v11__category">{product.categoryLabel}</p>
             <h1>{product.name}</h1>
             <p className="product-buy-v11__description">{product.fullDescription}</p>
 
-            <div className="product-buy-v11__status"><span><i />Доступно к заказу</span><b>{product.leadTime || "срок уточняется"}</b></div>
+            <div className="product-buy-v11__status"><span><i />Под заказ</span><b>{product.leadTime || "срок уточняется"}</b></div>
             <div className="product-buy-v11__price"><span>Ориентировочная цена</span><strong>{product.price}</strong></div>
 
-            <div className="product-buy-v11__order">
-              <div className="product-buy-v11__quantity" aria-label="Количество товара">
-                <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Уменьшить количество">−</button>
-                <output aria-live="polite">{quantity}</output>
-                <button type="button" onClick={() => setQuantity((value) => value + 1)} aria-label="Увеличить количество">+</button>
-              </div>
-              <AddToCartButton product={product} qty={quantity} className="product-buy-v11__cart" label="Добавить в корзину" />
+            <div className="product-buy-v11__development">
+              <span>Онлайн-заказ</span>
+              <strong>В разработке</strong>
+              <p>Корзина и отправка данных временно отключены. Уточнить наличие и комплектацию можно по телефону.</p>
             </div>
 
             <a href="tel:+79885807630" className="product-buy-v11__consult">Обсудить с инженером <span aria-hidden="true">↗</span></a>
@@ -77,7 +69,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
               <li><i>03</i> Подтверждаем цену и срок</li>
               <li><i>04</i> Организуем поставку</li>
             </ul>
-            <Link href="/contacts">Запросить консультацию</Link>
+            <Link href="/contacts">Контакты DEI</Link>
           </article>
         </section>
 

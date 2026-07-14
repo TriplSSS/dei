@@ -55,8 +55,8 @@ export default function ContactsClient() {
         </section>
 
         <section className="page-cta-v11">
-          <div><span>Уже знаете, что нужно?</span><h2>Добавьте товары в корзину — подготовим счёт</h2></div>
-          <Link href="/catalog">Открыть каталог <span aria-hidden="true">↗</span></Link>
+          <div><span>Онлайн-сервисы</span><h2>Корзина и отправка данных — в разработке</h2></div>
+          <a href={PHONE_HREF}>Позвонить в DEI <span aria-hidden="true">↗</span></a>
         </section>
       </main>
     </div>
