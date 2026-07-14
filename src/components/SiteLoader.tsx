@@ -94,7 +94,7 @@ export function SiteLoader() {
         <div className="site-loader-lockup" aria-hidden="true">
           <div className="site-loader-bloom" />
 
-          <svg className="site-loader-orbit site-loader-orbit--back" viewBox="0 0 600 300">
+          <svg className="site-loader-orbit site-loader-orbit--back" viewBox="0 0 600 300" shapeRendering="geometricPrecision">
             <defs>
               <linearGradient id="loader-orbit-gradient" x1="50" y1="150" x2="550" y2="150" gradientUnits="userSpaceOnUse">
                 <stop offset="0" stopColor="#450306" stopOpacity="0.2" />
@@ -103,13 +103,6 @@ export function SiteLoader() {
                 <stop offset="0.68" stopColor="#ff6b62" stopOpacity="0.9" />
                 <stop offset="1" stopColor="#450306" stopOpacity="0.2" />
               </linearGradient>
-              <filter id="loader-orbit-glow" x="-30%" y="-90%" width="160%" height="280%">
-                <feGaussianBlur stdDeviation="5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
             <ellipse className="site-loader-orbit-track" cx="300" cy="150" rx="250" ry="70" />
             <ellipse className="site-loader-orbit-halo" cx="300" cy="150" rx="250" ry="70" />
@@ -125,7 +118,7 @@ export function SiteLoader() {
 
           <div className="site-loader-logo">DEI</div>
 
-          <svg className="site-loader-orbit site-loader-orbit--front" viewBox="0 0 600 300">
+          <svg className="site-loader-orbit site-loader-orbit--front" viewBox="0 0 600 300" shapeRendering="geometricPrecision">
             <defs>
               <linearGradient id="loader-orbit-front-gradient" x1="50" y1="150" x2="550" y2="150" gradientUnits="userSpaceOnUse">
                 <stop stopColor="#e50914" stopOpacity="0" />
@@ -135,6 +128,11 @@ export function SiteLoader() {
                 <stop offset="1" stopColor="#e50914" stopOpacity="0" />
               </linearGradient>
             </defs>
+            <path
+              className="site-loader-orbit-front-halo"
+              d="M50 150 A250 70 0 0 0 550 150"
+              pathLength="1"
+            />
             <path
               className="site-loader-orbit-front-arc"
               d="M50 150 A250 70 0 0 0 550 150"

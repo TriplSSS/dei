@@ -52,7 +52,7 @@ export function ElectricHero() {
           <div className="dei-energy-lockup">
             <div className="dei-orbit-bloom" aria-hidden="true" />
 
-            <svg className="dei-energy-orbit dei-energy-orbit--back" viewBox="0 0 800 420" aria-hidden="true">
+            <svg className="dei-energy-orbit dei-energy-orbit--back" viewBox="0 0 800 420" shapeRendering="geometricPrecision" aria-hidden="true">
               <defs>
                 <linearGradient id="dei-orbit-gradient" x1="70" y1="210" x2="730" y2="210" gradientUnits="userSpaceOnUse">
                   <stop offset="0" stopColor="#450306" />
@@ -60,13 +60,6 @@ export function ElectricHero() {
                   <stop offset="0.58" stopColor="#ff786f" />
                   <stop offset="1" stopColor="#450306" />
                 </linearGradient>
-                <filter id="dei-orbit-glow" x="-30%" y="-80%" width="160%" height="260%">
-                  <feGaussianBlur stdDeviation="5" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
               </defs>
               <ellipse className="dei-orbit-track" cx="400" cy="210" rx="330" ry="104" />
               <ellipse className="dei-orbit-halo" cx="400" cy="210" rx="330" ry="104" />
@@ -82,7 +75,7 @@ export function ElectricHero() {
 
             <h1 id="dei-hero-title" className="dei-hero-wordmark">DEI</h1>
 
-            <svg className="dei-energy-orbit dei-energy-orbit--front" viewBox="0 0 800 420" aria-hidden="true">
+            <svg className="dei-energy-orbit dei-energy-orbit--front" viewBox="0 0 800 420" shapeRendering="geometricPrecision" aria-hidden="true">
               <defs>
                 <linearGradient id="dei-orbit-front-gradient" x1="70" y1="210" x2="730" y2="210" gradientUnits="userSpaceOnUse">
                   <stop stopColor="#e50914" stopOpacity="0" />
@@ -92,6 +85,11 @@ export function ElectricHero() {
                   <stop offset="1" stopColor="#e50914" stopOpacity="0" />
                 </linearGradient>
               </defs>
+              <path
+                className="dei-orbit-front-halo"
+                d="M70 210 A330 104 0 0 0 730 210"
+                pathLength="1"
+              />
               <path
                 className="dei-orbit-front-arc"
                 d="M70 210 A330 104 0 0 0 730 210"
