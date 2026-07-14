@@ -1,7 +1,7 @@
 /* V11 — compact premium commerce, inspired by the approved WeldMash catalog rhythm */
 
 :root {
-  --v11-bg: #070809;
+  --v11-bg: transparent;
   --v11-surface: #0d0f11;
   --v11-surface-2: #121416;
   --v11-surface-3: #17191c;
@@ -30,9 +30,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 0%, rgb(229 9 20 / 0.12), transparent 34%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.018), transparent 65%);
+  background: radial-gradient(ellipse 52rem 18rem at 50% 0%, rgb(110 0 14 / 0.055), rgb(70 0 10 / 0.018) 48%, transparent 76%);
 }
 
 .page-header-v11__inner {
@@ -444,7 +442,7 @@
 .product-related-v11__head > a { color: var(--v11-soft); font-size: 0.74rem; }
 
 /* Footer */
-.site-footer-v11 { border-top: 1px solid var(--v11-line); background: #060708; padding: 0 var(--v11-gutter); color: var(--v11-text); }
+.site-footer-v11 { position: relative; z-index: 1; border-top: 1px solid var(--v11-line); background: transparent; padding: 0 var(--v11-gutter); color: var(--v11-text); }
 .site-footer-v11__inner { width: min(100%, var(--v11-shell)); margin-inline: auto; }
 .site-footer-v11__cta { display: flex; justify-content: space-between; align-items: center; gap: 2rem; border-bottom: 1px solid var(--v11-line); padding: clamp(2.2rem, 5vw, 4rem) 0; }
 .site-footer-v11__cta span { color: #f26b73; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; }

@@ -84,12 +84,6 @@ export function SiteLoader() {
     <div className={`site-loader${leaving ? " site-loader--leaving" : ""}`} role="status">
       <span className="sr-only">Загрузка сайта DEI</span>
 
-      <div className="site-loader-panels" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
-
       <div className="site-loader-stage">
         <div className="site-loader-lockup" aria-hidden="true">
           <div className="site-loader-bloom" />

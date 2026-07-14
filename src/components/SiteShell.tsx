@@ -20,11 +20,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SiteLoader />
-      <div className="site-atmosphere" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
+      <div className="site-atmosphere" aria-hidden="true" />
       <SmoothScroll />
       <Nav />
       <AnimatePresence initial={false} mode="wait">
@@ -34,7 +30,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={reduceMotion ? undefined : { opacity: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.34, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: reduceMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
         >
           {children}
         </motion.main>
