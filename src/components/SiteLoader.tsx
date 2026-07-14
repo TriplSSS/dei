@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-const STANDARD_DURATION = 2800;
+const STANDARD_DURATION = 2350;
 const REDUCED_DURATION = 160;
-const COMPLETION_HOLD = 180;
+const COMPLETION_HOLD = 150;
 const EXIT_DURATION = 960;
 const MAXIMUM_WAIT = 8000;
 
