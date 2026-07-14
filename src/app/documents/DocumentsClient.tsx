@@ -110,7 +110,7 @@ function DocIcon({ type }: { type: DocItem["type"] }) {
 export default function DocumentsClient() {
   return (
     <>
-      <section className="page-intro">
+      <section className="page-intro page-intro--documents" data-page-code="03 / DOCUMENTS">
         <div className="page-intro-inner">
           <Reveal direction="up">
             <p className="page-kicker">Документы</p>
@@ -129,7 +129,7 @@ export default function DocumentsClient() {
       <section className="section-shell pb-24 md:pb-32">
         <div className="max-w-[1000px]">
           <Reveal direction="up" delay={0}>
-            <div className="documents-feature surface mb-8 p-7 md:p-10">
+            <div className="documents-feature mb-8 p-7 md:p-10">
               <div className="flex items-start gap-5">
                 <div className="shrink-0 flex h-11 w-11 items-center justify-center border border-red-500/30 text-red-400">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -158,7 +158,7 @@ export default function DocumentsClient() {
             </div>
           </Reveal>
 
-          <div className="documents-list surface">
+          <div className="documents-list">
             {DOCS.map((doc, i) => (
               <Reveal key={doc.title} direction="up" delay={i * 0.04}>
                 <div className="document-row group flex items-start gap-5 border-b border-white/[0.07] px-5 py-6 last:border-b-0 md:px-7">

@@ -73,7 +73,7 @@ export default function CalculatorClient() {
 
   return (
     <>
-      <section className="page-intro">
+      <section className="page-intro page-intro--calculator" data-page-code="02 / CALCULATOR">
         <div className="page-intro-inner">
           <Reveal direction="up">
             <p className="page-kicker">Инженерный расчёт</p>
@@ -94,12 +94,12 @@ export default function CalculatorClient() {
 
           {/* Форма */}
           <Reveal direction="left" delay={0.05}>
-            <div className="calculator-panel surface flex flex-col gap-8 p-6 lg:p-8">
+            <div className="calculator-panel flex flex-col gap-8 p-6 lg:p-8">
 
               {/* Размеры */}
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-4">Размеры помещения</p>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="calculator-dimensions grid grid-cols-3 gap-3">
                   {[
                     { label: "Длина (м)",  value: length,  set: setLength },
                     { label: "Ширина (м)", value: width,   set: setWidth },
@@ -129,7 +129,7 @@ export default function CalculatorClient() {
                       onClick={() => setRoomType(rt.key)}
                       type="button"
                       aria-pressed={roomType === rt.key}
-                      className={`selection-card btn border px-4 py-3 text-left transition-colors duration-200 ${
+                      className={`selection-card room-selection btn border px-4 py-3 text-left transition-colors duration-200 ${
                         roomType === rt.key
                           ? "border-red-500/45 bg-red-600/10 text-white"
                           : "border-white/10 bg-white/[0.015] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
@@ -152,7 +152,7 @@ export default function CalculatorClient() {
                       onClick={() => setModel(m.name)}
                       type="button"
                       aria-pressed={model === m.name}
-                      className={`selection-card btn flex items-center justify-between border px-4 py-3 transition-colors duration-200 ${
+                      className={`selection-card luminaire-selection btn flex items-center justify-between border px-4 py-3 transition-colors duration-200 ${
                         model === m.name
                           ? "border-red-500/45 bg-red-600/10 text-white"
                           : "border-white/10 bg-white/[0.015] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
@@ -174,7 +174,7 @@ export default function CalculatorClient() {
               {result ? (
                 <>
                   {/* Главный результат */}
-                  <div className="surface relative overflow-hidden p-7 text-center">
+                  <div className="calculator-primary-result relative overflow-hidden p-7 text-center">
                     <div className="absolute inset-x-0 top-0 h-px bg-red-500" aria-hidden />
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-2">Необходимо светильников</p>
                     <p
@@ -187,7 +187,7 @@ export default function CalculatorClient() {
                   </div>
 
                   {/* Детали */}
-                  <div className="surface overflow-hidden">
+                  <div className="calculator-result-list overflow-hidden">
                     {[
                       { label: "Площадь",         value: `${result.area} м²` },
                       { label: "Суммарная мощность", value: `${result.totalPower} Вт` },
@@ -215,7 +215,7 @@ export default function CalculatorClient() {
                   </div>
                 </>
               ) : (
-                <div className="surface p-8 text-center text-sm text-zinc-600">
+                <div className="calculator-empty p-8 text-center text-sm text-zinc-600">
                   Введите размеры помещения
                 </div>
               )}

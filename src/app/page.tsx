@@ -30,7 +30,7 @@ const process = [
 
 function Stats() {
   return (
-    <section className="section-shell py-16">
+    <section className="home-metrics section-shell" aria-label="Ключевые показатели компании">
       <div className="stat-strip">
         <div className="stat-cell">
           <p className="text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">2006</p>
@@ -55,7 +55,7 @@ function Stats() {
 
 function Principles() {
   return (
-    <section className="section-space">
+    <section className="home-principles section-space">
       <div className="section-shell">
         <Reveal>
           <p className="section-kicker">Подход</p>
@@ -85,17 +85,17 @@ function Principles() {
 
 function Process() {
   return (
-    <section className="section-space border-t border-white/[0.07]">
+    <section className="home-process dei-page-section section-space">
       <div className="section-shell">
         <Reveal>
           <p className="section-kicker">Процесс</p>
           <h2 className="section-title mt-5 max-w-[760px]">Четыре шага от запроса до запуска</h2>
         </Reveal>
 
-        <div className="glass-card mt-14 overflow-hidden rounded-[24px] p-2">
+        <div className="process-board mt-14 overflow-hidden">
           {process.map(([title, text], index) => (
             <Reveal key={title} delay={index * 0.05}>
-              <div className="grid gap-4 rounded-[16px] border-b border-white/[0.07] px-5 py-6 transition-colors hover:bg-white/[0.035] sm:grid-cols-[80px_220px_1fr] sm:items-baseline">
+              <div className="process-row grid gap-4 px-5 py-6 sm:grid-cols-[80px_220px_1fr] sm:items-baseline">
                 <span className="text-xs text-zinc-700">0{index + 1}</span>
                 <h3 className="text-lg font-medium text-white">{title}</h3>
                 <p className="max-w-[560px] text-sm leading-relaxed text-zinc-500">{text}</p>
@@ -110,10 +110,10 @@ function Process() {
 
 function ContactCta() {
   return (
-    <section className="section-space border-t border-white/[0.07]">
+    <section className="home-contact dei-page-section section-space">
       <div className="section-shell">
         <Reveal>
-          <div className="glass-card grid gap-8 overflow-hidden rounded-[28px] p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="contact-cta grid gap-8 overflow-hidden p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <p className="section-kicker">Консультация</p>
               <h2 className="section-title mt-5 max-w-[820px]">Расскажите о задаче — предложим следующий шаг</h2>

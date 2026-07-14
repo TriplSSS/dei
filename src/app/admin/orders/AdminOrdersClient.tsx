@@ -144,7 +144,7 @@ export default function AdminOrdersClient() {
   };
 
   return (
-    <main className="dei-admin-page px-4 pb-24 sm:px-6">
+    <div className="dei-admin-page admin-orders-page px-4 pb-24 sm:px-6">
       <div className="mx-auto max-w-[1180px]">
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -181,14 +181,14 @@ export default function AdminOrdersClient() {
         )}
 
         {loaded && orders.length === 0 && (
-          <div className="glass-card rounded-2xl p-8 text-center text-sm text-zinc-500">
+          <div className="admin-empty p-8 text-center text-sm text-zinc-500">
             Заказов пока нет.
           </div>
         )}
 
         <div className="grid gap-4">
           {orders.map((order) => (
-            <article key={order.id} className="glass-card min-w-0 rounded-lg p-4 sm:p-5">
+            <article key={order.id} className="admin-order-card min-w-0 p-4 sm:p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -263,7 +263,7 @@ export default function AdminOrdersClient() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

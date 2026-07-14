@@ -126,7 +126,7 @@ export default function CheckoutClient() {
 
     return (
       <section className="checkout-page section-shell pb-28 pt-36">
-        <div className="checkout-success surface mx-auto max-w-[680px] p-6 text-center md:p-10" aria-live="polite">
+        <div className="checkout-success mx-auto max-w-[680px] p-6 text-center md:p-10" aria-live="polite">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center border border-white/10">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400">
               <path d="M20 6 9 17l-5-5" />
@@ -202,7 +202,7 @@ export default function CheckoutClient() {
   }
 
   return (
-    <div className="checkout-page section-shell pb-24 pt-36">
+    <div className="checkout-page checkout-workflow section-shell pb-24 pt-36">
       <div className="max-w-[1100px]">
         <nav className="mb-6 flex items-center gap-2 text-xs text-zinc-600">
           <Link href="/catalog" className="transition-colors hover:text-zinc-400">Каталог</Link>
@@ -216,8 +216,14 @@ export default function CheckoutClient() {
           Укажите контактные данные и удобный способ оплаты. Менеджер подтвердит наличие, итоговую стоимость и срок поставки.
         </p>
 
+        <ol className="checkout-steps mb-10" aria-label="Этапы оформления заказа">
+          <li className="is-complete"><span>01</span> Корзина</li>
+          <li className="is-active" aria-current="step"><span>02</span> Контакты и оплата</li>
+          <li><span>03</span> Подтверждение</li>
+        </ol>
+
         {items.length === 0 ? (
-          <div className="surface py-20 text-center">
+          <div className="checkout-empty py-20 text-center">
             <p className="text-zinc-500">Корзина пуста</p>
             <Link href="/catalog" className="mt-3 inline-block text-sm text-red-500 hover:text-red-400 transition-colors">
               Перейти в каталог →
@@ -225,7 +231,7 @@ export default function CheckoutClient() {
           </div>
         ) : (
           <div className="checkout-layout grid items-start gap-8 lg:grid-cols-[1fr_400px]">
-            <form onSubmit={submit} className="checkout-form surface flex flex-col gap-6 p-6 md:p-8">
+            <form onSubmit={submit} className="checkout-form flex flex-col gap-6 p-6 md:p-8" aria-busy={busy}>
               <div>
                 <p id="payment-method-label" className="mb-2 block text-xs font-medium text-zinc-400">Способ оплаты *</p>
                 <div className="payment-methods grid gap-1 border border-white/[0.08] bg-black/20 p-1 sm:grid-cols-2" role="group" aria-labelledby="payment-method-label">
@@ -245,12 +251,12 @@ export default function CheckoutClient() {
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field id="checkout-name" label="Контактное лицо *" value={form.name} onChange={set("name")} placeholder="Иван Петров" />
-                <Field id="checkout-phone" label="Телефон *" value={form.phone} onChange={set("phone")} placeholder="+7 (___) ___-__-__" type="tel" />
-                <Field id="checkout-company" label="Организация" value={form.company} onChange={set("company")} placeholder="ООО «Ромашка»" />
-                <Field id="checkout-inn" label="ИНН" value={form.inn} onChange={set("inn")} placeholder="Для выставления счета" />
+                <Field id="checkout-name" label="Контактное лицо *" value={form.name} onChange={set("name")} placeholder="Иван Петров" autoComplete="name" required />
+                <Field id="checkout-phone" label="Телефон *" value={form.phone} onChange={set("phone")} placeholder="+7 (___) ___-__-__" type="tel" autoComplete="tel" required />
+                <Field id="checkout-company" label="Организация" value={form.company} onChange={set("company")} placeholder="ООО «Ромашка»" autoComplete="organization" />
+                <Field id="checkout-inn" label="ИНН" value={form.inn} onChange={set("inn")} placeholder="Для выставления счета" autoComplete="off" />
                 <div className="sm:col-span-2">
-                  <Field id="checkout-email" label="Email" value={form.email} onChange={set("email")} placeholder="mail@company.ru" type="email" />
+                  <Field id="checkout-email" label="Email" value={form.email} onChange={set("email")} placeholder="mail@company.ru" type="email" autoComplete="email" />
                 </div>
                 <div className="sm:col-span-2">
                   <label htmlFor="checkout-comment" className="mb-1.5 block text-xs font-medium text-zinc-400">Комментарий</label>
@@ -259,6 +265,7 @@ export default function CheckoutClient() {
                     value={form.comment}
                     onChange={set("comment")}
                     rows={3}
+                    autoComplete="street-address"
                     placeholder="Сроки, адрес доставки, пожелания..."
                     className="dei-control w-full resize-none px-4 py-3 text-sm"
                   />
@@ -290,12 +297,12 @@ export default function CheckoutClient() {
               </button>
             </form>
 
-            <aside className="checkout-summary surface p-6">
+            <aside className="checkout-summary p-6">
               <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Ваш заказ</p>
               <div className="flex flex-col gap-3">
-                {items.map((it) => (
+                {items.map((it, index) => (
                   <div key={it.slug} className="flex gap-3">
-                    <Image src={it.img} alt={it.name} width={48} height={48} className="h-12 w-12 shrink-0 object-cover" />
+                    <Image src={it.img} alt={it.name} width={48} height={48} loading={index === 0 ? "eager" : "lazy"} className="h-12 w-12 shrink-0 object-cover" />
                     <div className="flex-1 min-w-0">
                       <p className="truncate text-sm text-zinc-200">{it.name}</p>
                       <div className="mt-1 flex items-center gap-2">
@@ -372,6 +379,8 @@ function Field({
   onChange,
   placeholder,
   type = "text",
+  autoComplete,
+  required = false,
 }: {
   id: string;
   label: string;
@@ -379,6 +388,8 @@ function Field({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   type?: string;
+  autoComplete?: string;
+  required?: boolean;
 }) {
   return (
     <div>
@@ -389,6 +400,8 @@ function Field({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        autoComplete={autoComplete}
+        required={required}
         className="dei-control px-4 py-3 text-sm"
       />
     </div>

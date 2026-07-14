@@ -17,7 +17,7 @@ const contactRows = [
 export default function ContactsClient() {
   return (
     <>
-      <section className="page-intro">
+      <section className="page-intro page-intro--contacts" data-page-code="05 / CONTACT">
         <div className="page-intro-inner">
           <Reveal direction="up">
             <p className="page-kicker">Контакты</p>
@@ -35,7 +35,7 @@ export default function ContactsClient() {
       </section>
 
       <section className="section-shell pb-24 md:pb-32">
-        <div className="contact-shell glass-card grid overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="contact-shell grid overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
           <Reveal direction="left">
             <div className="px-7 py-10 lg:px-12 lg:py-16">
               <p className="section-kicker">Прямой контакт</p>
@@ -71,7 +71,7 @@ export default function ContactsClient() {
           </Reveal>
 
           <Reveal direction="right" delay={0.08}>
-            <div className="contact-visual relative min-h-[430px] overflow-hidden border-white/10 px-7 py-10 lg:border-l lg:px-14 lg:py-16">
+            <div className="contact-visual relative min-h-[430px] overflow-hidden px-7 py-10 lg:px-14 lg:py-16">
               <div className="contact-energy-arc" aria-hidden="true" />
               <div className="relative flex min-h-[350px] flex-col justify-between">
                 <div>

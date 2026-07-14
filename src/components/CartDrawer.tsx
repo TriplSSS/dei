@@ -41,7 +41,9 @@ export default function CartDrawer() {
       {isOpen && (
         <>
           {/* затемнение */}
-          <motion.div
+          <motion.button
+            type="button"
+            aria-label="Закрыть корзину"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -59,7 +61,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
-            className="cart-glass fixed right-0 top-0 z-[61] flex h-dvh w-full max-w-[440px] flex-col border-l border-white/[0.1]"
+            className="cart-glass fixed right-0 top-0 z-[61] flex h-dvh w-full max-w-[440px] flex-col"
           >
             {/* шапка */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
@@ -101,7 +103,7 @@ export default function CartDrawer() {
                 {/* список */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
                   {items.map((it) => (
-                    <div key={it.slug} className="cart-item glass-inner flex gap-3 p-3">
+                    <div key={it.slug} className="cart-item flex gap-3 p-3">
                       <Link href={`/catalog/${it.slug}`} onClick={close} className="shrink-0">
                         <Image src={it.img} alt={it.name} width={64} height={64} className="h-16 w-16 object-cover" />
                       </Link>

@@ -18,7 +18,7 @@ const timeline = [
 export default function AboutClient() {
   return (
     <>
-      <section className="page-intro">
+      <section className="page-intro page-intro--about" data-page-code="01 / COMPANY">
         <div className="page-intro-inner">
           <Reveal>
             <p className="page-kicker">О компании</p>
@@ -32,8 +32,8 @@ export default function AboutClient() {
 
       <section className="section-shell pb-20">
         <Reveal>
-          <div className="brand-statement glass-card grid min-h-[360px] overflow-hidden lg:grid-cols-[1fr_1.25fr]">
-            <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_30%_20%,rgba(239,45,63,.14),transparent_55%)] p-8 sm:p-12">
+          <div className="brand-statement grid min-h-[360px] overflow-hidden lg:grid-cols-[1fr_1.25fr]">
+            <div className="brand-statement-mark flex flex-col justify-between p-8 sm:p-12">
               <span className="text-xs uppercase tracking-[0.16em] text-zinc-600">ДонЭлектроИнтел</span>
               <span className="text-[clamp(6rem,16vw,13rem)] font-bold leading-[0.7] tracking-[-0.09em] text-white">DEI</span>
             </div>
@@ -74,10 +74,10 @@ export default function AboutClient() {
               <h2 className="section-title mt-5">Этапы развития</h2>
             </div>
           </Reveal>
-          <div className="timeline-panel glass-card overflow-hidden p-2">
+          <div className="timeline-panel overflow-hidden">
             {timeline.map(([year, text], index) => (
               <Reveal key={year} delay={index * 0.05}>
-                <div className="timeline-row grid gap-4 rounded-[14px] border-b border-white/[0.07] px-5 py-6 sm:grid-cols-[100px_1fr]">
+                <div className="timeline-row grid gap-4 px-5 py-6 sm:grid-cols-[100px_1fr]">
                   <span className="text-xl font-medium tabular-nums text-white">{year}</span>
                   <p className="max-w-[620px] text-sm leading-relaxed text-zinc-500">{text}</p>
                 </div>
@@ -90,7 +90,7 @@ export default function AboutClient() {
       <section className="dei-page-section section-space">
         <div className="section-shell">
           <Reveal>
-            <div className="cta-panel glass-card grid gap-10 p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="cta-panel grid gap-10 p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
               <div>
                 <p className="section-kicker">Сегодня</p>
                 <h2 className="section-title mt-5 max-w-[800px]">Производим, подбираем и сопровождаем оборудование</h2>

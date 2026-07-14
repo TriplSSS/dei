@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="not-found-page section-shell flex min-h-[88dvh] items-center py-32">
+    <div className="not-found-page section-shell flex min-h-[88dvh] items-center py-32" data-page-code="ERR / 404">
       <div className="grid w-full border-y border-white/10 py-12 md:grid-cols-[0.7fr_1fr] md:items-end md:py-20">
         <p className="text-[clamp(7rem,18vw,13rem)] font-semibold leading-none tracking-[-0.08em] text-white">
           404

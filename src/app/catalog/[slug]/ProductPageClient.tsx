@@ -14,7 +14,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
     .slice(0, 3);
 
   return (
-    <>
+    <div className="product-page">
       {/* ── Хлебные крошки ── */}
       <div className="product-breadcrumbs">
         <div className="product-detail-shell">
@@ -35,7 +35,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
             {/* Изображение */}
             <Reveal direction="left" delay={0}>
-              <div className="product-gallery product-photo-stage relative aspect-[4/3] overflow-hidden border border-white/[0.09]">
+              <div className="product-gallery product-photo-stage relative aspect-[4/3] overflow-hidden">
                 <Image
                   src={product.img}
                   alt={product.name}
@@ -70,7 +70,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
                 </div>
 
                 {/* Цена + покупка */}
-                <div className="product-purchase-card surface px-5 py-4">
+                <div className="product-purchase-card px-5 py-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-zinc-500 uppercase tracking-widest mb-0.5">Стоимость</p>
@@ -89,7 +89,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
                 </div>
 
                 {/* Технические характеристики */}
-                <div className="product-specs-panel surface overflow-hidden">
+                <div className="product-specs-panel overflow-hidden">
                   <div className="px-5 py-3 border-b border-white/[0.05]">
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Технические характеристики</p>
                   </div>
@@ -146,7 +146,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
               {related.map((p, i) => (
                 <Reveal key={p.slug} delay={i * 0.07} direction="blur">
                   <Link href={`/catalog/${p.slug}`} className="block group">
-                    <div className="product-card-premium hover-lift overflow-hidden rounded-lg">
+                    <div className="related-product-card product-card-premium hover-lift overflow-hidden">
                       <div className="product-photo-stage relative aspect-[4/3] overflow-hidden">
                         <Image src={p.img} alt={p.name} fill sizes="(max-width: 639px) 100vw, 33vw" className="product-photo-blend img-zoom" />
                       </div>
@@ -165,6 +165,6 @@ export default function ProductPageClient({ product, products }: { product: Prod
           </div>
         </section>
       )}
-    </>
+    </div>
   );
 }

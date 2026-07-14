@@ -125,7 +125,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
   return (
     <>
       {/* ── Шапка ── */}
-      <section className="page-intro">
+      <section className="page-intro page-intro--catalog" data-page-code="00 / CATALOG">
         <div className="page-intro-inner">
           <Reveal>
             <p className="page-kicker">Каталог DEI</p>
@@ -137,11 +137,11 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         </div>
       </section>
 
-      <section className="catalog-section">
+      <section className="catalog-section catalog-index">
         <div className="catalog-layout grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-5">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="catalog-filter-panel surface sticky top-24 p-4">
+            <div className="catalog-filter-panel sticky top-24 p-4">
               {Filters}
             </div>
           </aside>
@@ -149,7 +149,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="catalog-toolbar surface min-w-0 p-2.5">
+            <div className="catalog-toolbar min-w-0 p-2.5">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
                 <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
                   <p className="text-sm text-zinc-500">
@@ -219,14 +219,14 @@ export default function CatalogClient({ products }: { products: Product[] }) {
 
             {/* Фильтры (моб, раскрывающиеся) */}
             {filtersOpen && (
-              <div id="catalog-mobile-filters" className="catalog-filter-panel premium-panel glass-card mb-5 p-4 lg:hidden">
+              <div id="catalog-mobile-filters" className="catalog-filter-panel mb-5 p-4 lg:hidden">
                 {Filters}
               </div>
             )}
 
             {/* Сетка */}
             {filtered.length === 0 ? (
-              <div className="glass-card rounded-lg py-16 text-center">
+              <div className="catalog-empty py-16 text-center">
                 <p className="text-zinc-500">Ничего не найдено</p>
                 <button type="button" onClick={reset} className="mt-3 text-sm text-red-500 hover:text-red-400 transition-colors">
                   Сбросить фильтры
@@ -243,6 +243,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                             src={product.img}
                             alt={product.name}
                             fill
+                            loading={i === 0 ? "eager" : "lazy"}
                             sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 30vw"
                             className="product-photo-blend img-zoom"
                           />
@@ -303,7 +304,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
             )}
 
             {/* Нестандартный заказ */}
-            <div className="catalog-bespoke surface mt-10 flex flex-col items-start gap-5 px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
+            <div className="catalog-bespoke mt-10 flex flex-col items-start gap-5 px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
               <div className="min-w-0">
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>

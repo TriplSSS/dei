@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { CATEGORIES, type Product, type ProductAvailabilityStatus, type ProductSpec } from "@/data/products";
 
 type ProductsResponse =
@@ -325,9 +326,9 @@ export default function AdminProductsClient() {
   };
 
   return (
-    <main className="dei-admin-page px-4 pb-24 sm:px-6">
-      <div className="mx-auto grid max-w-[1280px] gap-6 lg:grid-cols-[minmax(0,1fr)_460px]">
-        <section className="min-w-0">
+    <div className="dei-admin-page admin-products-page px-4 pb-24 sm:px-6">
+      <div className="admin-workbench mx-auto grid max-w-[1280px] gap-6 lg:grid-cols-[minmax(0,1fr)_460px]">
+        <section className="admin-list-column min-w-0">
           <div className="mb-6">
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">DEI admin</p>
             <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Товары</h1>
@@ -357,7 +358,7 @@ export default function AdminProductsClient() {
           {error && <div className="mb-4 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
           {message && <div className="mb-4 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{message}</div>}
 
-          <div className="mb-4 rounded-lg border border-white/[0.07] bg-white/[0.025] p-3">
+          <div className="admin-search-panel mb-4 p-3">
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -368,21 +369,18 @@ export default function AdminProductsClient() {
 
           <div className="grid gap-3">
             {loaded && filteredProducts.length === 0 && (
-              <div className="glass-card rounded-lg p-8 text-center text-sm text-zinc-500">Товары не найдены.</div>
+              <div className="admin-empty p-8 text-center text-sm text-zinc-500">Товары не найдены.</div>
             )}
             {filteredProducts.map((product) => (
               <button
                 key={product.slug}
                 type="button"
                 onClick={() => setForm(productToForm(product))}
-                className="glass-card grid min-w-0 gap-3 rounded-lg p-4 text-left transition-colors hover:border-red-600/25 sm:grid-cols-[72px_minmax(0,1fr)_150px]"
+                className="admin-product-row grid min-w-0 gap-3 p-4 text-left sm:grid-cols-[72px_minmax(0,1fr)_150px]"
               >
-                <div
-                  aria-label={product.name}
-                  className="h-16 w-16 rounded-lg bg-zinc-900 bg-cover bg-center"
-                  role="img"
-                  style={{ backgroundImage: `url(${product.img})` }}
-                />
+                <div className="admin-product-thumb relative h-16 w-16 overflow-hidden">
+                  <Image src={product.img} alt={product.name} fill sizes="64px" className="object-contain" />
+                </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-white">{product.name}</p>
                   <p className="mt-1 break-all text-xs text-zinc-500">{product.slug}</p>
@@ -397,7 +395,7 @@ export default function AdminProductsClient() {
           </div>
         </section>
 
-        <aside className="glass-card h-fit rounded-lg p-4 sm:p-5">
+        <aside className="admin-editor h-fit p-4 sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-bold text-white">Карточка товара</h2>
             <button type="button" onClick={() => setForm(emptyForm)} className="text-xs text-zinc-500 transition-colors hover:text-red-400">
@@ -506,7 +504,7 @@ export default function AdminProductsClient() {
           </form>
         </aside>
       </div>
-    </main>
+    </div>
   );
 }
 
@@ -539,7 +537,7 @@ function Field({
 
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="grid gap-3 rounded-lg border border-white/[0.07] bg-white/[0.025] p-3">
+    <section className="admin-form-section grid gap-3 p-3">
       <h3 className="text-sm font-semibold text-zinc-100">{title}</h3>
       {children}
     </section>
