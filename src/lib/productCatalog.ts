@@ -2,16 +2,16 @@ import { neon } from "@neondatabase/serverless";
 import { mkdir, readFile, appendFile } from "node:fs/promises";
 import path from "node:path";
 import {
+  DEFAULT_CATEGORIES,
   PRODUCTS,
   type Product,
   type ProductAvailabilityStatus,
+  type ProductCategory,
   type ProductDocument,
   type ProductGalleryImage,
   type ProductSpec,
   type ProductVariant,
 } from "@/data/products";
-
-export type ProductCategory = Product["category"];
 
 export type ProductMutationResult = {
   status: "saved" | "deleted" | "failed";
@@ -19,8 +19,14 @@ export type ProductMutationResult = {
   product?: Product;
 };
 
+export type CategoryMutationResult = {
+  status: "saved" | "deleted" | "failed";
+  message: string;
+  category?: ProductCategory;
+};
+
 const PRODUCT_FILE_NAME = "products.jsonl";
-const CATEGORY_KEYS = new Set<ProductCategory>(["welding", "light"]);
+const CATEGORY_FILE_NAME = "categories.jsonl";
 const AVAILABILITY_STATUSES = new Set<ProductAvailabilityStatus>(["in_stock", "on_order", "preorder", "out_of_stock"]);
 const LEGACY_PRODUCT_SLUGS = new Set([
   "proton-dei-vdi-200",
@@ -44,9 +50,17 @@ type ProductRecord = {
   updatedAt: string;
 };
 
+type CategoryRecord = {
+  schemaVersion: "product-category/v1";
+  category: ProductCategory;
+  deleted?: boolean;
+  updatedAt: string;
+};
+
 let dbClient: SqlClient | null = null;
 let dbClientUrl: string | null = null;
 let ensureProductsTablePromise: Promise<void> | null = null;
+let ensureCategoriesTablePromise: Promise<void> | null = null;
 
 function getProductStorageDir() {
   return process.env.PRODUCT_STORAGE_DIR?.trim() || process.env.ORDER_STORAGE_DIR?.trim() || path.join(process.cwd(), ".data");
@@ -54,6 +68,10 @@ function getProductStorageDir() {
 
 function getProductStorageFile() {
   return path.join(getProductStorageDir(), PRODUCT_FILE_NAME);
+}
+
+function getCategoryStorageFile() {
+  return path.join(getProductStorageDir(), CATEGORY_FILE_NAME);
 }
 
 function getDatabaseUrl() {
@@ -68,6 +86,7 @@ function getDbClient() {
     dbClient = neon(databaseUrl);
     dbClientUrl = databaseUrl;
     ensureProductsTablePromise = null;
+    ensureCategoriesTablePromise = null;
   }
 
   return dbClient;
@@ -89,6 +108,23 @@ async function ensureProductsTable(sql: SqlClient) {
   }
 
   return ensureProductsTablePromise;
+}
+
+async function ensureCategoriesTable(sql: SqlClient) {
+  if (!ensureCategoriesTablePromise) {
+    ensureCategoriesTablePromise = sql`
+      CREATE TABLE IF NOT EXISTS product_categories (
+        key TEXT PRIMARY KEY,
+        label TEXT NOT NULL,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        active BOOLEAN NOT NULL DEFAULT TRUE,
+        payload JSONB NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `.then(() => undefined);
+  }
+
+  return ensureCategoriesTablePromise;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -127,6 +163,27 @@ function normalizeOptionalNumber(value: unknown, min = 0) {
 
   const number = Number(value);
   return Number.isFinite(number) && number >= min ? number : undefined;
+}
+
+export function normalizeCategoryInput(value: unknown): ProductCategory | null {
+  if (!isRecord(value)) return null;
+
+  const key = normalizeText(value.key).toLowerCase();
+  const label = normalizeText(value.label);
+  const description = normalizeOptionalText(value.description);
+  const normalizedSortOrder = normalizeOptionalNumber(value.sortOrder);
+  const sortOrder = normalizedSortOrder !== undefined && Number.isInteger(normalizedSortOrder)
+    ? normalizedSortOrder
+    : undefined;
+
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key) || !label) return null;
+
+  return {
+    key,
+    label,
+    ...(description ? { description } : {}),
+    ...(sortOrder !== undefined ? { sortOrder } : {}),
+  };
 }
 
 function normalizeAvailabilityStatus(value: unknown): ProductAvailabilityStatus | undefined {
@@ -197,7 +254,7 @@ export function normalizeProductInput(value: unknown): Product | null {
   const slug = normalizeText(value.slug).toLowerCase();
   const name = normalizeText(value.name);
   const shortName = normalizeText(value.shortName);
-  const category = normalizeText(value.category) as ProductCategory;
+  const category = normalizeText(value.category).toLowerCase();
   const categoryLabel = normalizeText(value.categoryLabel);
   const price = normalizeText(value.price);
   const priceNum = Number(value.priceNum);
@@ -211,7 +268,7 @@ export function normalizeProductInput(value: unknown): Product | null {
     !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ||
     !name ||
     !shortName ||
-    !CATEGORY_KEYS.has(category) ||
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(category) ||
     !categoryLabel ||
     !price ||
     !Number.isInteger(priceNum) ||
@@ -284,6 +341,81 @@ function isProductRecord(value: unknown): value is ProductRecord {
   return value.schemaVersion === "product/v0" && isProduct(value.product) && typeof value.updatedAt === "string";
 }
 
+function isCategoryRecord(value: unknown): value is CategoryRecord {
+  if (!isRecord(value)) return false;
+
+  return value.schemaVersion === "product-category/v1" && normalizeCategoryInput(value.category) !== null && typeof value.updatedAt === "string";
+}
+
+function seedCategoryMap() {
+  return new Map(DEFAULT_CATEGORIES.map((category) => [category.key, category]));
+}
+
+async function listCategoriesFromJsonl() {
+  const categories = seedCategoryMap();
+
+  try {
+    const content = await readFile(getCategoryStorageFile(), "utf8");
+    content
+      .split("\n")
+      .filter(Boolean)
+      .forEach((line) => {
+        try {
+          const record = JSON.parse(line) as unknown;
+          if (!isCategoryRecord(record)) return;
+
+          if (record.deleted) {
+            categories.delete(record.category.key);
+          } else {
+            categories.set(record.category.key, record.category);
+          }
+        } catch {
+          // Одна битая строка не должна ломать весь справочник категорий.
+        }
+      });
+  } catch (error) {
+    if (!(error && typeof error === "object" && "code" in error && error.code === "ENOENT")) {
+      throw error;
+    }
+  }
+
+  return Array.from(categories.values()).sort((left, right) =>
+    (left.sortOrder ?? 0) - (right.sortOrder ?? 0) || left.label.localeCompare(right.label, "ru")
+  );
+}
+
+async function listCategoriesFromDatabase(sql: SqlClient) {
+  await ensureCategoriesTable(sql);
+  const rows = await sql`
+    SELECT key, active, payload
+    FROM product_categories
+    ORDER BY sort_order ASC, updated_at ASC
+  ` as Array<{ key: unknown; active: unknown; payload: unknown }>;
+
+  const categories = seedCategoryMap();
+  rows.forEach((row) => {
+    const key = normalizeText(row.key);
+    if (!key) return;
+
+    if (row.active === false) {
+      categories.delete(key);
+      return;
+    }
+
+    const category = normalizeCategoryInput(row.payload);
+    if (category) categories.set(category.key, category);
+  });
+
+  return Array.from(categories.values()).sort((left, right) =>
+    (left.sortOrder ?? 0) - (right.sortOrder ?? 0) || left.label.localeCompare(right.label, "ru")
+  );
+}
+
+export async function listProductCategories(): Promise<ProductCategory[]> {
+  const sql = getDbClient();
+  return sql ? listCategoriesFromDatabase(sql) : listCategoriesFromJsonl();
+}
+
 function seedProductMap() {
   return new Map(PRODUCTS.map((product) => [product.slug, product]));
 }
@@ -350,7 +482,16 @@ async function listProductsFromDatabase(sql: SqlClient) {
 
 export async function listProducts(): Promise<Product[]> {
   const sql = getDbClient();
-  return sql ? listProductsFromDatabase(sql) : listProductsFromJsonl();
+  const [products, categories] = await Promise.all([
+    sql ? listProductsFromDatabase(sql) : listProductsFromJsonl(),
+    listProductCategories(),
+  ]);
+  const categoryLabels = new Map(categories.map((category) => [category.key, category.label]));
+
+  return products.map((product) => ({
+    ...product,
+    categoryLabel: categoryLabels.get(product.category) || product.categoryLabel,
+  }));
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
@@ -393,6 +534,16 @@ export async function saveProduct(input: unknown): Promise<ProductMutationResult
   }
 
   try {
+    const categories = await listProductCategories();
+    const category = categories.find((item) => item.key === product.category);
+    if (!category) {
+      return {
+        status: "failed",
+        message: "Товар не сохранен: выбранная категория не существует.",
+      };
+    }
+
+    product.categoryLabel = category.label;
     const sql = getDbClient();
     if (sql) {
       await saveProductToDatabase(sql, product);
@@ -413,6 +564,60 @@ export async function saveProduct(input: unknown): Promise<ProductMutationResult
   }
 }
 
+async function saveCategoryToJsonl(category: ProductCategory) {
+  const dir = getProductStorageDir();
+  await mkdir(dir, { recursive: true });
+  await appendFile(
+    getCategoryStorageFile(),
+    `${JSON.stringify({ schemaVersion: "product-category/v1", category, updatedAt: new Date().toISOString() } satisfies CategoryRecord)}\n`,
+    "utf8"
+  );
+}
+
+async function saveCategoryToDatabase(sql: SqlClient, category: ProductCategory) {
+  await ensureCategoriesTable(sql);
+  await sql`
+    INSERT INTO product_categories (key, label, sort_order, active, payload, updated_at)
+    VALUES (${category.key}, ${category.label}, ${category.sortOrder ?? 0}, TRUE, ${JSON.stringify(category)}::jsonb, NOW())
+    ON CONFLICT (key) DO UPDATE SET
+      label = EXCLUDED.label,
+      sort_order = EXCLUDED.sort_order,
+      active = TRUE,
+      payload = EXCLUDED.payload,
+      updated_at = NOW()
+  `;
+}
+
+export async function saveProductCategory(input: unknown): Promise<CategoryMutationResult> {
+  const category = normalizeCategoryInput(input);
+  if (!category) {
+    return {
+      status: "failed",
+      message: "Категория не сохранена: укажите ключ латиницей и название.",
+    };
+  }
+
+  try {
+    const sql = getDbClient();
+    if (sql) {
+      await saveCategoryToDatabase(sql, category);
+    } else {
+      await saveCategoryToJsonl(category);
+    }
+
+    return {
+      status: "saved",
+      message: "Категория сохранена.",
+      category,
+    };
+  } catch {
+    return {
+      status: "failed",
+      message: "Категория не сохранена: хранилище каталога сейчас недоступно.",
+    };
+  }
+}
+
 async function deleteProductFromJsonl(product: Product) {
   const dir = getProductStorageDir();
   await mkdir(dir, { recursive: true });
@@ -426,9 +631,11 @@ async function deleteProductFromJsonl(product: Product) {
 async function deleteProductFromDatabase(sql: SqlClient, slug: string) {
   await ensureProductsTable(sql);
   await sql`
-    UPDATE products
-    SET active = FALSE, updated_at = NOW()
-    WHERE slug = ${slug}
+    INSERT INTO products (slug, name, category, price_num, active, payload, updated_at)
+    VALUES (${slug}, ${slug}, ${"hidden"}, ${0}, FALSE, ${JSON.stringify({})}::jsonb, NOW())
+    ON CONFLICT (slug) DO UPDATE SET
+      active = FALSE,
+      updated_at = NOW()
   `;
 }
 
@@ -466,6 +673,64 @@ export async function deleteProduct(slug: string): Promise<ProductMutationResult
     return {
       status: "failed",
       message: "Товар не удален: хранилище каталога сейчас недоступно.",
+    };
+  }
+}
+
+async function deleteCategoryFromJsonl(category: ProductCategory) {
+  const dir = getProductStorageDir();
+  await mkdir(dir, { recursive: true });
+  await appendFile(
+    getCategoryStorageFile(),
+    `${JSON.stringify({ schemaVersion: "product-category/v1", category, deleted: true, updatedAt: new Date().toISOString() } satisfies CategoryRecord)}\n`,
+    "utf8"
+  );
+}
+
+async function deleteCategoryFromDatabase(sql: SqlClient, category: ProductCategory) {
+  await ensureCategoriesTable(sql);
+  await sql`
+    INSERT INTO product_categories (key, label, sort_order, active, payload, updated_at)
+    VALUES (${category.key}, ${category.label}, ${category.sortOrder ?? 0}, FALSE, ${JSON.stringify(category)}::jsonb, NOW())
+    ON CONFLICT (key) DO UPDATE SET
+      active = FALSE,
+      updated_at = NOW()
+  `;
+}
+
+export async function deleteProductCategory(key: string): Promise<CategoryMutationResult> {
+  const normalizedKey = normalizeText(key).toLowerCase();
+  if (!normalizedKey) {
+    return { status: "failed", message: "Категория не удалена: ключ не указан." };
+  }
+
+  try {
+    const [categories, products] = await Promise.all([listProductCategories(), listProducts()]);
+    const category = categories.find((item) => item.key === normalizedKey);
+    if (!category) {
+      return { status: "failed", message: "Категория не найдена." };
+    }
+
+    const productsInCategory = products.filter((product) => product.category === normalizedKey).length;
+    if (productsInCategory > 0) {
+      return {
+        status: "failed",
+        message: `Сначала перенесите ${productsInCategory} товар(а/ов) в другую категорию.`,
+      };
+    }
+
+    const sql = getDbClient();
+    if (sql) {
+      await deleteCategoryFromDatabase(sql, category);
+    } else {
+      await deleteCategoryFromJsonl(category);
+    }
+
+    return { status: "deleted", message: "Категория удалена.", category };
+  } catch {
+    return {
+      status: "failed",
+      message: "Категория не удалена: хранилище каталога сейчас недоступно.",
     };
   }
 }

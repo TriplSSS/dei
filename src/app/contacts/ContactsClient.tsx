@@ -10,7 +10,6 @@ export default function ContactsClient() {
     <div className="internal-page-v11 contacts-page-v11">
       <PageHeader
         centered
-        eyebrow="Контакты"
         title="Давайте обсудим вашу задачу"
         description="Позвоните напрямую или подготовьте короткое описание объекта. Инженер уточнит параметры и предложит следующий шаг."
         meta={[
@@ -31,14 +30,12 @@ export default function ContactsClient() {
           </article>
 
           <article className="contact-card-v11">
-            <span className="v11-kicker">Адрес</span>
             <h2>Ростов-на-Дону</h2>
             <p>пер. Нарядный, 14/2<br />Офис и производство DEI</p>
             <a href={MAP_URL} target="_blank" rel="noreferrer">Открыть в Яндекс Картах <span aria-hidden="true">↗</span></a>
           </article>
 
           <article className="contact-card-v11">
-            <span className="v11-kicker">Режим работы</span>
             <h2>Пн–Пт</h2>
             <p>09:00–18:00<br />Суббота и воскресенье — выходные</p>
             <Link href="/catalog">Перейти в каталог <span aria-hidden="true">↗</span></Link>
@@ -46,7 +43,7 @@ export default function ContactsClient() {
         </section>
 
         <section className="contacts-process-v11">
-          <div className="section-head-v11"><div><span className="v11-kicker">Как начать</span><h2>Три шага до предложения</h2></div><p>Достаточно базовой информации — остальное уточним вместе.</p></div>
+          <div className="section-head-v11"><div><h2>Три шага до предложения</h2></div><p>Достаточно базовой информации — остальное уточним вместе.</p></div>
           <div className="contacts-process-v11__grid">
             <article><span>01</span><h3>Опишите задачу</h3><p>Что нужно сваривать или освещать, где будет работать оборудование.</p></article>
             <article><span>02</span><h3>Уточним параметры</h3><p>Зададим несколько вопросов по режиму, мощности и комплектации.</p></article>
@@ -55,7 +52,7 @@ export default function ContactsClient() {
         </section>
 
         <section className="page-cta-v11">
-          <div><span>Онлайн-сервисы</span><h2>Корзина и отправка данных — в разработке</h2></div>
+          <div><h2>Корзина и отправка данных — в разработке</h2></div>
           <a href={PHONE_HREF}>Позвонить в DEI <span aria-hidden="true">↗</span></a>
         </section>
       </main>

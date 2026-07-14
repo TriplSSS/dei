@@ -1,14 +1,5 @@
-import type { Metadata } from "next";
-import AdminProductsClient from "./AdminProductsClient";
-
-export const metadata: Metadata = {
-  title: "Админка товаров",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+import { redirect } from "next/navigation";
 
 export default function AdminProductsPage() {
-  return <AdminProductsClient />;
+  redirect("/admin");
 }

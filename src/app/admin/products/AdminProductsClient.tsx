@@ -1,22 +1,31 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Image from "next/image";
-import { CATEGORIES, type Product, type ProductAvailabilityStatus, type ProductSpec } from "@/data/products";
+import { useMemo, useState } from "react";
+import type {
+  Product,
+  ProductAvailabilityStatus,
+  ProductCategory,
+  ProductSpec,
+} from "@/data/products";
 
 type ProductsResponse =
-  | { ok: true; products: Product[]; count: number }
+  | { ok: true; products: Product[]; count: number; local?: boolean }
   | { ok: false; message?: string };
 
-type ProductMutationResponse =
-  | { ok: true; product?: Product; message: string }
+type CategoriesResponse =
+  | { ok: true; categories: ProductCategory[]; count: number; local?: boolean }
+  | { ok: false; message?: string };
+
+type MutationResponse<T> =
+  | { ok: true; message: string; product?: T; category?: T; url?: string }
   | { ok: false; message?: string };
 
 type FormState = {
   slug: string;
   name: string;
   shortName: string;
-  category: Product["category"];
+  category: string;
   categoryLabel: string;
   sku: string;
   brand: string;
@@ -45,38 +54,56 @@ type FormState = {
   featured: boolean;
 };
 
-const emptyForm: FormState = {
-  slug: "",
-  name: "",
-  shortName: "",
-  category: "welding",
-  categoryLabel: "",
-  sku: "",
-  brand: "",
-  manufacturer: "",
-  model: "",
-  series: "",
-  price: "",
-  priceNum: "",
-  oldPrice: "",
-  wholesalePrice: "",
-  vatRate: "",
-  vatIncluded: true,
-  availabilityStatus: "",
-  stockQuantity: "",
-  leadTime: "",
-  saleUnit: "",
-  minOrderQuantity: "",
-  img: "",
-  description: "",
-  fullDescription: "",
-  specsText: "",
-  tagsText: "",
-  seoTitle: "",
-  seoDescription: "",
-  naks: false,
-  featured: false,
+type CategoryFormState = {
+  originalKey: string;
+  key: string;
+  label: string;
+  description: string;
+  sortOrder: string;
 };
+
+const emptyCategoryForm: CategoryFormState = {
+  originalKey: "",
+  key: "",
+  label: "",
+  description: "",
+  sortOrder: "",
+};
+
+function createEmptyProduct(category = "welding"): FormState {
+  return {
+    slug: "",
+    name: "",
+    shortName: "",
+    category,
+    categoryLabel: "",
+    sku: "",
+    brand: "DEI",
+    manufacturer: "",
+    model: "",
+    series: "",
+    price: "",
+    priceNum: "",
+    oldPrice: "",
+    wholesalePrice: "",
+    vatRate: "",
+    vatIncluded: true,
+    availabilityStatus: "on_order",
+    stockQuantity: "",
+    leadTime: "",
+    saleUnit: "шт.",
+    minOrderQuantity: "1",
+    img: "",
+    description: "",
+    fullDescription: "",
+    specsText: "",
+    tagsText: "",
+    seoTitle: "",
+    seoDescription: "",
+    naks: false,
+    featured: false,
+  };
+}
 
 const AVAILABILITY_OPTIONS: Array<{ value: "" | ProductAvailabilityStatus; label: string }> = [
   { value: "", label: "Не указано" },
@@ -98,7 +125,6 @@ function parseSpecs(value: string): ProductSpec[] {
     .map((line) => {
       const separatorIndex = line.indexOf(":");
       if (separatorIndex === -1) return null;
-
       const label = line.slice(0, separatorIndex).trim();
       const specValue = line.slice(separatorIndex + 1).trim();
       return label && specValue ? { label, value: specValue } : null;
@@ -111,13 +137,11 @@ function numberToFormValue(value: number | undefined) {
 }
 
 function optionalText(value: string) {
-  const text = value.trim();
-  return text || undefined;
+  return value.trim() || undefined;
 }
 
 function optionalNumber(value: string) {
   if (!value.trim()) return undefined;
-
   const number = Number(value);
   return Number.isFinite(number) ? number : undefined;
 }
@@ -157,13 +181,14 @@ function productToForm(product: Product): FormState {
   };
 }
 
-function formToProduct(form: FormState): Product {
+function formToProduct(form: FormState, categories: ProductCategory[]): Product {
+  const category = categories.find((item) => item.key === form.category);
   const product: Product = {
     slug: form.slug.trim().toLowerCase(),
     name: form.name.trim(),
     shortName: form.shortName.trim(),
     category: form.category,
-    categoryLabel: form.categoryLabel.trim(),
+    categoryLabel: category?.label || form.categoryLabel.trim(),
     price: form.price.trim(),
     priceNum: Number(form.priceNum),
     img: form.img.trim(),
@@ -195,34 +220,49 @@ function formToProduct(form: FormState): Product {
   };
 
   Object.entries(optionalFields).forEach(([key, value]) => {
-    if (value !== undefined) {
-      product[key as keyof Product] = value as never;
-    }
+    if (value !== undefined) product[key as keyof Product] = value as never;
   });
 
   return product;
 }
 
+function categoryToForm(category: ProductCategory): CategoryFormState {
+  return {
+    originalKey: category.key,
+    key: category.key,
+    label: category.label,
+    description: category.description || "",
+    sortOrder: numberToFormValue(category.sortOrder),
+  };
+}
+
 export default function AdminProductsClient() {
   const [token, setToken] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [localMode, setLocalMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [query, setQuery] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const [activeTab, setActiveTab] = useState<"products" | "categories">("products");
+  const [form, setForm] = useState<FormState>(() => createEmptyProduct());
+  const [categoryForm, setCategoryForm] = useState<CategoryFormState>(emptyCategoryForm);
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return products;
-
     return products.filter((product) =>
       [product.slug, product.name, product.shortName, product.categoryLabel]
         .some((value) => value.toLowerCase().includes(normalizedQuery))
     );
   }, [products, query]);
+
+  const selectedCategoryUsage = products.filter((product) => product.category === categoryForm.key).length;
+  const authHeaders: Record<string, string> = token.trim() ? { "x-admin-token": token.trim() } : {};
 
   const setField = (field: keyof FormState) => (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -233,26 +273,35 @@ export default function AdminProductsClient() {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
-  const loadProducts = async (event?: React.FormEvent<HTMLFormElement>) => {
+  const loadCatalog = async (event?: React.FormEvent<HTMLFormElement>, preserveFeedback = false) => {
     event?.preventDefault();
-    if (!token.trim()) return;
-
     setLoading(true);
-    setError("");
-    setMessage("");
+    if (!preserveFeedback) {
+      setError("");
+      setMessage("");
+    }
 
     try {
-      const response = await fetch("/api/admin/products", {
-        headers: { "x-admin-token": token.trim() },
-      });
-      const data = (await response.json().catch(() => null)) as ProductsResponse | null;
+      const [productsResponse, categoriesResponse] = await Promise.all([
+        fetch("/api/admin/products", { headers: authHeaders }),
+        fetch("/api/admin/categories", { headers: authHeaders }),
+      ]);
+      const productsData = (await productsResponse.json().catch(() => null)) as ProductsResponse | null;
+      const categoriesData = (await categoriesResponse.json().catch(() => null)) as CategoriesResponse | null;
 
-      if (!data) throw new Error("Не удалось прочитать каталог.");
-      if (!data.ok) throw new Error(data.message || "Доступ к каталогу отклонен.");
-      if (!response.ok) throw new Error("Доступ к каталогу отклонен.");
+      if (!productsData || !categoriesData) throw new Error("Не удалось прочитать каталог.");
+      if (!productsData.ok) throw new Error(productsData.message || "Доступ к товарам отклонен.");
+      if (!categoriesData.ok) throw new Error(categoriesData.message || "Доступ к категориям отклонен.");
+      if (!productsResponse.ok || !categoriesResponse.ok) throw new Error("Доступ к каталогу отклонен.");
 
-      setProducts(data.products);
+      setProducts(productsData.products);
+      setCategories(categoriesData.categories);
+      setLocalMode(Boolean(productsData.local || categoriesData.local));
       setLoaded(true);
+      setForm((current) => {
+        if (categoriesData.categories.some((category) => category.key === current.category)) return current;
+        return { ...current, category: categoriesData.categories[0]?.key || "" };
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось прочитать каталог.");
     } finally {
@@ -262,8 +311,6 @@ export default function AdminProductsClient() {
 
   const saveCurrentProduct = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!token.trim()) return;
-
     setSaving(true);
     setError("");
     setMessage("");
@@ -271,20 +318,16 @@ export default function AdminProductsClient() {
     try {
       const response = await fetch("/api/admin/products", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-token": token.trim(),
-        },
-        body: JSON.stringify(formToProduct(form)),
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify(formToProduct(form, categories)),
       });
-      const data = (await response.json().catch(() => null)) as ProductMutationResponse | null;
-
+      const data = (await response.json().catch(() => null)) as MutationResponse<Product> | null;
       if (!data) throw new Error("Не удалось сохранить товар.");
       if (!data.ok) throw new Error(data.message || "Товар не сохранен.");
       if (!response.ok) throw new Error("Товар не сохранен.");
 
       setMessage(data.message);
-      await loadProducts();
+      await loadCatalog(undefined, true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось сохранить товар.");
     } finally {
@@ -293,31 +336,23 @@ export default function AdminProductsClient() {
   };
 
   const deleteCurrentProduct = async () => {
-    if (!token.trim() || !form.slug.trim()) return;
-    const confirmed = window.confirm(
-      `Скрыть товар "${form.name || form.slug}" из публичного каталога? Его можно будет вернуть, сохранив карточку заново.`
-    );
-
-    if (!confirmed) return;
-
+    if (!form.slug.trim() || !window.confirm(`Скрыть товар «${form.name || form.slug}» из каталога?`)) return;
     setSaving(true);
     setError("");
-    setMessage("");
 
     try {
       const response = await fetch(`/api/admin/products?slug=${encodeURIComponent(form.slug.trim())}`, {
         method: "DELETE",
-        headers: { "x-admin-token": token.trim() },
+        headers: authHeaders,
       });
-      const data = (await response.json().catch(() => null)) as ProductMutationResponse | null;
-
+      const data = (await response.json().catch(() => null)) as MutationResponse<Product> | null;
       if (!data) throw new Error("Не удалось скрыть товар.");
       if (!data.ok) throw new Error(data.message || "Товар не скрыт.");
       if (!response.ok) throw new Error("Товар не скрыт.");
 
       setMessage(data.message);
-      setForm(emptyForm);
-      await loadProducts();
+      setForm(createEmptyProduct(categories[0]?.key));
+      await loadCatalog(undefined, true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось скрыть товар.");
     } finally {
@@ -325,267 +360,262 @@ export default function AdminProductsClient() {
     }
   };
 
+  const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setUploading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const body = new FormData();
+      body.append("image", file);
+      const response = await fetch("/api/admin/products/image", { method: "POST", headers: authHeaders, body });
+      const data = (await response.json().catch(() => null)) as MutationResponse<never> | null;
+      if (!data) throw new Error("Не удалось загрузить изображение.");
+      if (!data.ok) throw new Error(data.message || "Изображение не загружено.");
+      if (!response.ok || !data.url) throw new Error("Изображение не загружено.");
+
+      setForm((current) => ({ ...current, img: data.url || current.img }));
+      setMessage(data.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось загрузить изображение.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const saveCategory = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaving(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const payload: ProductCategory = {
+        key: categoryForm.key.trim().toLowerCase(),
+        label: categoryForm.label.trim(),
+        ...(optionalText(categoryForm.description) ? { description: optionalText(categoryForm.description) } : {}),
+        ...(optionalNumber(categoryForm.sortOrder) !== undefined ? { sortOrder: optionalNumber(categoryForm.sortOrder) } : {}),
+      };
+      const response = await fetch("/api/admin/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify(payload),
+      });
+      const data = (await response.json().catch(() => null)) as MutationResponse<ProductCategory> | null;
+      if (!data) throw new Error("Не удалось сохранить категорию.");
+      if (!data.ok) throw new Error(data.message || "Категория не сохранена.");
+      if (!response.ok) throw new Error("Категория не сохранена.");
+
+      setMessage(data.message);
+      setCategoryForm({ ...categoryForm, originalKey: payload.key, key: payload.key });
+      await loadCatalog(undefined, true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось сохранить категорию.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteCategory = async () => {
+    if (!categoryForm.key || !window.confirm(`Удалить категорию «${categoryForm.label || categoryForm.key}»?`)) return;
+    setSaving(true);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/admin/categories?key=${encodeURIComponent(categoryForm.key)}`, {
+        method: "DELETE",
+        headers: authHeaders,
+      });
+      const data = (await response.json().catch(() => null)) as MutationResponse<ProductCategory> | null;
+      if (!data) throw new Error("Не удалось удалить категорию.");
+      if (!data.ok) throw new Error(data.message || "Категория не удалена.");
+      if (!response.ok) throw new Error("Категория не удалена.");
+
+      setMessage(data.message);
+      setCategoryForm(emptyCategoryForm);
+      await loadCatalog(undefined, true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось удалить категорию.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="dei-admin-page admin-products-page px-4 pb-24 sm:px-6">
-      <div className="admin-workbench mx-auto grid max-w-[1280px] gap-6 lg:grid-cols-[minmax(0,1fr)_460px]">
-        <section className="admin-list-column min-w-0">
-          <header className="admin-v10__header mb-6">
-            <div>
-            <p className="admin-v10__index">ADMIN / 01</p>
-            <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Товары</h1>
-            <p className="mt-3 max-w-[640px] text-sm leading-relaxed text-zinc-400">
-              Управление рабочим каталогом магазина. После сохранения товар используется на сайте и при оформлении заказов. В локальном запуске изменения остаются на этом компьютере, на сервере сохраняются в подключенном хранилище.
-            </p>
-            </div>
-
-          <form onSubmit={loadProducts} className="admin-v10__auth">
+      <div className="admin-products-shell mx-auto max-w-[1280px]">
+        <header className="admin-dashboard-header">
+          <div>
+            <p className="admin-v10__index">DEI / CONTENT CONTROL</p>
+            <h1>Каталог и категории</h1>
+            <p>Товары, фотографии, цены, описания и структура каталога редактируются в одном месте.</p>
+          </div>
+          <form onSubmit={loadCatalog} className="admin-v10__auth">
             <input
               type="password"
               value={token}
               onChange={(event) => setToken(event.target.value)}
-              placeholder="Пароль админки"
+              placeholder="Пароль (локально не нужен)"
               autoComplete="current-password"
-              className="min-h-11 rounded-xl border border-white/[0.08] bg-black/25 px-4 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-red-600/50 sm:w-72"
+              aria-label="Пароль администратора"
             />
-            <button
-              type="submit"
-              disabled={!token.trim() || loading}
-              className="min-h-11 rounded-xl bg-red-600 px-5 text-sm font-semibold text-white btn transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {loading ? "Загрузка..." : loaded ? "Обновить" : "Открыть каталог"}
-            </button>
+            <button type="submit" disabled={loading}>{loading ? "Загрузка…" : loaded ? "Обновить" : "Открыть админку"}</button>
           </form>
-          </header>
+        </header>
 
-          {error && <div className="mb-4 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
-          {message && <div className="mb-4 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{message}</div>}
-
-          <div className="admin-search-panel mb-4 p-3">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Поиск по названию, slug или категории"
-              className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-4 py-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-red-600/50"
-            />
+        {loaded && (
+          <div className="admin-overview">
+            <div><span>Товары</span><strong>{products.length}</strong></div>
+            <div><span>Категории</span><strong>{categories.length}</strong></div>
+            <div><span>Хранилище</span><strong>{localMode ? "Локально" : "Сервер"}</strong></div>
           </div>
+        )}
 
-          <div className="grid gap-3">
-            {loaded && filteredProducts.length === 0 && (
-              <div className="admin-empty p-8 text-center text-sm text-zinc-500">Товары не найдены.</div>
+        {error && <div className="admin-feedback is-error" role="alert">{error}</div>}
+        {message && <div className="admin-feedback is-success" role="status">{message}</div>}
+
+        {loaded && (
+          <>
+            <nav className="admin-tabs" aria-label="Разделы каталога">
+              <button type="button" aria-pressed={activeTab === "products"} className={activeTab === "products" ? "is-active" : ""} onClick={() => setActiveTab("products")}>Товары <span>{products.length}</span></button>
+              <button type="button" aria-pressed={activeTab === "categories"} className={activeTab === "categories" ? "is-active" : ""} onClick={() => setActiveTab("categories")}>Категории <span>{categories.length}</span></button>
+            </nav>
+
+            {activeTab === "products" ? (
+              <div className="admin-workbench grid gap-6 lg:grid-cols-[minmax(0,1fr)_480px]">
+                <section className="admin-list-column min-w-0">
+                  <div className="admin-search-panel">
+                    <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Поиск по товару или категории" aria-label="Поиск товаров" />
+                    <button type="button" onClick={() => setForm(createEmptyProduct(categories[0]?.key))}>+ Новый товар</button>
+                  </div>
+
+                  <div className="admin-product-list">
+                    {filteredProducts.length === 0 && <div className="admin-empty">Товары не найдены.</div>}
+                    {filteredProducts.map((product) => (
+                      <button
+                        key={product.slug}
+                        type="button"
+                        onClick={() => setForm(productToForm(product))}
+                        className={`admin-product-row${form.slug === product.slug ? " is-active" : ""}`}
+                      >
+                        <div className="admin-product-thumb">
+                          <Image src={product.img} alt="" fill sizes="76px" className="object-contain" />
+                        </div>
+                        <div className="admin-product-row__copy">
+                          <span>{product.categoryLabel}</span>
+                          <strong>{product.name}</strong>
+                          <small>{product.slug}</small>
+                        </div>
+                        <div className="admin-product-row__price"><strong>{product.price}</strong><span>Редактировать ↗</span></div>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                <aside className="admin-editor">
+                  <div className="admin-editor__head"><div><span>{form.slug ? "Редактирование" : "Новый товар"}</span><h2>Карточка товара</h2></div><button type="button" onClick={() => setForm(createEmptyProduct(categories[0]?.key))}>Очистить</button></div>
+
+                  <form onSubmit={saveCurrentProduct} className="admin-editor__form">
+                    <div className="admin-image-editor">
+                      <div className="admin-image-editor__preview">
+                        {form.img.startsWith("/") ? <Image src={form.img} alt={form.name || "Фото товара"} fill sizes="420px" className="object-contain" /> : <span>{form.img ? "Для предпросмотра загрузите файл в админке" : "Фото товара"}</span>}
+                      </div>
+                      <div className="admin-image-editor__actions">
+                        <label className="admin-upload-button">
+                          {uploading ? "Загрузка…" : "Загрузить фото"}
+                          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadImage} disabled={uploading} />
+                        </label>
+                        <small>JPG, PNG или WEBP до 8 МБ</small>
+                      </div>
+                    </div>
+
+                    <FormSection title="Основное">
+                      <Field label="Slug" value={form.slug} onChange={setField("slug")} placeholder="product-name" required />
+                      <Field label="Название" value={form.name} onChange={setField("name")} required />
+                      <div className="admin-field-grid"><Field label="Короткое имя" value={form.shortName} onChange={setField("shortName")} required /><Field label="Артикул / SKU" value={form.sku} onChange={setField("sku")} /></div>
+                      <label className="admin-field"><span>Категория</span><select value={form.category} onChange={setField("category")} required>{categories.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></label>
+                    </FormSection>
+
+                    <FormSection title="Цена и наличие">
+                      <div className="admin-field-grid"><Field label="Цена на сайте" value={form.price} onChange={setField("price")} placeholder="от 18 500 ₽" required /><Field label="Цена числом" value={form.priceNum} onChange={setField("priceNum")} type="number" required /></div>
+                      <div className="admin-field-grid"><Field label="Старая цена" value={form.oldPrice} onChange={setField("oldPrice")} type="number" /><Field label="Оптовая цена" value={form.wholesalePrice} onChange={setField("wholesalePrice")} type="number" /></div>
+                      <label className="admin-field"><span>Статус наличия</span><select value={form.availabilityStatus} onChange={setField("availabilityStatus")}>{AVAILABILITY_OPTIONS.map((option) => <option key={option.value || "empty"} value={option.value}>{option.label}</option>)}</select></label>
+                      <div className="admin-field-grid"><Field label="Остаток" value={form.stockQuantity} onChange={setField("stockQuantity")} type="number" /><Field label="Срок поставки" value={form.leadTime} onChange={setField("leadTime")} placeholder="2–5 дней" /></div>
+                    </FormSection>
+
+                    <FormSection title="Фото и описание">
+                      <Field label="Путь к изображению" value={form.img} onChange={setField("img")} placeholder="/uploads/products/photo.webp" required />
+                      <TextArea label="Краткое описание" value={form.description} onChange={setField("description")} rows={3} required />
+                      <TextArea label="Полное описание" value={form.fullDescription} onChange={setField("fullDescription")} rows={5} required />
+                      <TextArea label="Характеристики" value={form.specsText} onChange={setField("specsText")} rows={5} hint="Одна строка: Метка: значение" />
+                      <TextArea label="Теги" value={form.tagsText} onChange={setField("tagsText")} rows={2} hint="Через запятую" />
+                    </FormSection>
+
+                    <FormSection title="Дополнительно">
+                      <div className="admin-field-grid"><Field label="Бренд" value={form.brand} onChange={setField("brand")} /><Field label="Производитель" value={form.manufacturer} onChange={setField("manufacturer")} /></div>
+                      <div className="admin-field-grid"><Field label="Модель" value={form.model} onChange={setField("model")} /><Field label="Серия" value={form.series} onChange={setField("series")} /></div>
+                      <div className="admin-field-grid"><Field label="НДС, %" value={form.vatRate} onChange={setField("vatRate")} type="number" /><Field label="Минимальный заказ" value={form.minOrderQuantity} onChange={setField("minOrderQuantity")} type="number" /></div>
+                      <div className="admin-field-grid"><Field label="Единица продажи" value={form.saleUnit} onChange={setField("saleUnit")} /><Checkbox label="Цена с НДС" checked={form.vatIncluded} onChange={setField("vatIncluded")} /></div>
+                      <div className="admin-field-grid"><Checkbox label="НАКС" checked={form.naks} onChange={setField("naks")} /><Checkbox label="Рекомендуемый" checked={form.featured} onChange={setField("featured")} /></div>
+                    </FormSection>
+
+                    <FormSection title="SEO">
+                      <Field label="SEO title" value={form.seoTitle} onChange={setField("seoTitle")} />
+                      <TextArea label="SEO description" value={form.seoDescription} onChange={setField("seoDescription")} rows={3} />
+                    </FormSection>
+
+                    <div className="admin-editor__footer"><button type="submit" disabled={saving || uploading}>{saving ? "Сохранение…" : "Сохранить товар"}</button><button type="button" disabled={!form.slug || saving} onClick={deleteCurrentProduct}>Скрыть</button></div>
+                  </form>
+                </aside>
+              </div>
+            ) : (
+              <div className="admin-category-layout">
+                <section className="admin-category-list">
+                  <div className="admin-section-head"><div><span>Структура каталога</span><h2>Категории товаров</h2></div><button type="button" onClick={() => setCategoryForm(emptyCategoryForm)}>+ Новая категория</button></div>
+                  <div className="admin-category-grid">
+                    {categories.map((category, index) => {
+                      const count = products.filter((product) => product.category === category.key).length;
+                      return <button key={category.key} type="button" aria-pressed={categoryForm.key === category.key} className={categoryForm.key === category.key ? "is-active" : ""} onClick={() => setCategoryForm(categoryToForm(category))}><span>{String(index + 1).padStart(2, "0")}</span><strong>{category.label}</strong><p>{category.description || "Описание категории пока не заполнено."}</p><small>{count} товар(а/ов)</small></button>;
+                    })}
+                  </div>
+                </section>
+
+                <aside className="admin-category-editor">
+                  <div className="admin-editor__head"><div><span>{categoryForm.originalKey ? "Редактирование" : "Новая категория"}</span><h2>Категория</h2></div><button type="button" onClick={() => setCategoryForm(emptyCategoryForm)}>Очистить</button></div>
+                  <form onSubmit={saveCategory} className="admin-editor__form">
+                    <Field label="Ключ латиницей" value={categoryForm.key} onChange={(event) => setCategoryForm((current) => ({ ...current, key: event.target.value }))} placeholder="welding-machines" required disabled={Boolean(categoryForm.originalKey)} />
+                    <Field label="Название" value={categoryForm.label} onChange={(event) => setCategoryForm((current) => ({ ...current, label: event.target.value }))} required />
+                    <TextArea label="Описание" value={categoryForm.description} onChange={(event) => setCategoryForm((current) => ({ ...current, description: event.target.value }))} rows={4} />
+                    <Field label="Порядок сортировки" value={categoryForm.sortOrder} onChange={(event) => setCategoryForm((current) => ({ ...current, sortOrder: event.target.value }))} type="number" placeholder="10" />
+                    {categoryForm.originalKey && <div className="admin-category-usage"><span>Используется в товарах</span><strong>{selectedCategoryUsage}</strong></div>}
+                    <div className="admin-editor__footer"><button type="submit" disabled={saving}>{saving ? "Сохранение…" : "Сохранить категорию"}</button><button type="button" disabled={!categoryForm.originalKey || saving || selectedCategoryUsage > 0} onClick={deleteCategory}>Удалить</button></div>
+                  </form>
+                </aside>
+              </div>
             )}
-            {filteredProducts.map((product) => (
-              <button
-                key={product.slug}
-                type="button"
-                onClick={() => setForm(productToForm(product))}
-                className="admin-product-row grid min-w-0 gap-3 p-4 text-left sm:grid-cols-[72px_minmax(0,1fr)_150px]"
-              >
-                <div className="admin-product-thumb relative h-16 w-16 overflow-hidden">
-                  <Image src={product.img} alt={product.name} fill sizes="64px" className="object-contain" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">{product.name}</p>
-                  <p className="mt-1 break-all text-xs text-zinc-500">{product.slug}</p>
-                  <p className="mt-2 line-clamp-2 text-xs text-zinc-400">{product.description}</p>
-                </div>
-                <div className="text-sm sm:text-right">
-                  <p className="font-bold text-red-400">{product.price}</p>
-                  <p className="mt-1 text-xs text-zinc-500">{product.categoryLabel}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <aside className="admin-editor h-fit p-4 sm:p-5">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-white">Карточка товара</h2>
-            <button type="button" onClick={() => setForm(emptyForm)} className="text-xs text-zinc-500 transition-colors hover:text-red-400">
-              Очистить
-            </button>
-          </div>
-
-          <form onSubmit={saveCurrentProduct} className="grid gap-4">
-            <FormSection title="Основное">
-              <Field label="Slug" value={form.slug} onChange={setField("slug")} placeholder="new-product-slug" />
-              <Field label="Название" value={form.name} onChange={setField("name")} />
-              <Field label="Короткое имя" value={form.shortName} onChange={setField("shortName")} />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Артикул / SKU" value={form.sku} onChange={setField("sku")} placeholder="DEI-VDI-200" />
-                <Field label="Бренд" value={form.brand} onChange={setField("brand")} placeholder="DEI" />
-              </div>
-              <Field label="Производитель" value={form.manufacturer} onChange={setField("manufacturer")} />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Модель" value={form.model} onChange={setField("model")} />
-                <Field label="Серия" value={form.series} onChange={setField("series")} />
-              </div>
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-medium text-zinc-400">Категория</span>
-                <select
-                  value={form.category}
-                  onChange={setField("category")}
-                  className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none focus:border-red-600/50"
-                >
-                  {CATEGORIES.filter((category) => category.key !== "all").map((category) => (
-                    <option key={category.key} value={category.key} style={{ background: "#09090b" }}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <Field label="Метка категории" value={form.categoryLabel} onChange={setField("categoryLabel")} />
-            </FormSection>
-
-            <FormSection title="Продажи и наличие">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Цена текстом" value={form.price} onChange={setField("price")} placeholder="от 18 500 ₽" />
-                <Field label="Цена числом" value={form.priceNum} onChange={setField("priceNum")} type="number" />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Старая цена" value={form.oldPrice} onChange={setField("oldPrice")} type="number" />
-                <Field label="Оптовая цена" value={form.wholesalePrice} onChange={setField("wholesalePrice")} type="number" />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="НДС, %" value={form.vatRate} onChange={setField("vatRate")} type="number" placeholder="20" />
-                <Checkbox label="Цена с НДС" checked={form.vatIncluded} onChange={setField("vatIncluded")} />
-              </div>
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-medium text-zinc-400">Статус наличия</span>
-                <select
-                  value={form.availabilityStatus}
-                  onChange={setField("availabilityStatus")}
-                  className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none focus:border-red-600/50"
-                >
-                  {AVAILABILITY_OPTIONS.map((option) => (
-                    <option key={option.value || "empty"} value={option.value} style={{ background: "#09090b" }}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <Field label="Остаток" value={form.stockQuantity} onChange={setField("stockQuantity")} type="number" />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Срок поставки" value={form.leadTime} onChange={setField("leadTime")} placeholder="2-5 дней" />
-                <Field label="Единица продажи" value={form.saleUnit} onChange={setField("saleUnit")} placeholder="шт." />
-              </div>
-              <Field label="Минимальный заказ" value={form.minOrderQuantity} onChange={setField("minOrderQuantity")} type="number" />
-            </FormSection>
-
-            <FormSection title="Контент">
-              <Field label="Изображение" value={form.img} onChange={setField("img")} placeholder="/products/example.jpg" />
-              <TextArea label="Краткое описание" value={form.description} onChange={setField("description")} rows={2} />
-              <TextArea label="Полное описание" value={form.fullDescription} onChange={setField("fullDescription")} rows={4} />
-              <TextArea label="Характеристики" value={form.specsText} onChange={setField("specsText")} rows={5} hint="Одна строка: Метка: значение" />
-              <TextArea label="Теги" value={form.tagsText} onChange={setField("tagsText")} rows={2} hint="Через запятую" />
-              <div className="grid gap-2 sm:grid-cols-2">
-                <Checkbox label="НАКС" checked={form.naks} onChange={setField("naks")} />
-                <Checkbox label="Рекомендуемый" checked={form.featured} onChange={setField("featured")} />
-              </div>
-            </FormSection>
-
-            <FormSection title="SEO">
-              <Field label="SEO title" value={form.seoTitle} onChange={setField("seoTitle")} />
-              <TextArea label="SEO description" value={form.seoDescription} onChange={setField("seoDescription")} rows={3} />
-            </FormSection>
-
-            <button
-              type="submit"
-              disabled={!token.trim() || saving}
-              className="mt-2 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white btn transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {saving ? "Сохранение..." : "Сохранить товар"}
-            </button>
-            <button
-              type="button"
-              disabled={!token.trim() || !form.slug.trim() || saving}
-              onClick={deleteCurrentProduct}
-              className="rounded-xl border border-red-500/25 bg-red-500/10 py-3 text-sm font-semibold text-red-200 transition-colors hover:bg-red-500/15 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Скрыть товар из каталога
-            </button>
-          </form>
-        </aside>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  type?: string;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs font-medium text-zinc-400">{label}</span>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="w-full rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-red-600/50"
-      />
-    </label>
-  );
+function Field({ label, value, onChange, placeholder, type = "text", required = false, disabled = false }: { label: string; value: string; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; placeholder?: string; type?: string; required?: boolean; disabled?: boolean }) {
+  return <label className="admin-field"><span>{label}</span><input type={type} value={value} onChange={onChange} placeholder={placeholder} required={required} disabled={disabled} /></label>;
 }
 
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="admin-form-section grid gap-3 p-3">
-      <h3 className="text-sm font-semibold text-zinc-100">{title}</h3>
-      {children}
-    </section>
-  );
+  return <section className="admin-form-section"><h3>{title}</h3>{children}</section>;
 }
 
-function TextArea({
-  label,
-  value,
-  onChange,
-  rows,
-  hint,
-}: {
-  label: string;
-  value: string;
-  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  rows: number;
-  hint?: string;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs font-medium text-zinc-400">{label}</span>
-      <textarea
-        value={value}
-        onChange={onChange}
-        rows={rows}
-        className="w-full resize-none rounded-lg border border-white/[0.08] bg-black/25 px-3 py-2.5 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-red-600/50"
-      />
-      {hint && <span className="mt-1 block text-[11px] text-zinc-600">{hint}</span>}
-    </label>
-  );
+function TextArea({ label, value, onChange, rows, hint, required = false }: { label: string; value: string; onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void; rows: number; hint?: string; required?: boolean }) {
+  return <label className="admin-field"><span>{label}</span><textarea value={value} onChange={onChange} rows={rows} required={required} />{hint && <small>{hint}</small>}</label>;
 }
 
-function Checkbox({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <label className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-black/20 px-3 py-2 text-sm text-zinc-300">
-      <input type="checkbox" checked={checked} onChange={onChange} className="h-4 w-4 accent-red-600" />
-      {label}
-    </label>
-  );
+function Checkbox({ label, checked, onChange }: { label: string; checked: boolean; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void }) {
+  return <label className="admin-checkbox"><input type="checkbox" checked={checked} onChange={onChange} /><span>{label}</span></label>;
 }

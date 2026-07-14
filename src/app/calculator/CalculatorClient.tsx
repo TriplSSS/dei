@@ -55,7 +55,6 @@ export default function CalculatorClient() {
     <div className="internal-page-v11 calculator-page-v11">
       <PageHeader
         centered
-        eyebrow="Калькулятор освещения"
         title="Рассчитайте количество светильников"
         description="Укажите размеры и назначение помещения. Калькулятор покажет ориентировочное количество, мощность и стоимость оборудования."
         meta={[
@@ -106,7 +105,6 @@ export default function CalculatorClient() {
         <aside className="calculator-result-v11" aria-live="polite">
           {result ? (
             <>
-              <span className="v11-kicker">Ориентировочный результат</span>
               <div className="calculator-result-v11__count"><strong>{result.count}</strong><span>светильников</span></div>
               <p className="calculator-result-v11__model">{model}</p>
               <dl>

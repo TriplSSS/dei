@@ -3,8 +3,16 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/data/products";
 
+const availabilityLabels: Record<NonNullable<Product["availabilityStatus"]>, string> = {
+  in_stock: "В наличии",
+  on_order: "Под заказ",
+  preorder: "Предзаказ",
+  out_of_stock: "Нет в наличии",
+};
+
 export default function ProductPageClient({ product, products }: { product: Product; products: Product[] }) {
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
+  const availabilityStatus = product.availabilityStatus || "on_order";
 
   return (
     <div className="product-page-v11">
@@ -30,11 +38,10 @@ export default function ProductPageClient({ product, products }: { product: Prod
             <h1>{product.name}</h1>
             <p className="product-buy-v11__description">{product.fullDescription}</p>
 
-            <div className="product-buy-v11__status"><span><i />Под заказ</span><b>{product.leadTime || "срок уточняется"}</b></div>
+            <div className={`product-buy-v11__status is-${availabilityStatus}`}><span><i />{availabilityLabels[availabilityStatus]}</span><b>{product.leadTime || "срок уточняется"}</b></div>
             <div className="product-buy-v11__price"><span>Ориентировочная цена</span><strong>{product.price}</strong></div>
 
             <div className="product-buy-v11__development">
-              <span>Онлайн-заказ</span>
               <strong>В разработке</strong>
               <p>Корзина и отправка данных временно отключены. Уточнить наличие и комплектацию можно по телефону.</p>
             </div>
@@ -46,14 +53,12 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
         <section className="product-info-v11">
           <article className="product-info-v11__description">
-            <span>О товаре</span>
             <h2>Описание</h2>
             <p>{product.fullDescription}</p>
             <div className="product-info-v11__tags">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           </article>
 
           <article className="product-info-v11__specs">
-            <span>Параметры</span>
             <h2>Характеристики</h2>
             <dl>
               {product.specs.map((spec) => <div key={spec.label}><dt>{spec.label}</dt><dd>{spec.value}</dd></div>)}
@@ -61,7 +66,6 @@ export default function ProductPageClient({ product, products }: { product: Prod
           </article>
 
           <article className="product-service-v11">
-            <span>Сервис DEI</span>
             <h2>Поставка без лишней переписки</h2>
             <ul>
               <li><i>01</i> Уточняем рабочую задачу</li>
@@ -75,7 +79,7 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
         {related.length > 0 && (
           <section className="product-related-v11">
-            <div className="product-related-v11__head"><div><span>Каталог</span><h2>Другие товары</h2></div><Link href="/catalog">Смотреть все</Link></div>
+            <div className="product-related-v11__head"><div><h2>Другие товары</h2></div><Link href="/catalog">Смотреть все</Link></div>
             <div className="catalog-grid-v11">
               {related.map((item) => <ProductCard key={item.slug} product={item} />)}
             </div>

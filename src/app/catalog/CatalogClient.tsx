@@ -5,18 +5,17 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import ProductCard from "@/components/ProductCard";
-import { CATEGORIES, type Product } from "@/data/products";
+import type { Product, ProductCategory } from "@/data/products";
 
 const ruble = (value: number) => `${value.toLocaleString("ru-RU")} ₽`;
-const CATEGORY_KEYS = CATEGORIES.map((category) => category.key as string);
-
-export default function CatalogClient({ products }: { products: Product[] }) {
+export default function CatalogClient({ products, categories }: { products: Product[]; categories: ProductCategory[] }) {
   const searchParams = useSearchParams();
   const requestedCategory = searchParams.get("category");
-  const minPrice = Math.min(...products.map((product) => product.priceNum));
-  const maxCatalogPrice = Math.max(...products.map((product) => product.priceNum));
+  const categoryKeys = categories.map((item) => item.key);
+  const minPrice = products.length ? Math.min(...products.map((product) => product.priceNum)) : 0;
+  const maxCatalogPrice = products.length ? Math.max(...products.map((product) => product.priceNum)) : 0;
   const [category, setCategory] = useState(
-    requestedCategory && CATEGORY_KEYS.includes(requestedCategory) ? requestedCategory : "all"
+    requestedCategory && categoryKeys.includes(requestedCategory) ? requestedCategory : "all"
   );
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"default" | "asc" | "desc">("default");
@@ -55,7 +54,6 @@ export default function CatalogClient({ products }: { products: Product[] }) {
     <div className="catalog-page-v11">
       <PageHeader
         centered
-        eyebrow="Каталог DEI"
         title="Оборудование и материалы"
         description="Сварочное оборудование и промышленное освещение. Подберём комплектацию, подготовим счёт и организуем поставку."
       />
@@ -64,7 +62,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         <div className="catalog-section-v11__inner">
           <div className="catalog-controls-v11">
             <div className="catalog-categories-v11" role="group" aria-label="Категории товаров">
-              {CATEGORIES.map((item) => {
+              {[{ key: "all", label: "Все" }, ...categories].map((item) => {
                 const count = item.key === "all" ? products.length : products.filter((product) => product.category === item.key).length;
                 return (
                   <button
@@ -127,7 +125,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {filteredProducts.length > 0 ? (
             <div className="catalog-grid-v11">
               {filteredProducts.map((product, index) => (
-                <ProductCard key={product.slug} product={product} priority={index === 0} featured={index === 0} />
+                <ProductCard key={product.slug} product={product} priority={index === 0} />
               ))}
             </div>
           ) : (
@@ -141,7 +139,6 @@ export default function CatalogClient({ products }: { products: Product[] }) {
 
           <div className="catalog-help-v11">
             <div>
-              <span>Индивидуальный подбор</span>
               <h2>Не нашли нужную комплектацию?</h2>
               <p>Опишите задачу — инженер предложит оборудование и рассчитает стоимость поставки.</p>
             </div>

@@ -11,11 +11,18 @@ export type ProductVariant = {
   leadTime?: string;
 };
 
+export type ProductCategory = {
+  key: string;
+  label: string;
+  description?: string;
+  sortOrder?: number;
+};
+
 export type Product = {
   slug: string;
   name: string;
   shortName: string;
-  category: "welding" | "light";
+  category: string;
   categoryLabel: string;
   price: string;
   priceNum: number;
@@ -50,11 +57,25 @@ export type Product = {
   variants?: ProductVariant[];
 };
 
+export const DEFAULT_CATEGORIES: ProductCategory[] = [
+  {
+    key: "welding",
+    label: "Сварочные аппараты",
+    description: "Оборудование для ручной дуговой и производственной сварки.",
+    sortOrder: 10,
+  },
+  {
+    key: "light",
+    label: "Светильники",
+    description: "Светодиодное оборудование для промышленных и рабочих зон.",
+    sortOrder: 20,
+  },
+];
+
 export const CATEGORIES = [
   { key: "all", label: "Все" },
-  { key: "welding", label: "Сварочные аппараты" },
-  { key: "light", label: "Светильники" },
-] as const;
+  ...DEFAULT_CATEGORIES,
+];
 
 export const PRODUCTS: Product[] = [
   {

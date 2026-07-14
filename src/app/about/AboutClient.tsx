@@ -20,7 +20,6 @@ export default function AboutClient() {
     <div className="internal-page-v11 about-page-v11">
       <PageHeader
         centered
-        eyebrow="О компании"
         title="Делаем оборудование, которое работает"
         description="ДонЭлектроИнтел — российская инженерная компания из Ростова-на-Дону. Разрабатываем, производим и поставляем оборудование с 2006 года."
         meta={[
@@ -33,7 +32,6 @@ export default function AboutClient() {
       <main className="internal-shell-v11 about-content-v11">
         <section className="about-story-v11">
           <div className="about-story-v11__copy">
-            <span className="v11-kicker">Кто мы</span>
             <h2>От реальной задачи — к рабочему решению</h2>
             <p>Мы не ограничиваемся продажей готовой позиции. Уточняем режим работы, условия объекта и требования к результату, чтобы оборудование не оказалось случайным выбором.</p>
             <p>Собственная инженерная экспертиза помогает говорить с производством на одном языке и предлагать решения без лишних обещаний.</p>
@@ -47,7 +45,7 @@ export default function AboutClient() {
         </section>
 
         <section className="about-principles-v11">
-          <div className="section-head-v11"><div><span className="v11-kicker">Наш подход</span><h2>Три принципа работы</h2></div><p>Понятный процесс от первого обращения до поставки.</p></div>
+          <div className="section-head-v11"><div><h2>Три принципа работы</h2></div><p>Понятный процесс от первого обращения до поставки.</p></div>
           <div className="about-principles-v11__grid">
             {principles.map((item) => (
               <article key={item.title}>
@@ -60,14 +58,14 @@ export default function AboutClient() {
         </section>
 
         <section className="about-timeline-v11">
-          <div className="section-head-v11"><div><span className="v11-kicker">История</span><h2>Как развивалась компания</h2></div></div>
+          <div className="section-head-v11"><div><h2>Как развивалась компания</h2></div></div>
           <div className="about-timeline-v11__list">
             {timeline.map(([year, text]) => <article key={year}><time>{year}</time><p>{text}</p></article>)}
           </div>
         </section>
 
         <section className="page-cta-v11">
-          <div><span>Готовы обсудить задачу?</span><h2>Подберём оборудование и подготовим расчёт</h2></div>
+          <div><h2>Подберём оборудование и подготовим расчёт</h2></div>
           <Link href="/contacts">Связаться с нами <span aria-hidden="true">↗</span></Link>
         </section>
       </main>

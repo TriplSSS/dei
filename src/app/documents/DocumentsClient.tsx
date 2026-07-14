@@ -51,7 +51,6 @@ export default function DocumentsClient() {
     <div className="internal-page-v11 documents-page-v11">
       <PageHeader
         centered
-        eyebrow="Документы"
         title="Сертификаты и документация"
         description="Аттестаты, сертификаты соответствия, патенты и технические паспорта на оборудование DEI."
         meta={[
@@ -64,7 +63,7 @@ export default function DocumentsClient() {
       <main className="internal-shell-v11 documents-content-v11">
         <section className="documents-feature-v11">
           <div className="documents-feature-v11__icon"><DocumentIcon type="naks" /></div>
-          <div><span>Главный документ · действует</span><h2>ПРОТОН-ДЭИ ВДИ 200 аттестован НАКС</h2><p>Оборудование допущено к сварке трубопроводов нефтегазовой отрасли, ответственных металлоконструкций и оборудования под давлением.</p></div>
+          <div><h2>ПРОТОН-ДЭИ ВДИ 200 аттестован НАКС</h2><p>Оборудование допущено к сварке трубопроводов нефтегазовой отрасли, ответственных металлоконструкций и оборудования под давлением.</p></div>
           <Link href="/contacts">Запросить копию <span aria-hidden="true">↗</span></Link>
         </section>
 
@@ -90,7 +89,7 @@ export default function DocumentsClient() {
         </section>
 
         <section className="page-cta-v11">
-          <div><span>Не нашли нужный файл?</span><h2>Подготовим актуальный документ в течение рабочего дня</h2></div>
+          <div><h2>Подготовим актуальный документ в течение рабочего дня</h2></div>
           <Link href="/contacts">Отправить запрос <span aria-hidden="true">↗</span></Link>
         </section>
       </main>

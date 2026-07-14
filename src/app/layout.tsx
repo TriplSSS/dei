@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "./internal-v11.css";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
-import SmoothScroll from "@/components/SmoothScroll";
-import BackToTop from "@/components/BackToTop";
-import { SiteLoader } from "@/components/SiteLoader";
+import SiteShell from "@/components/SiteShell";
 
 const inter = Inter({
   subsets: ["cyrillic", "latin"],
@@ -52,21 +48,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ru" className={`${inter.variable} antialiased`}>
       <body className="font-[family-name:var(--font-inter)]">
-        <SiteLoader />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <div className="site-atmosphere" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-        <SmoothScroll />
-        <Nav />
-        <main>{children}</main>
-        <Footer />
-        <BackToTop />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

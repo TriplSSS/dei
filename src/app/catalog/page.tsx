@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { listProducts } from "@/lib/productCatalog";
+import { listProductCategories, listProducts } from "@/lib/productCatalog";
 import CatalogClient from "./CatalogClient";
 
 export const metadata: Metadata = {
@@ -15,11 +15,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CatalogPage() {
-  const products = await listProducts();
+  const [products, categories] = await Promise.all([listProducts(), listProductCategories()]);
 
   return (
     <Suspense>
-      <CatalogClient products={products} />
+      <CatalogClient products={products} categories={categories} />
     </Suspense>
   );
 }

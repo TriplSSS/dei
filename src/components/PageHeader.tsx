@@ -4,7 +4,6 @@ type PageHeaderMeta = {
 };
 
 type PageHeaderProps = {
-  eyebrow: string;
   title: string;
   description?: string;
   meta?: PageHeaderMeta[];
@@ -12,7 +11,6 @@ type PageHeaderProps = {
 };
 
 export default function PageHeader({
-  eyebrow,
   title,
   description,
   meta = [],
@@ -21,7 +19,6 @@ export default function PageHeader({
   return (
     <header className={`page-header-v11${centered ? " page-header-v11--centered" : ""}`}>
       <div className="page-header-v11__inner">
-        <p className="page-header-v11__eyebrow"><span />{eyebrow}</p>
         <h1>{title}</h1>
         {description && <p className="page-header-v11__description">{description}</p>}
         {meta.length > 0 && (

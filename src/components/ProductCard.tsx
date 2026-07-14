@@ -8,7 +8,16 @@ type ProductCardProps = {
   featured?: boolean;
 };
 
+const availabilityLabels: Record<NonNullable<Product["availabilityStatus"]>, string> = {
+  in_stock: "В наличии",
+  on_order: "Под заказ",
+  preorder: "Предзаказ",
+  out_of_stock: "Нет в наличии",
+};
+
 export default function ProductCard({ product, priority = false, featured = false }: ProductCardProps) {
+  const isFeatured = featured || Boolean(product.featured);
+
   return (
     <article className="product-card-v11">
       <Link href={`/catalog/${product.slug}`} className="product-card-v11__media" aria-label={product.name}>
@@ -21,10 +30,13 @@ export default function ProductCard({ product, priority = false, featured = fals
           className="product-card-v11__image product-photo-blend"
         />
         <div className="product-card-v11__badges">
-          {featured && <span className="is-accent">Выбор DEI</span>}
+          {isFeatured && <span className="is-accent">Выбор DEI</span>}
           {product.naks && <span>НАКС</span>}
         </div>
-        <span className="product-card-v11__availability"><i />Под заказ</span>
+        <span className={`product-card-v11__availability is-${product.availabilityStatus || "on_order"}`}>
+          <i />
+          {availabilityLabels[product.availabilityStatus || "on_order"]}
+        </span>
       </Link>
 
       <div className="product-card-v11__body">
@@ -32,15 +44,19 @@ export default function ProductCard({ product, priority = false, featured = fals
         <Link href={`/catalog/${product.slug}`}>
           <h2>{product.name}</h2>
         </Link>
-        <p className="product-card-v11__description">{product.description}</p>
-        <div className="product-card-v11__price">{product.price}</div>
+        <div className="product-card-v11__price">
+          <strong>{product.price}</strong>
+          {product.oldPrice && <s>{product.oldPrice.toLocaleString("ru-RU")} ₽</s>}
+        </div>
 
         <div className="product-card-v11__actions">
           <span className="product-card-v11__development">
             <i aria-hidden="true" />
             В разработке
           </span>
-          <Link href={`/catalog/${product.slug}`} className="product-card-v11__details" aria-label={`Подробнее: ${product.name}`}>↗</Link>
+          <Link href={`/catalog/${product.slug}`} className="product-card-v11__details" aria-label={`Подробнее: ${product.name}`}>
+            <span>Подробнее</span><b aria-hidden="true">↗</b>
+          </Link>
         </div>
       </div>
     </article>

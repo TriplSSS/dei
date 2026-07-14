@@ -13,7 +13,6 @@ export default function CheckoutPage() {
     <div className="internal-page-v11 development-page-v11">
       <PageHeader
         centered
-        eyebrow="Онлайн-сервисы"
         title="В разработке"
         description="Корзина, онлайн-заказ и формы отправки данных временно отключены. Каталог доступен для просмотра, а обсудить оборудование можно напрямую с DEI."
         meta={[
@@ -31,7 +30,6 @@ export default function CheckoutPage() {
             <i />
           </div>
           <div className="development-panel-v11__copy">
-            <span>DEI / ONLINE SERVICES</span>
             <h2>Покупка на сайте появится позже</h2>
             <p>Сейчас сайт работает как витрина оборудования. Мы не сохраняем товары в корзине и не предлагаем заполнять персональные данные.</p>
           </div>

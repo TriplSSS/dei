@@ -97,7 +97,6 @@ export function HomeStory() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.65, ease }}
             >
-              <p className={styles.kicker}>DEI в цифрах</p>
               <h2 id="metrics-title">Опыт, который можно проверить</h2>
               <span>Наведите на показатель, чтобы открыть связанный раздел</span>
             </motion.div>
@@ -135,7 +134,6 @@ export function HomeStory() {
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.7, ease }}
               >
-                <p className={styles.kicker}>Принципы работы</p>
                 <h2 id="principles-title">Не обещаем лишнего.<br />Показываем логику решения.</h2>
                 <p>Выберите принцип — панель покажет, как он работает на практике.</p>
               </motion.div>
@@ -159,11 +157,31 @@ export function HomeStory() {
 
             <div className={styles.principlePanel} aria-live="polite">
               <div className={styles.signalVisual} aria-hidden="true">
+                <svg className={styles.signalCircuit} viewBox="0 0 760 300" preserveAspectRatio="xMidYMid slice">
+                  <defs>
+                    <linearGradient id="story-signal-gradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stopColor="#6d0008" stopOpacity="0" />
+                      <stop offset="0.48" stopColor="#ff2a31" />
+                      <stop offset="1" stopColor="#6d0008" stopOpacity="0" />
+                    </linearGradient>
+                    <filter id="story-signal-glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="3.5" result="blur" />
+                      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                  </defs>
+                  <g className={styles.signalTrack}>
+                    <path d="M18 150H166L220 96H310" />
+                    <path d="M450 204H540L594 150H742" />
+                    <path d="M310 96L380 150L450 204" />
+                    <circle cx="166" cy="150" r="4" />
+                    <circle cx="594" cy="150" r="4" />
+                  </g>
+                  <g className={styles.signalEnergy} filter="url(#story-signal-glow)">
+                    <path pathLength="1" d="M18 150H166L220 96H310" />
+                    <path pathLength="1" d="M450 204H540L594 150H742" />
+                  </g>
+                </svg>
                 <span className={styles.signalCore}>DEI</span>
-                <span className={styles.signalOrbitOne} />
-                <span className={styles.signalOrbitTwo} />
-                <span className={styles.signalSweep} />
-                <i className={styles.signalDot} />
               </div>
               <AnimatePresence mode="wait">
                 <motion.article
@@ -173,11 +191,6 @@ export function HomeStory() {
                   exit={{ opacity: 0, y: -12, filter: "blur(5px)" }}
                   transition={{ duration: 0.42, ease }}
                 >
-                  <div className={styles.panelMeta}>
-                    <span>PRINCIPLE / {principle.number}</span>
-                    <span>{principle.signal}</span>
-                  </div>
-                  <p className={styles.panelCaption}>{principle.caption}</p>
                   <h3>{principle.title}</h3>
                   <p className={styles.panelText}>{principle.text}</p>
                   <ul>
@@ -199,7 +212,6 @@ export function HomeStory() {
               transition={{ duration: 0.7, ease }}
             >
               <div>
-                <p className={styles.kicker}>Процесс</p>
                 <h2 id="process-title">Четыре шага<br />до рабочего результата</h2>
               </div>
               <p>Нажмите на этап, чтобы увидеть, что именно происходит и какой результат вы получаете.</p>
@@ -233,7 +245,6 @@ export function HomeStory() {
                     transition={{ duration: 0.42, ease }}
                   >
                     <span className={styles.processNumber}>{step.number}</span>
-                    <p>Этап {step.number} / 04</p>
                     <h3>{step.title}</h3>
                     <div className={styles.processLine}><motion.i layoutId="process-signal" /></div>
                     <p className={styles.processDescription}>{step.text}</p>
@@ -258,7 +269,6 @@ export function HomeStory() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.7, ease }}
             >
-              <p className={styles.kicker}>Следующий шаг</p>
               <h2 id="home-cta-title">Опишите задачу.<br />Инженер DEI предложит решение.</h2>
               <p>Без регистрации и онлайн-оплаты. Вы оставляете контакты — мы уточняем детали и готовим предложение.</p>
             </motion.div>

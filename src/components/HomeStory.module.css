@@ -8,9 +8,7 @@
   --story-muted: #666164;
   position: relative;
   overflow: clip;
-  background:
-    radial-gradient(circle at 10% 12%, rgb(132 0 8 / 0.12), transparent 28rem),
-    #050505;
+  background: #050505;
   color: #f7f7f5;
 }
 
@@ -19,51 +17,40 @@
   margin-inline: auto;
 }
 
-.kicker {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  color: #ff626b;
-  font-size: 0.65rem;
-  font-weight: 750;
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
-}
-
-.kicker::before {
-  width: 22px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--story-red-bright), transparent);
-  content: "";
-}
-
 .metrics {
   position: relative;
-  padding: clamp(5rem, 9vw, 8rem) 0 clamp(6rem, 10vw, 10rem);
+  padding: clamp(5rem, 9vw, 8rem) 0 clamp(3.5rem, 5vw, 5.5rem);
+  background:
+    radial-gradient(circle at 10% 20%, rgb(132 0 8 / 0.12), transparent 30rem),
+    linear-gradient(180deg, #050505 0%, #060505 62%, #090606 100%);
 }
 
 .metrics::after {
   position: absolute;
   inset: auto 0 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(229 9 20 / 0.35), transparent);
+  height: clamp(90px, 12vw, 180px);
+  background: linear-gradient(180deg, transparent, #090606);
+  pointer-events: none;
   content: "";
 }
 
 .metricsIntro {
   display: grid;
-  grid-template-columns: 0.7fr 1.4fr 0.8fr;
+  position: relative;
+  z-index: 1;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, auto);
   gap: 2rem;
   align-items: end;
   margin-bottom: 2rem;
 }
 
 .metricsIntro h2 {
-  max-width: 680px;
+  min-width: 0;
   color: #fff;
-  font-size: clamp(2.25rem, 4vw, 4.2rem);
+  font-size: clamp(2.25rem, 3.55vw, 4.2rem);
   line-height: 0.98;
   letter-spacing: -0.06em;
+  white-space: nowrap;
 }
 
 .metricsIntro > span {
@@ -76,6 +63,8 @@
 
 .metricsGrid {
   display: grid;
+  position: relative;
+  z-index: 1;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.75rem;
 }
@@ -185,10 +174,11 @@
 
 .principles {
   position: relative;
-  padding: clamp(6rem, 11vw, 11rem) 0;
+  padding: clamp(3.5rem, 5.5vw, 6rem) 0 clamp(5rem, 8vw, 8rem);
   background:
     linear-gradient(118deg, rgb(255 255 255 / 0.022), transparent 32%),
-    radial-gradient(circle at 76% 45%, rgb(112 0 8 / 0.18), transparent 34rem);
+    radial-gradient(circle at 76% 45%, rgb(112 0 8 / 0.18), transparent 34rem),
+    linear-gradient(180deg, #090606 0%, #060505 58%, #050505 100%);
 }
 
 .principles::before {
@@ -218,7 +208,7 @@
 .sectionLead h2,
 .processHead h2,
 .ctaCopy h2 {
-  margin-top: 1rem;
+  margin-top: 0;
   color: #fff;
   font-size: clamp(2.7rem, 5.2vw, 5.9rem);
   font-weight: 650;
@@ -289,8 +279,52 @@
   place-items: center;
   overflow: hidden;
   border-bottom: 1px solid var(--story-line);
-  background: radial-gradient(circle, rgb(229 9 20 / 0.22), transparent 37%);
+  background:
+    radial-gradient(circle at 50% 50%, rgb(229 9 20 / 0.2), transparent 34%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.018), transparent);
 }
+
+.signalVisual::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #0c0c0d 0%, transparent 18%, transparent 82%, #0c0c0d 100%);
+  pointer-events: none;
+  content: "";
+}
+
+.signalCircuit {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.signalTrack path {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.1);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.signalTrack circle {
+  fill: #141416;
+  stroke: rgb(255 255 255 / 0.18);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.signalEnergy path {
+  fill: none;
+  stroke: url(#story-signal-gradient);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.075 0.925;
+  vector-effect: non-scaling-stroke;
+  animation: signalFlow 4.6s linear infinite;
+}
+
+.signalEnergy path:nth-child(2) { animation-delay: -2.3s; }
 
 .signalCore {
   position: relative;
@@ -302,38 +336,8 @@
   text-shadow: 0 0 38px rgb(229 9 20 / 0.35);
 }
 
-.signalOrbitOne,
-.signalOrbitTwo,
-.signalSweep {
-  position: absolute;
-  width: 58%;
-  aspect-ratio: 2 / 0.82;
-  border: 1px solid rgb(229 9 20 / 0.34);
-  border-radius: 50%;
-  transform: rotate(-8deg);
-}
-
-.signalOrbitTwo { width: 78%; border-color: rgb(255 255 255 / 0.08); transform: rotate(12deg); }
-.signalSweep { width: 67%; border-color: transparent; border-top-color: var(--story-red-bright); filter: drop-shadow(0 0 7px rgb(229 9 20 / 0.75)); animation: orbitSweep 7s linear infinite; }
-
-.signalDot {
-  position: absolute;
-  z-index: 4;
-  left: 19%;
-  top: 53%;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 8px #fff, 0 0 20px var(--story-red-bright);
-  animation: signalPulse 2.1s ease-in-out infinite;
-}
-
 .principlePanel article { position: relative; z-index: 2; padding: clamp(1.5rem, 4vw, 3.3rem); }
-.panelMeta { display: flex; justify-content: space-between; gap: 1rem; color: #6d676a; font-size: 0.59rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
-.panelMeta span:last-child { color: #a23b41; }
-.panelCaption { margin-top: 2.5rem; color: #ff646c; font-size: 0.65rem; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; }
-.principlePanel h3 { margin-top: 0.75rem; color: #fff; font-size: clamp(2rem, 4vw, 3.8rem); line-height: 0.98; letter-spacing: -0.055em; }
+.principlePanel h3 { color: #fff; font-size: clamp(2rem, 4vw, 3.8rem); line-height: 0.98; letter-spacing: -0.055em; }
 .panelText { max-width: 680px; margin-top: 1.25rem; color: var(--story-soft); font-size: 0.83rem; line-height: 1.72; }
 .principlePanel ul { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.7rem; }
 .principlePanel li { border: 1px solid rgb(255 255 255 / 0.09); border-radius: 999px; background: rgb(255 255 255 / 0.025); padding: 0.58rem 0.75rem; color: #9b9698; font-size: 0.64rem; }
@@ -341,8 +345,7 @@
 .process {
   position: relative;
   padding: clamp(6rem, 11vw, 11rem) 0;
-  border-top: 1px solid rgb(255 255 255 / 0.055);
-  background: linear-gradient(180deg, #050505, #080606 52%, #050505);
+  background: linear-gradient(180deg, #050505 0%, #080606 52%, #070505 100%);
 }
 
 .processHead {
@@ -416,8 +419,7 @@
 
 .processStageContent { position: relative; z-index: 1; display: flex; min-height: 540px; flex-direction: column; justify-content: flex-end; padding: clamp(2rem, 5vw, 4.8rem); }
 .processNumber { position: absolute; top: 1rem; right: 1.8rem; color: rgb(255 255 255 / 0.035); font-size: clamp(8rem, 20vw, 17rem); font-weight: 800; line-height: 0.8; letter-spacing: -0.1em; }
-.processStageContent > p:first-of-type { color: #f0525a; font-size: 0.63rem; font-weight: 750; letter-spacing: 0.15em; text-transform: uppercase; }
-.processStageContent h3 { margin-top: 0.8rem; color: #fff; font-size: clamp(2.8rem, 6vw, 6rem); line-height: 0.9; letter-spacing: -0.07em; }
+.processStageContent h3 { color: #fff; font-size: clamp(2.8rem, 6vw, 6rem); line-height: 0.9; letter-spacing: -0.07em; }
 .processLine { width: 100%; height: 1px; margin: 2rem 0; overflow: hidden; background: rgb(255 255 255 / 0.08); }
 .processLine i { display: block; width: 38%; height: 100%; background: linear-gradient(90deg, var(--story-red-bright), transparent); box-shadow: 0 0 12px var(--story-red); }
 .processDescription { max-width: 680px; color: var(--story-soft); font-size: 0.82rem; line-height: 1.72; }
@@ -426,7 +428,7 @@
 .cta {
   position: relative;
   padding: clamp(5rem, 10vw, 9rem) 0;
-  border-top: 1px solid rgb(255 255 255 / 0.055);
+  background: linear-gradient(180deg, #070505 0%, #050505 48%, #050505 100%);
 }
 
 .ctaCard {
@@ -480,12 +482,12 @@
   outline-offset: 3px;
 }
 
-@keyframes orbitSweep { to { transform: rotate(352deg); } }
-@keyframes signalPulse { 50% { opacity: 0.35; transform: scale(0.7); } }
+@keyframes signalFlow { to { stroke-dashoffset: -1; } }
 @keyframes ctaPulse { 50% { opacity: 0.35; transform: scale(1.8); } }
 
 @media (max-width: 1023px) {
-  .metricsIntro { grid-template-columns: 1fr 1.6fr; }
+  .metricsIntro { grid-template-columns: 1fr; }
+  .metricsIntro h2 { white-space: normal; }
   .metricsIntro > span { display: none; }
   .metricsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .principlesLayout { grid-template-columns: 1fr; }
@@ -513,7 +515,6 @@
   .principleTabs button { min-width: 220px; }
   .principlePanel { min-height: 650px; border-radius: 20px; }
   .signalVisual { height: 260px; }
-  .panelMeta { align-items: flex-start; flex-direction: column; }
   .processHead { grid-template-columns: 1fr; }
   .processHead > p { justify-self: start; }
   .processConsole { border-radius: 20px; }
@@ -526,8 +527,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .signalSweep,
-  .signalDot,
+  .signalEnergy path,
   .ctaEnergy i { animation: none !important; }
   .metricCard,
   .principleTabs button,
