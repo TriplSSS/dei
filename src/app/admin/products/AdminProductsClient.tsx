@@ -329,15 +329,16 @@ export default function AdminProductsClient() {
     <div className="dei-admin-page admin-products-page px-4 pb-24 sm:px-6">
       <div className="admin-workbench mx-auto grid max-w-[1280px] gap-6 lg:grid-cols-[minmax(0,1fr)_460px]">
         <section className="admin-list-column min-w-0">
-          <div className="mb-6">
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">DEI admin</p>
+          <header className="admin-v10__header mb-6">
+            <div>
+            <p className="admin-v10__index">ADMIN / 01</p>
             <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Товары</h1>
             <p className="mt-3 max-w-[640px] text-sm leading-relaxed text-zinc-400">
               Управление рабочим каталогом магазина. После сохранения товар используется на сайте и при оформлении заказов. В локальном запуске изменения остаются на этом компьютере, на сервере сохраняются в подключенном хранилище.
             </p>
-          </div>
+            </div>
 
-          <form onSubmit={loadProducts} className="mb-5 flex flex-col gap-3 sm:flex-row">
+          <form onSubmit={loadProducts} className="admin-v10__auth">
             <input
               type="password"
               value={token}
@@ -354,6 +355,7 @@ export default function AdminProductsClient() {
               {loading ? "Загрузка..." : loaded ? "Обновить" : "Открыть каталог"}
             </button>
           </form>
+          </header>
 
           {error && <div className="mb-4 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
           {message && <div className="mb-4 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{message}</div>}

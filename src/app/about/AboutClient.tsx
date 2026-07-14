@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import InternalMasthead from "@/components/InternalMasthead";
 
 const principles = [
   ["Инженерная точность", "Решения оцениваются по рабочим параметрам, надёжности и условиям эксплуатации."],
@@ -18,44 +19,44 @@ const timeline = [
 export default function AboutClient() {
   return (
     <>
-      <section className="page-intro page-intro--about" data-page-code="01 / COMPANY">
-        <div className="page-intro-inner">
-          <Reveal>
-            <p className="page-kicker">О компании</p>
-            <h1 className="page-title max-w-[1050px]">Инженерная культура с 2006 года</h1>
-            <p className="page-lead">
-              ДонЭлектроИнтел объединяет производственный опыт, собственные разработки и практический подход к задачам заказчика.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <InternalMasthead
+        index="01"
+        eyebrow="Компания"
+        title="Инженерная культура, проверенная производством"
+        summary="ДонЭлектроИнтел объединяет собственные разработки, практический опыт и ответственность за результат — от расчёта до запуска оборудования."
+        facts={[
+          { label: "Основание", value: "2006" },
+          { label: "Профиль", value: "B2B / INDUSTRIAL" },
+          { label: "География", value: "РОССИЯ" },
+        ]}
+      />
 
-      <section className="section-shell pb-20">
+      <section className="about-origin-section section-shell">
         <Reveal>
-          <div className="brand-statement grid min-h-[360px] overflow-hidden lg:grid-cols-[1fr_1.25fr]">
-            <div className="brand-statement-mark flex flex-col justify-between p-8 sm:p-12">
-              <span className="text-xs uppercase tracking-[0.16em] text-zinc-600">ДонЭлектроИнтел</span>
-              <span className="text-[clamp(6rem,16vw,13rem)] font-bold leading-[0.7] tracking-[-0.09em] text-white">DEI</span>
+          <div className="about-origin">
+            <div className="about-origin__statement">
+              <span>Основа компании</span>
+              <p>Техника должна решать задачу в реальных условиях, а не только соответствовать цифрам в каталоге.</p>
             </div>
-            <div className="flex items-end border-t border-white/[0.09] p-8 sm:p-12 lg:border-l lg:border-t-0">
-              <p className="max-w-[620px] text-xl leading-relaxed text-zinc-300 sm:text-2xl">
-                Компания создана инженерами, которые ранее отвечали за качество разработки и производства сложных технических систем.
-              </p>
+            <div className="about-origin__facts">
+              <div><span>01</span><p>Собственная инженерная экспертиза</p></div>
+              <div><span>02</span><p>Контроль производственных параметров</p></div>
+              <div><span>03</span><p>Поддержка после поставки</p></div>
             </div>
           </div>
         </Reveal>
       </section>
 
-      <section className="dei-page-section section-space">
+      <section className="about-principles dei-page-section section-space">
         <div className="section-shell">
           <Reveal>
             <p className="section-kicker">Принципы</p>
             <h2 className="section-title mt-5 max-w-[760px]">Технологичность начинается с дисциплины</h2>
           </Reveal>
-          <div className="principle-grid mt-14">
+          <div className="about-principles__list mt-14">
             {principles.map(([title, text], index) => (
               <Reveal key={title} delay={index * 0.07}>
-                <article className="principle-item">
+                <article className="about-principle">
                   <span className="text-xs text-red-500">0{index + 1}</span>
                   <h3 className="mt-8 text-xl font-medium text-white">{title}</h3>
                   <p className="mt-3 max-w-[350px] text-sm leading-relaxed text-zinc-500">{text}</p>
@@ -66,7 +67,7 @@ export default function AboutClient() {
         </div>
       </section>
 
-      <section className="dei-page-section section-space">
+      <section className="about-history dei-page-section section-space">
         <div className="section-shell grid gap-14 lg:grid-cols-[0.72fr_1.28fr]">
           <Reveal>
             <div className="lg:sticky lg:top-28">
@@ -74,10 +75,10 @@ export default function AboutClient() {
               <h2 className="section-title mt-5">Этапы развития</h2>
             </div>
           </Reveal>
-          <div className="timeline-panel overflow-hidden">
+          <div className="about-timeline">
             {timeline.map(([year, text], index) => (
               <Reveal key={year} delay={index * 0.05}>
-                <div className="timeline-row grid gap-4 px-5 py-6 sm:grid-cols-[100px_1fr]">
+                <div className="about-timeline__row grid gap-4 px-5 py-6 sm:grid-cols-[100px_1fr]">
                   <span className="text-xl font-medium tabular-nums text-white">{year}</span>
                   <p className="max-w-[620px] text-sm leading-relaxed text-zinc-500">{text}</p>
                 </div>
@@ -87,10 +88,10 @@ export default function AboutClient() {
         </div>
       </section>
 
-      <section className="dei-page-section section-space">
+      <section className="about-closing dei-page-section section-space">
         <div className="section-shell">
           <Reveal>
-            <div className="cta-panel grid gap-10 p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="about-closing__panel grid gap-10 p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
               <div>
                 <p className="section-kicker">Сегодня</p>
                 <h2 className="section-title mt-5 max-w-[800px]">Производим, подбираем и сопровождаем оборудование</h2>

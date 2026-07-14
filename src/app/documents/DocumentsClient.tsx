@@ -1,4 +1,5 @@
 import Reveal from "@/components/Reveal";
+import InternalMasthead from "@/components/InternalMasthead";
 
 type DocItem = {
   title: string;
@@ -110,24 +111,25 @@ function DocIcon({ type }: { type: DocItem["type"] }) {
 export default function DocumentsClient() {
   return (
     <>
-      <section className="page-intro page-intro--documents" data-page-code="03 / DOCUMENTS">
-        <div className="page-intro-inner">
-          <Reveal direction="up">
-            <p className="page-kicker">Документы</p>
-          </Reveal>
-          <Reveal direction="up" delay={0.06}>
-            <h1 className="page-title">Сертификаты и документация</h1>
-          </Reveal>
-          <Reveal direction="up" delay={0.12}>
-            <p className="page-lead">
-              Аттестаты НАКС, сертификаты соответствия, патенты и технические паспорта на всю продукцию DEI.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <InternalMasthead
+        index="03"
+        eyebrow="Документы"
+        title="Технический архив и подтверждение соответствия"
+        summary="Аттестаты НАКС, сертификаты, патенты и эксплуатационная документация на оборудование DEI."
+        facts={[
+          { label: "Разделов", value: "05" },
+          { label: "Документов", value: String(DOCS.length).padStart(2, "0") },
+          { label: "Выдача", value: "ПО ЗАПРОСУ" },
+        ]}
+      />
 
-      <section className="section-shell pb-24 md:pb-32">
-        <div className="max-w-[1000px]">
+      <section className="documents-archive section-shell pb-24 md:pb-32">
+        <div className="documents-archive__layout">
+          <aside className="documents-archive__aside">
+            <span>ARCHIVE / DEI</span>
+            <p>Документы предоставляются в актуальной редакции после проверки назначения и комплектации оборудования.</p>
+          </aside>
+          <div className="documents-archive__content">
           <Reveal direction="up" delay={0}>
             <div className="documents-feature mb-8 p-7 md:p-10">
               <div className="flex items-start gap-5">
@@ -158,10 +160,10 @@ export default function DocumentsClient() {
             </div>
           </Reveal>
 
-          <div className="documents-list">
+          <div className="documents-list" aria-label="Реестр документов">
             {DOCS.map((doc, i) => (
               <Reveal key={doc.title} direction="up" delay={i * 0.04}>
-                <div className="document-row group flex items-start gap-5 border-b border-white/[0.07] px-5 py-6 last:border-b-0 md:px-7">
+                <article className="document-row group grid gap-5 px-5 py-6 md:grid-cols-[48px_minmax(0,1fr)_120px] md:px-7">
                   <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center border ${TYPE_COLORS[doc.type]}`}>
                     <DocIcon type={doc.type} />
                   </div>
@@ -176,7 +178,7 @@ export default function DocumentsClient() {
                     <p className="text-xs text-zinc-500 mt-1 leading-relaxed">{doc.subtitle}</p>
                   </div>
 
-                  <div className="shrink-0">
+                  <div className="document-row__action shrink-0">
                     {doc.available ? (
                       <a
                         href="/contacts"
@@ -188,7 +190,7 @@ export default function DocumentsClient() {
                       <span className="text-xs text-zinc-700 px-3 py-1.5 whitespace-nowrap">По запросу</span>
                     )}
                   </div>
-                </div>
+                </article>
               </Reveal>
             ))}
           </div>
@@ -206,6 +208,7 @@ export default function DocumentsClient() {
               </a>
             </div>
           </Reveal>
+          </div>
         </div>
       </section>
     </>

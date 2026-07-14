@@ -202,25 +202,26 @@ export default function CheckoutClient() {
   }
 
   return (
-    <div className="checkout-page checkout-workflow section-shell pb-24 pt-36">
-      <div className="max-w-[1100px]">
-        <nav className="mb-6 flex items-center gap-2 text-xs text-zinc-600">
+    <div className="checkout-v10 section-shell pb-24 pt-36">
+      <div className="checkout-v10__frame">
+        <nav className="checkout-v10__breadcrumbs">
           <Link href="/catalog" className="transition-colors hover:text-zinc-400">Каталог</Link>
           <span>/</span>
           <span className="text-zinc-400">Оформление заказа</span>
         </nav>
 
-        <p className="page-kicker">Заявка на поставку</p>
-        <h1 className="mb-4 mt-5 text-[clamp(2.8rem,6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-white">Оформление заказа</h1>
-        <p className="mb-12 max-w-[640px] text-base leading-relaxed text-zinc-400">
-          Укажите контактные данные и удобный способ оплаты. Менеджер подтвердит наличие, итоговую стоимость и срок поставки.
-        </p>
-
-        <ol className="checkout-steps mb-10" aria-label="Этапы оформления заказа">
-          <li className="is-complete"><span>01</span> Корзина</li>
-          <li className="is-active" aria-current="step"><span>02</span> Контакты и оплата</li>
-          <li><span>03</span> Подтверждение</li>
-        </ol>
+        <header className="checkout-v10__header">
+          <div>
+            <p className="page-kicker">Заявка на поставку</p>
+            <h1>Оформление заказа</h1>
+            <p>Передайте контактные данные и выберите способ оплаты. Наличие, итоговую стоимость и срок поставки подтвердит менеджер.</p>
+          </div>
+          <ol className="checkout-steps" aria-label="Этапы оформления заказа">
+            <li className="is-complete"><span>01</span> Корзина</li>
+            <li className="is-active" aria-current="step"><span>02</span> Данные</li>
+            <li><span>03</span> Подтверждение</li>
+          </ol>
+        </header>
 
         {items.length === 0 ? (
           <div className="checkout-empty py-20 text-center">
@@ -230,9 +231,10 @@ export default function CheckoutClient() {
             </Link>
           </div>
         ) : (
-          <div className="checkout-layout grid items-start gap-8 lg:grid-cols-[1fr_400px]">
-            <form onSubmit={submit} className="checkout-form flex flex-col gap-6 p-6 md:p-8" aria-busy={busy}>
-              <div>
+          <div className="checkout-v10__layout">
+            <form onSubmit={submit} className="checkout-form checkout-v10__form" aria-busy={busy}>
+              <section className="checkout-v10__section">
+                <div className="checkout-v10__section-head"><span>01</span><h2>Способ оплаты</h2></div>
                 <p id="payment-method-label" className="mb-2 block text-xs font-medium text-zinc-400">Способ оплаты *</p>
                 <div className="payment-methods grid gap-1 border border-white/[0.08] bg-black/20 p-1 sm:grid-cols-2" role="group" aria-labelledby="payment-method-label">
                   <PaymentButton
@@ -248,9 +250,11 @@ export default function CheckoutClient() {
                     onClick={() => setPaymentMethod("online_yookassa")}
                   />
                 </div>
-              </div>
+              </section>
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <section className="checkout-v10__section">
+                <div className="checkout-v10__section-head"><span>02</span><h2>Контактные данные</h2></div>
+                <div className="grid gap-5 sm:grid-cols-2">
                 <Field id="checkout-name" label="Контактное лицо *" value={form.name} onChange={set("name")} placeholder="Иван Петров" autoComplete="name" required />
                 <Field id="checkout-phone" label="Телефон *" value={form.phone} onChange={set("phone")} placeholder="+7 (___) ___-__-__" type="tel" autoComplete="tel" required />
                 <Field id="checkout-company" label="Организация" value={form.company} onChange={set("company")} placeholder="ООО «Ромашка»" autoComplete="organization" />
@@ -270,7 +274,8 @@ export default function CheckoutClient() {
                     className="dei-control w-full resize-none px-4 py-3 text-sm"
                   />
                 </div>
-              </div>
+                </div>
+              </section>
 
               {paymentMethod === "online_yookassa" && (
                 <div className="border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-zinc-300">
@@ -297,7 +302,7 @@ export default function CheckoutClient() {
               </button>
             </form>
 
-            <aside className="checkout-summary p-6">
+            <aside className="checkout-summary checkout-v10__summary p-6">
               <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Ваш заказ</p>
               <div className="flex flex-col gap-3">
                 {items.map((it, index) => (

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Reveal from "@/components/Reveal";
+import InternalMasthead from "@/components/InternalMasthead";
 import AddToCartButton from "@/components/AddToCartButton";
 import { CATEGORIES, type Product } from "@/data/products";
 
@@ -124,24 +125,23 @@ export default function CatalogClient({ products }: { products: Product[] }) {
 
   return (
     <>
-      {/* ── Шапка ── */}
-      <section className="page-intro page-intro--catalog" data-page-code="00 / CATALOG">
-        <div className="page-intro-inner">
-          <Reveal>
-            <p className="page-kicker">Каталог DEI</p>
-            <h1 className="page-title">Каталог оборудования</h1>
-            <p className="page-lead">
-              Оборудование для сварочных работ и освещения производственных площадок. Поможем подобрать комплектацию под вашу задачу и подготовим предложение.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <InternalMasthead
+        index="00"
+        eyebrow="Каталог оборудования"
+        title="Оборудование, отобранное по рабочим параметрам"
+        summary="Сварочные аппараты и промышленное освещение DEI. В каждой позиции — ключевые характеристики, комплектация и прямой запрос инженеру."
+        facts={[
+          { label: "Категорий", value: String(CATEGORIES.length - 1).padStart(2, "0") },
+          { label: "Позиций", value: String(products.length).padStart(2, "0") },
+          { label: "Поставка", value: "ПО РОССИИ" },
+        ]}
+      />
 
-      <section className="catalog-section catalog-index">
-        <div className="catalog-layout grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-5">
+      <section className="catalog-v10">
+        <div className="catalog-v10__layout">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="catalog-filter-panel sticky top-24 p-4">
+            <div className="catalog-filter-panel catalog-v10__filters sticky top-24 p-4">
               {Filters}
             </div>
           </aside>
@@ -149,7 +149,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="catalog-toolbar min-w-0 p-2.5">
+            <div className="catalog-toolbar catalog-v10__toolbar min-w-0 p-2.5">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
                 <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
                   <p className="text-sm text-zinc-500">
@@ -233,12 +233,12 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                 </button>
               </div>
             ) : (
-              <div className="catalog-product-grid grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              <div className="catalog-product-list">
                 {filtered.map((product, i) => (
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.035}>
-                    <div className="catalog-card product-card-premium group flex h-full min-w-0 flex-col overflow-hidden">
-                      <Link href={`/catalog/${product.slug}`} className="block">
-                        <div className="product-photo-stage relative aspect-video overflow-hidden">
+                    <article className="catalog-product-sheet group">
+                      <Link href={`/catalog/${product.slug}`} className="catalog-product-sheet__visual">
+                        <div className="product-photo-stage relative h-full min-h-[240px] overflow-hidden">
                           <Image
                             src={product.img}
                             alt={product.name}
@@ -247,12 +247,12 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                             sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 30vw"
                             className="product-photo-blend img-zoom"
                           />
-                          <div className="absolute left-2.5 top-2.5 flex gap-1.5">
-                            <span className="glass-pill rounded-md px-2 py-1 text-[9px] font-medium uppercase tracking-normal text-red-300">
+                          <div className="catalog-product-sheet__tags absolute left-3 top-3 flex gap-1.5">
+                            <span>
                               {product.categoryLabel}
                             </span>
                             {product.naks && (
-                              <span className="glass-pill rounded-md px-2 py-1 text-[9px] font-medium uppercase tracking-normal text-emerald-300">
+                              <span>
                                 НАКС
                               </span>
                             )}
@@ -260,16 +260,17 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                         </div>
                       </Link>
 
-                      <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-3.5">
+                      <div className="catalog-product-sheet__body">
+                        <span className="catalog-product-sheet__index">PRODUCT / {String(i + 1).padStart(2, "0")}</span>
                         <Link href={`/catalog/${product.slug}`} className="min-w-0">
-                          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white">
+                          <h2 className="catalog-product-sheet__title">
                             {product.name}
-                          </h3>
+                          </h2>
                         </Link>
-                        <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">{product.description}</p>
+                        <p className="catalog-product-sheet__description">{product.description}</p>
 
-                        <div className="grid gap-2 border-t border-white/[0.06] pt-2.5">
-                          {product.specs.slice(0, 1).map((spec) => (
+                        <div className="catalog-product-sheet__specs">
+                          {product.specs.slice(0, 2).map((spec) => (
                             <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-xs leading-none">
                               <span className="truncate text-zinc-600">{spec.label}</span>
                               <span className="shrink-0 font-medium text-zinc-300">{spec.value}</span>
@@ -277,18 +278,18 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                           ))}
                         </div>
 
-                        <div className="mt-auto flex items-baseline justify-between gap-3 pt-2">
-                          <p className="text-base font-bold tabular-nums text-red-500">{product.price}</p>
+                        <div className="catalog-product-sheet__price">
+                          <p>{product.price}</p>
                           <span className="shrink-0 text-[11px] text-zinc-600">под заказ</span>
                         </div>
-                        <div className="flex min-w-0 gap-2">
+                        <div className="catalog-product-sheet__actions">
                           <AddToCartButton
                             product={product}
-                            className="energy-strip min-w-0 flex-1 rounded-lg bg-red-600 py-2 text-center text-xs font-semibold text-white hover:bg-red-500"
+                            className="energy-strip min-w-0 flex-1 bg-red-600 py-3 text-center text-xs font-semibold text-white hover:bg-red-500"
                           />
                           <Link
                             href={`/catalog/${product.slug}`}
-                            className="glass-pill btn flex shrink-0 items-center justify-center rounded-lg px-3 text-zinc-400 transition-colors hover:text-white"
+                            className="btn flex shrink-0 items-center justify-center border border-white/10 px-4 text-zinc-400 transition-colors hover:text-white"
                             aria-label="Подробнее"
                           >
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -297,14 +298,14 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                           </Link>
                         </div>
                       </div>
-                    </div>
+                    </article>
                   </Reveal>
                 ))}
               </div>
             )}
 
             {/* Нестандартный заказ */}
-            <div className="catalog-bespoke mt-10 flex flex-col items-start gap-5 px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
+            <div className="catalog-bespoke catalog-v10__request mt-10 flex flex-col items-start gap-5 px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
               <div className="min-w-0">
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>

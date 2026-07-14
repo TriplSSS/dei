@@ -146,16 +146,16 @@ export default function AdminOrdersClient() {
   return (
     <div className="dei-admin-page admin-orders-page px-4 pb-24 sm:px-6">
       <div className="mx-auto max-w-[1180px]">
-        <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <header className="admin-v10__header mb-8">
           <div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-400">DEI admin</p>
+            <p className="admin-v10__index">ADMIN / 02</p>
             <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Заказы</h1>
             <p className="mt-3 max-w-[620px] text-sm leading-relaxed text-zinc-400">
               Внутренний список заявок из локального журнала заказов.
             </p>
           </div>
 
-          <form onSubmit={loadOrders} className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+          <form onSubmit={loadOrders} className="admin-v10__auth">
             <input
               type="password"
               value={token}
@@ -172,7 +172,7 @@ export default function AdminOrdersClient() {
               {loading ? "Загрузка..." : loaded ? "Обновить" : "Открыть"}
             </button>
           </form>
-        </div>
+        </header>
 
         {error && (
           <div className="mb-6 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -186,7 +186,7 @@ export default function AdminOrdersClient() {
           </div>
         )}
 
-        <div className="grid gap-4">
+        <div className="admin-order-ledger">
           {orders.map((order) => (
             <article key={order.id} className="admin-order-card min-w-0 p-4 sm:p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

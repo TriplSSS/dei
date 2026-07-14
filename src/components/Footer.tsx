@@ -10,44 +10,31 @@ const links = [
 
 export default function Footer() {
   return (
-    <footer className="site-footer relative z-10 mt-12 px-4 pb-5 pt-4 sm:px-6">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="site-footer-panel overflow-hidden">
-          <div className="site-footer-brand grid gap-8 p-7 md:grid-cols-[1fr_auto] md:items-end md:p-10">
-            <Link href="/" className="site-footer-wordmark text-white">DEI</Link>
-            <p className="max-w-[390px] text-sm leading-relaxed text-zinc-400 md:text-right">
-              Сварочное оборудование и промышленное освещение.<br />Ростов-на-Дону · с 2006 года.
-            </p>
-          </div>
-
-          <div className="site-footer-grid grid md:grid-cols-[1.4fr_1fr]">
-            <div className="site-footer-links p-7 md:p-10">
-              <p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">Разделы</p>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
-                {links.map((link) => (
-                  <Link key={link.href} href={link.href} className="text-sm text-zinc-400 transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="site-footer-contact p-7 md:p-10">
-              <p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-red-400">Прямой контакт</p>
-              <a href="tel:+79885807630" className="site-footer-phone text-white transition-colors hover:text-red-400">
-                +7 (988) 580-76-30
-              </a>
-              <address className="mt-4 not-italic text-sm leading-relaxed text-zinc-500">
-                пер. Нарядный, 14/2<br />Ростов-на-Дону, 344065
-              </address>
-            </div>
-          </div>
+    <footer className="site-footer-v10">
+      <div className="site-footer-v10__frame">
+        <div className="site-footer-v10__identity">
+          <Link href="/" className="site-footer-v10__logo">DEI</Link>
+          <p>Промышленное оборудование<br />Ростов-на-Дону · 2006</p>
         </div>
 
-        <div className="mt-5 flex flex-col gap-3 px-2 text-xs text-zinc-700 sm:flex-row sm:items-center sm:justify-between">
-          <span>© 2006–{new Date().getFullYear()} ДонЭлектроИнтел</span>
-          <Link href="/contacts" className="transition-colors hover:text-zinc-400">Связаться с компанией</Link>
-          <span>Все права защищены</span>
+        <nav className="site-footer-v10__nav" aria-label="Навигация в подвале">
+          {links.map((link, index) => (
+            <Link key={link.href} href={link.href}>
+              <span>0{index + 1}</span>{link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="site-footer-v10__contact">
+          <span>Отдел продаж</span>
+          <a href="tel:+79885807630">+7 (988) 580-76-30</a>
+          <address>пер. Нарядный, 14/2<br />Ростов-на-Дону</address>
+        </div>
+
+        <div className="site-footer-v10__meta">
+          <span>© 2006–{new Date().getFullYear()} ООО «ДонЭлектроИнтел»</span>
+          <span>Пн–Пт · 09:00–18:00</span>
+          <Link href="/contacts">Запросить консультацию <span aria-hidden="true">↗</span></Link>
         </div>
       </div>
     </footer>

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Reveal from "@/components/Reveal";
+import InternalMasthead from "@/components/InternalMasthead";
 
 type RoomType = {
   key: string;
@@ -73,32 +74,28 @@ export default function CalculatorClient() {
 
   return (
     <>
-      <section className="page-intro page-intro--calculator" data-page-code="02 / CALCULATOR">
-        <div className="page-intro-inner">
-          <Reveal direction="up">
-            <p className="page-kicker">Инженерный расчёт</p>
-          </Reveal>
-          <Reveal direction="up" delay={0.06}>
-            <h1 className="page-title">Калькулятор освещения</h1>
-          </Reveal>
-          <Reveal direction="up" delay={0.12}>
-            <p className="page-lead">
-              Рассчитайте необходимое количество светильников для вашего объекта по нормативному методу.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <InternalMasthead
+        index="02"
+        eyebrow="Инженерный расчёт"
+        title="Светотехнический расчёт без лишних вводных"
+        summary="Задайте геометрию помещения, норматив освещённости и модель. Результат обновится сразу после изменения параметров."
+        facts={[
+          { label: "Метод", value: "НОРМАТИВНЫЙ" },
+          { label: "Шагов", value: "03" },
+          { label: "Результат", value: "МГНОВЕННО" },
+        ]}
+      />
 
-      <section className="section-shell pb-24 md:pb-32">
-        <div className="calculator-layout grid gap-6 lg:grid-cols-[1fr_380px]">
+      <section className="calculator-studio section-shell pb-24 md:pb-32">
+        <div className="calculator-studio__grid">
 
           {/* Форма */}
           <Reveal direction="left" delay={0.05}>
-            <div className="calculator-panel flex flex-col gap-8 p-6 lg:p-8">
+            <div className="calculator-workflow">
 
               {/* Размеры */}
-              <div>
-                <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-4">Размеры помещения</p>
+              <div className="calculator-step">
+                <div className="calculator-step__head"><span>01</span><h2>Геометрия помещения</h2></div>
                 <div className="calculator-dimensions grid grid-cols-3 gap-3">
                   {[
                     { label: "Длина (м)",  value: length,  set: setLength },
@@ -120,8 +117,8 @@ export default function CalculatorClient() {
               </div>
 
               {/* Тип помещения */}
-              <div>
-                <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">Тип помещения</p>
+              <div className="calculator-step">
+                <div className="calculator-step__head"><span>02</span><h2>Норматив освещённости</h2></div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {ROOM_TYPES.map(rt => (
                     <button
@@ -143,8 +140,8 @@ export default function CalculatorClient() {
               </div>
 
               {/* Модель светильника */}
-              <div>
-                <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">Модель светильника</p>
+              <div className="calculator-step">
+                <div className="calculator-step__head"><span>03</span><h2>Модель светильника</h2></div>
                 <div className="flex flex-col gap-2">
                   {MODELS.map(m => (
                     <button
@@ -169,12 +166,12 @@ export default function CalculatorClient() {
 
           {/* Результаты */}
           <Reveal direction="right" delay={0.1}>
-            <div className="calculator-result flex flex-col gap-4">
+            <div className="calculator-output">
 
               {result ? (
                 <>
                   {/* Главный результат */}
-                  <div className="calculator-primary-result relative overflow-hidden p-7 text-center">
+                  <div className="calculator-output__hero calculator-primary-result relative overflow-hidden p-7 text-center">
                     <div className="absolute inset-x-0 top-0 h-px bg-red-500" aria-hidden />
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-2">Необходимо светильников</p>
                     <p
@@ -187,7 +184,7 @@ export default function CalculatorClient() {
                   </div>
 
                   {/* Детали */}
-                  <div className="calculator-result-list overflow-hidden">
+                  <div className="calculator-output__list calculator-result-list overflow-hidden">
                     {[
                       { label: "Площадь",         value: `${result.area} м²` },
                       { label: "Суммарная мощность", value: `${result.totalPower} Вт` },
@@ -202,7 +199,7 @@ export default function CalculatorClient() {
                     ))}
                   </div>
 
-                  <div className="text-center">
+                  <div className="calculator-output__action text-center">
                     <p className="text-xs text-zinc-600 mb-3">
                       Расчёт ориентировочный. Для точного проекта — выезд специалиста бесплатно.
                     </p>

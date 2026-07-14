@@ -1,4 +1,5 @@
 import Reveal from "@/components/Reveal";
+import InternalMasthead from "@/components/InternalMasthead";
 
 const PHONE = "+7 (988) 580-76-30";
 const PHONE_HREF = "tel:+79885807630";
@@ -17,40 +18,36 @@ const contactRows = [
 export default function ContactsClient() {
   return (
     <>
-      <section className="page-intro page-intro--contacts" data-page-code="05 / CONTACT">
-        <div className="page-intro-inner">
-          <Reveal direction="up">
-            <p className="page-kicker">Контакты</p>
-          </Reveal>
-          <Reveal direction="up" delay={0.06}>
-            <h1 className="page-title">Обсудим вашу задачу</h1>
-          </Reveal>
-          <Reveal direction="up" delay={0.12}>
-            <p className="page-lead">
-              Подберём оборудование, подготовим расчёт и ответим на технические
-              вопросы. В рабочее время обычно отвечаем в течение часа.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <InternalMasthead
+        index="05"
+        eyebrow="Контакты"
+        title="Начнём с технической задачи"
+        summary="Опишите объект, условия эксплуатации или нужную комплектацию. Инженер уточнит вводные и предложит следующий шаг."
+        facts={[
+          { label: "Ответ", value: "ДО 1 ЧАСА" },
+          { label: "График", value: "09:00–18:00" },
+          { label: "Часовой пояс", value: "МСК" },
+        ]}
+      />
 
-      <section className="section-shell pb-24 md:pb-32">
-        <div className="contact-shell grid overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
+      <section className="contact-directory section-shell pb-24 md:pb-32">
+        <div className="contact-directory__grid">
           <Reveal direction="left">
-            <div className="px-7 py-10 lg:px-12 lg:py-16">
+            <div className="contact-directory__primary">
+              <div className="contact-directory__status"><span /> Инженерный отдел на связи</div>
               <p className="section-kicker">Прямой контакт</p>
               <a
                 href={PHONE_HREF}
-                className="mt-6 block text-[clamp(2rem,5vw,4rem)] font-semibold tracking-[-0.05em] text-white transition-colors hover:text-red-500"
+                className="contact-directory__phone"
               >
                 {PHONE}
               </a>
 
-              <dl className="mt-12 border-t border-white/10">
+              <dl className="contact-directory__rows">
                 {contactRows.map((row) => (
                   <div
                     key={row.label}
-                    className="grid gap-2 border-b border-white/10 py-5 sm:grid-cols-[140px_1fr]"
+                    className="contact-directory__row grid gap-2 py-5 sm:grid-cols-[140px_1fr]"
                   >
                     <dt className="text-xs uppercase tracking-[0.14em] text-zinc-600">
                       {row.label}
@@ -71,8 +68,8 @@ export default function ContactsClient() {
           </Reveal>
 
           <Reveal direction="right" delay={0.08}>
-            <div className="contact-visual relative min-h-[430px] overflow-hidden px-7 py-10 lg:px-14 lg:py-16">
-              <div className="contact-energy-arc" aria-hidden="true" />
+            <div className="contact-directory__location">
+              <div className="contact-directory__diagram" aria-hidden="true"><span /><span /><span /></div>
               <div className="relative flex min-h-[350px] flex-col justify-between">
                 <div>
                   <p className="section-kicker">Офис и производство</p>
@@ -89,7 +86,7 @@ export default function ContactsClient() {
                     href={MAP_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-6 inline-flex items-center gap-3 border-b border-white/25 pb-2 text-sm font-medium text-white transition-colors hover:border-red-500 hover:text-red-400"
+                    className="contact-directory__map-link"
                   >
                     Открыть в Яндекс Картах
                     <span aria-hidden="true">↗</span>

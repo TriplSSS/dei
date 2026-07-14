@@ -10,154 +10,124 @@ import { type Product } from "@/data/products";
 export default function ProductPageClient({ product, products }: { product: Product; products: Product[] }) {
   const [qty, setQty] = useState(1);
   const related = products
-    .filter(p => p.category === product.category && p.slug !== product.slug)
+    .filter((item) => item.category === product.category && item.slug !== product.slug)
     .slice(0, 3);
 
   return (
-    <div className="product-page">
-      {/* ── Хлебные крошки ── */}
-      <div className="product-breadcrumbs">
+    <div className="product-v10">
+      <div className="product-v10__breadcrumbs">
         <div className="product-detail-shell">
-          <nav className="flex items-center gap-2 text-xs text-zinc-700" aria-label="Навигационная цепочка">
-            <Link href="/" className="hover:text-zinc-400 transition-colors">Главная</Link>
-            <span>/</span>
-            <Link href="/catalog" className="hover:text-zinc-400 transition-colors">Каталог</Link>
-            <span>/</span>
-            <span className="text-zinc-400">{product.name}</span>
+          <nav aria-label="Навигационная цепочка">
+            <Link href="/">Главная</Link><span>/</span>
+            <Link href="/catalog">Каталог</Link><span>/</span>
+            <span>{product.shortName}</span>
           </nav>
         </div>
       </div>
 
-      {/* ── Основной контент ── */}
-      <section className="product-detail-section">
+      <header className="product-v10__header">
         <div className="product-detail-shell">
-          <div className="product-detail-grid">
-
-            {/* Изображение */}
-            <Reveal direction="left" delay={0}>
-              <div className="product-gallery product-photo-stage relative aspect-[4/3] overflow-hidden">
-                <Image
-                  src={product.img}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1023px) 100vw, 560px"
-                  className="product-photo-blend"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="rounded border border-white/[0.1] bg-black/50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-zinc-300">
-                    {product.categoryLabel}
-                  </span>
-                  {product.naks && (
-                    <span className="rounded border border-emerald-400/20 bg-black/50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-emerald-300">
-                      НАКС
-                    </span>
-                  )}
-                </div>
+          <div className="product-v10__header-grid">
+            <Reveal>
+              <div>
+                <p className="product-v10__category">{product.categoryLabel}</p>
+                <h1>{product.name}</h1>
               </div>
             </Reveal>
-
-            {/* Информация */}
-            <Reveal direction="right" delay={0.08}>
-              <div className="product-info">
-                {/* Заголовок */}
-                <div>
-                  <p className="page-kicker mb-4">{product.categoryLabel}</p>
-                  <h1 className="product-name">
-                    {product.name}
-                  </h1>
-                  <p className="mt-5 max-w-[580px] text-base leading-relaxed text-zinc-400">{product.fullDescription}</p>
-                </div>
-
-                {/* Цена + покупка */}
-                <div className="product-purchase-card px-5 py-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-zinc-500 uppercase tracking-widest mb-0.5">Стоимость</p>
-                      <p className="text-2xl font-semibold tabular-nums text-white">{product.price}</p>
-                    </div>
-                    {/* количество */}
-                    <div className="flex items-center rounded-lg border border-white/[0.1] bg-black/20 shadow-[0_16px_38px_-28px_rgba(255,255,255,0.5)]">
-                      <button type="button" onClick={() => setQty(q => Math.max(1, q - 1))} className="btn flex h-11 w-11 items-center justify-center text-zinc-400 hover:text-white" aria-label="Меньше">−</button>
-                      <span className="w-9 text-center font-medium tabular-nums text-white">{qty}</span>
-                      <button type="button" onClick={() => setQty(q => q + 1)} className="btn flex h-11 w-11 items-center justify-center text-zinc-400 hover:text-white" aria-label="Больше">+</button>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-[11px] text-zinc-500 leading-relaxed">
-                    Цена ориентировочная. Точную стоимость и счёт пришлём после оформления заявки.
-                  </p>
-                </div>
-
-                {/* Технические характеристики */}
-                <div className="product-specs-panel overflow-hidden">
-                  <div className="px-5 py-3 border-b border-white/[0.05]">
-                    <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Технические характеристики</p>
-                  </div>
-                  <div className="grid gap-1 p-1">
-                    {product.specs.map((spec) => (
-                      <div key={spec.label} className="product-spec-row flex items-center justify-between rounded-lg bg-white/[0.018] px-4 py-3">
-                        <span className="text-sm text-zinc-500">{spec.label}</span>
-                        <span className="text-sm text-zinc-200 font-medium text-right max-w-[55%]">{spec.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Теги */}
-                <div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-white/[0.08] pt-4">
-                  {product.tags.map(tag => (
-                    <span key={tag} className="text-xs text-zinc-600">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* CTA */}
-                <div className="flex gap-3">
-                  <AddToCartButton
-                    product={product}
-                    qty={qty}
-                    className="btn flex-1 bg-red-600 py-3.5 text-center text-sm font-semibold text-white hover:bg-red-500"
-                  />
-                  <a
-                    href="tel:+79885807630"
-                    className="btn border border-white/[0.12] px-5 py-3.5 text-center text-sm font-medium text-zinc-400 hover:text-white"
-                  >
-                    Позвонить
-                  </a>
-                </div>
-              </div>
+            <Reveal delay={0.06}>
+              <p className="product-v10__lead">{product.fullDescription}</p>
             </Reveal>
           </div>
         </div>
+      </header>
+
+      <section className="product-v10__overview">
+        <div className="product-detail-shell product-v10__overview-grid">
+          <Reveal direction="left">
+            <div className="product-v10__stage product-photo-stage">
+              <Image
+                src={product.img}
+                alt={product.name}
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 760px"
+                className="product-photo-blend"
+              />
+              <div className="product-v10__badges">
+                <span>{product.categoryLabel}</span>
+                {product.naks && <span>Аттестация НАКС</span>}
+              </div>
+              <span className="product-v10__stage-index" aria-hidden="true">DEI / PRODUCT</span>
+            </div>
+          </Reveal>
+
+          <Reveal direction="right" delay={0.08}>
+            <aside className="product-v10__order" aria-label="Заказ товара">
+              <div className="product-v10__availability"><span /> Доступно к заказу</div>
+              <div className="product-v10__price">
+                <span>Ориентировочная стоимость</span>
+                <strong>{product.price}</strong>
+              </div>
+
+              <div className="product-v10__quantity">
+                <span>Количество</span>
+                <div>
+                  <button type="button" onClick={() => setQty((value) => Math.max(1, value - 1))} aria-label="Уменьшить количество">−</button>
+                  <output aria-live="polite">{qty}</output>
+                  <button type="button" onClick={() => setQty((value) => value + 1)} aria-label="Увеличить количество">+</button>
+                </div>
+              </div>
+
+              <p className="product-v10__note">Точную стоимость, комплектацию и срок поставки подтвердит менеджер после получения заявки.</p>
+
+              <AddToCartButton
+                product={product}
+                qty={qty}
+                className="product-v10__primary btn bg-red-600 text-center font-semibold text-white hover:bg-red-500"
+              />
+              <a href="tel:+79885807630" className="product-v10__secondary btn">Обсудить с инженером</a>
+
+              <div className="product-v10__tags">
+                {product.tags.map((tag) => <span key={tag}>{tag}</span>)}
+              </div>
+            </aside>
+          </Reveal>
+        </div>
       </section>
 
-      {/* ── Похожие товары ── */}
-      {related.length > 0 && (
-        <section className="related-products">
-          <div className="product-detail-shell">
-            <Reveal direction="up">
-              <h2 className="mb-8 text-[clamp(1.6rem,3vw,2.4rem)] font-semibold tracking-[-0.035em] text-white">
-                Похожие <span className="text-red-500">товары</span>
-              </h2>
-            </Reveal>
+      <section className="product-v10__technical">
+        <div className="product-detail-shell product-v10__technical-grid">
+          <div>
+            <p className="section-kicker">Технические данные</p>
+            <h2>Рабочие характеристики</h2>
+            <p>Параметры базовой комплектации. Для нестандартного исполнения подготовим отдельную спецификацию.</p>
+          </div>
+          <dl className="product-v10__specs">
+            {product.specs.map((spec, index) => (
+              <div key={spec.label}>
+                <dt><span>{String(index + 1).padStart(2, "0")}</span>{spec.label}</dt>
+                <dd>{spec.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-              {related.map((p, i) => (
-                <Reveal key={p.slug} delay={i * 0.07} direction="blur">
-                  <Link href={`/catalog/${p.slug}`} className="block group">
-                    <div className="related-product-card product-card-premium hover-lift overflow-hidden">
-                      <div className="product-photo-stage relative aspect-[4/3] overflow-hidden">
-                        <Image src={p.img} alt={p.name} fill sizes="(max-width: 639px) 100vw, 33vw" className="product-photo-blend img-zoom" />
-                      </div>
-                      <div className="glass-inner p-4 flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">{p.name}</p>
-                          <p className="text-red-500 font-bold text-sm mt-1">{p.price}</p>
-                        </div>
-                        <span className="text-zinc-500 group-hover:text-red-400 transition-colors text-lg">→</span>
-                      </div>
+      {related.length > 0 && (
+        <section className="product-v10__related">
+          <div className="product-detail-shell">
+            <div className="product-v10__related-head">
+              <p className="section-kicker">Ещё в категории</p>
+              <Link href="/catalog">Весь каталог <span aria-hidden="true">↗</span></Link>
+            </div>
+            <div className="product-v10__related-list">
+              {related.map((item, index) => (
+                <Reveal key={item.slug} delay={index * 0.05}>
+                  <Link href={`/catalog/${item.slug}`} className="product-v10__related-item">
+                    <div className="product-photo-stage">
+                      <Image src={item.img} alt={item.name} fill sizes="(max-width: 639px) 100vw, 33vw" className="product-photo-blend" />
                     </div>
+                    <div><span>{item.categoryLabel}</span><strong>{item.name}</strong><b>{item.price}</b></div>
                   </Link>
                 </Reveal>
               ))}
