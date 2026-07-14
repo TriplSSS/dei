@@ -23,11 +23,22 @@
   --dei-burgundy-700: #430306;
   --dei-red-rgb: 229 9 20;
   --dei-white-rgb: 245 244 244;
-  --page-canvas: #050506;
+  /* Background primitives */
+  --page-ink-1000: #030304;
+  --page-ink-950: #050506;
+  --page-burgundy-950: #120205;
+
+  /* Background semantics */
+  --page-canvas: var(--page-ink-1000);
   --page-atmosphere:
-    radial-gradient(ellipse 70vw 58vh at 92% 14%, rgb(112 0 15 / .095) 0%, rgb(72 0 10 / .045) 40%, rgb(38 0 7 / .015) 60%, transparent 78%),
-    radial-gradient(ellipse 58vw 66vh at -8% 72%, rgb(82 0 11 / .052) 0%, rgb(48 0 8 / .022) 46%, transparent 76%);
-  --page-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='2' seed='17' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+    radial-gradient(ellipse 78vw 68vh at 94% 4%, rgb(78 0 12 / .2) 0%, rgb(58 0 10 / .13) 22%, rgb(38 0 8 / .072) 43%, rgb(20 0 5 / .028) 62%, transparent 82%),
+    radial-gradient(ellipse 62vw 70vh at -12% 92%, rgb(64 0 10 / .105) 0%, rgb(41 0 8 / .058) 34%, rgb(21 0 5 / .022) 58%, transparent 80%),
+    linear-gradient(152deg, var(--page-ink-1000) 0%, var(--page-ink-950) 46%, var(--page-burgundy-950) 100%);
+
+  /* Background component tokens */
+  --atmosphere-plane-light: rgb(255 255 255 / .014);
+  --atmosphere-plane-red: rgb(var(--dei-red-rgb) / .02);
+  --atmosphere-vignette: rgb(0 0 0 / .48);
   --dei-radius-sm: 10px;
   --dei-radius-md: 16px;
   --dei-radius-lg: 24px;
@@ -117,9 +128,85 @@ img { -webkit-user-drag: none; user-select: none; }
   overflow: hidden;
   pointer-events: none;
   background-color: var(--page-canvas);
-  background-image: var(--page-grain), var(--page-atmosphere);
-  background-repeat: repeat, no-repeat, no-repeat;
-  background-size: 96px 96px, 100% 100%, 100% 100%;
+  background-image: var(--page-atmosphere);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.site-atmosphere::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -18%;
+  pointer-events: none;
+  background:
+    linear-gradient(113deg, transparent 7%, var(--atmosphere-plane-light) 28%, var(--atmosphere-plane-red) 41%, transparent 59%),
+    linear-gradient(113deg, transparent 45%, rgb(255 255 255 / .008) 59%, rgb(var(--dei-red-rgb) / .012) 68%, transparent 84%);
+  opacity: .78;
+  transform: translate3d(-1.4%, 0, 0) scale(1.02);
+  animation: atmosphere-plane-drift 32s ease-in-out infinite alternate;
+}
+.site-atmosphere::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 88% 80% at 50% 43%, transparent 45%, rgb(0 0 0 / .12) 72%, var(--atmosphere-vignette) 100%);
+}
+.site-atmosphere__aurora {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  border-radius: 50%;
+  will-change: transform;
+}
+.site-atmosphere__aurora--primary {
+  width: 72vw;
+  height: 68vh;
+  top: -24vh;
+  right: -24vw;
+  background: radial-gradient(ellipse at center, rgb(124 0 18 / .13) 0%, rgb(82 0 14 / .075) 32%, rgb(45 0 9 / .03) 56%, transparent 76%);
+  transform: rotate(-11deg);
+  animation: atmosphere-aurora-primary 26s ease-in-out infinite alternate;
+}
+.site-atmosphere__aurora--secondary {
+  width: 58vw;
+  height: 62vh;
+  left: -24vw;
+  bottom: -30vh;
+  background: radial-gradient(ellipse at center, rgb(92 0 15 / .072) 0%, rgb(56 0 11 / .036) 42%, transparent 74%);
+  transform: rotate(14deg);
+  animation: atmosphere-aurora-secondary 31s ease-in-out infinite alternate;
+}
+.site-atmosphere__field {
+  position: absolute;
+  z-index: 2;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  overflow: visible;
+  opacity: .82;
+  transform: translate3d(0, 0, 0) scale(1.015);
+  animation: atmosphere-field-drift 36s ease-in-out infinite alternate;
+}
+.site-atmosphere__field-lines { fill: none; }
+.site-atmosphere__field-glow {
+  stroke-width: 18;
+  opacity: .28;
+}
+.site-atmosphere__field-line {
+  stroke-width: .9;
+  opacity: .62;
+  vector-effect: non-scaling-stroke;
+}
+.site-atmosphere__field-line--quiet { opacity: .45; }
+.site-atmosphere__field-pulse {
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-dasharray: 92 1460;
+  opacity: .72;
+  vector-effect: non-scaling-stroke;
+  animation: atmosphere-electric-pulse 18s linear infinite;
 }
 
 /* Matte black glass */
@@ -812,9 +899,9 @@ html.site-is-loading body {
   overflow: hidden;
   isolation: isolate;
   background-color: var(--page-canvas);
-  background-image: var(--page-grain), var(--page-atmosphere);
-  background-repeat: repeat, no-repeat, no-repeat;
-  background-size: 96px 96px, 100% 100%, 100% 100%;
+  background-image: var(--page-atmosphere);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   will-change: opacity;
 }
 .site-loader::before {
@@ -824,6 +911,18 @@ html.site-is-loading body {
   inset: 0;
   pointer-events: none;
   background: radial-gradient(circle 340px at 52% 47%, rgb(var(--dei-red-rgb) / .045), rgb(var(--dei-red-rgb) / .014) 48%, transparent 76%);
+}
+.site-loader::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: -18%;
+  pointer-events: none;
+  background:
+    linear-gradient(113deg, transparent 7%, var(--atmosphere-plane-light) 28%, var(--atmosphere-plane-red) 41%, transparent 59%),
+    linear-gradient(113deg, transparent 45%, rgb(255 255 255 / .008) 59%, rgb(var(--dei-red-rgb) / .012) 68%, transparent 84%);
+  opacity: .64;
+  animation: atmosphere-plane-drift 32s ease-in-out infinite alternate;
 }
 .site-loader--leaving {
   pointer-events: none;
@@ -952,6 +1051,25 @@ html.site-is-loading body {
   0%, 18% { opacity: 1; }
   100% { opacity: 0; }
 }
+@keyframes atmosphere-plane-drift {
+  from { transform: translate3d(-1.4%, 0, 0) scale(1.02); }
+  to { transform: translate3d(1.3%, -1%, 0) scale(1.035); }
+}
+@keyframes atmosphere-aurora-primary {
+  from { transform: translate3d(0, 0, 0) rotate(-11deg) scale(1); }
+  to { transform: translate3d(-12px, 9px, 0) rotate(-9deg) scale(1.035); }
+}
+@keyframes atmosphere-aurora-secondary {
+  from { transform: translate3d(0, 0, 0) rotate(14deg) scale(1); }
+  to { transform: translate3d(11px, -8px, 0) rotate(12deg) scale(1.04); }
+}
+@keyframes atmosphere-field-drift {
+  from { transform: translate3d(0, 0, 0) scale(1.015); }
+  to { transform: translate3d(-10px, 6px, 0) scale(1.025); }
+}
+@keyframes atmosphere-electric-pulse {
+  to { stroke-dashoffset: -1552; }
+}
 
 html.site-is-loading .dei-hero-copy {
   opacity: 0;
@@ -993,9 +1111,18 @@ html.site-is-loading.site-is-revealing .dei-hero-copy {
   .dei-orbit-charge { display: none; }
   .site-loader-orbit-charge { display: none; }
   .dei-energy-lockup { transform: none; }
+  .site-atmosphere::before,
+  .site-atmosphere__aurora,
+  .site-atmosphere__field,
+  .site-atmosphere__field-pulse,
+  .site-loader::after { animation: none !important; }
+  .site-atmosphere__field-pulse { opacity: .22; }
 }
 
 @media (max-width: 1024px) {
+  .site-atmosphere__aurora--primary { width: 100vw; right: -42vw; }
+  .site-atmosphere__aurora--secondary { width: 86vw; left: -42vw; }
+  .site-atmosphere__field { inset: -8%; width: 116%; height: 116%; opacity: .68; }
   .dei-hero-layout { width: min(100% - 40px, 760px); padding: 115px 0 52px; }
   .dei-energy-lockup { width: min(760px, 94vw); height: clamp(300px, 50vw, 390px); }
   .dei-hero-wordmark { font-size: clamp(118px, 29vw, 200px); }
@@ -1017,6 +1144,11 @@ html.site-is-loading.site-is-revealing .dei-hero-copy {
 }
 
 @media (max-width: 640px) {
+  .site-atmosphere::before { opacity: .58; }
+  .site-atmosphere__aurora--primary { width: 132vw; height: 58vh; right: -70vw; top: -18vh; }
+  .site-atmosphere__aurora--secondary { width: 118vw; height: 54vh; left: -74vw; bottom: -24vh; }
+  .site-atmosphere__field { opacity: .48; }
+  .site-atmosphere__field-line--quiet { display: none; }
   .page-intro { min-height: 400px; padding: 7.5rem 1rem 3.5rem; }
   .page-intro::after { width: 135vw; right: -78vw; top: 25%; }
   .page-title { font-size: clamp(2.55rem, 13vw, 4.2rem); }
