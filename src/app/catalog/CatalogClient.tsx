@@ -66,9 +66,10 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         <div className="flex flex-col gap-1">
           {CATEGORIES.map((cat) => (
             <button
+              type="button"
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
-              className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+              className={`flex items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors ${
                 activeCategory === cat.key
                   ? "bg-red-600/15 text-white"
                   : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
@@ -113,7 +114,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         </label>
       </div>
 
-      <button onClick={reset} className="self-start text-xs text-zinc-500 hover:text-red-400 transition-colors">
+      <button type="button" onClick={reset} className="self-start text-xs text-zinc-500 hover:text-red-400 transition-colors">
         Сбросить фильтры
       </button>
     </div>
@@ -130,20 +131,15 @@ export default function CatalogClient({ products }: { products: Product[] }) {
             <p className="page-lead">
               Оборудование для сварочных работ и освещения производственных площадок. Поможем подобрать комплектацию под вашу задачу и подготовим предложение.
             </p>
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-xs text-zinc-600">
-              <span><b className="mr-1 text-white">{products.length}</b> позиции</span>
-              <span>Подбор специалистом</span>
-              <span>Поставка по России</span>
-            </div>
           </Reveal>
         </div>
       </section>
 
       <section className="px-4 pb-28 sm:px-6">
-        <div className="mx-auto grid min-w-0 max-w-[1400px] gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
+        <div className="mx-auto grid min-w-0 max-w-[1480px] gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-5">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="surface sticky top-24 rounded-lg p-5">
+            <div className="surface sticky top-24 rounded-xl p-4">
               {Filters}
             </div>
           </aside>
@@ -151,7 +147,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="surface mb-5 min-w-0 rounded-lg p-2.5 sm:p-3">
+            <div className="surface mb-4 min-w-0 rounded-xl p-2.5">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
                 <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
                   <p className="text-sm text-zinc-500">
@@ -160,6 +156,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                     <span className="text-zinc-600"> / {products.length}</span>
                   </p>
                   <button
+                    type="button"
                     onClick={() => setFiltersOpen((v) => !v)}
                     className="glass-pill inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm text-zinc-300 shadow-[0_14px_32px_-24px_rgba(248,113,113,0.85)] lg:hidden"
                     style={{ border: "1px solid rgba(255,255,255,0.08)" }}
@@ -210,7 +207,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                   </span>
                 )}
                 {hasCatalogState && (
-                  <button onClick={reset} className="ml-auto rounded-md px-2 py-1 text-zinc-500 transition-colors hover:text-red-400">
+                  <button type="button" onClick={reset} className="ml-auto rounded-md px-2 py-1 text-zinc-500 transition-colors hover:text-red-400">
                     Сбросить
                   </button>
                 )}
@@ -228,30 +225,30 @@ export default function CatalogClient({ products }: { products: Product[] }) {
             {filtered.length === 0 ? (
               <div className="glass-card rounded-lg py-16 text-center">
                 <p className="text-zinc-500">Ничего не найдено</p>
-                <button onClick={reset} className="mt-3 text-sm text-red-500 hover:text-red-400 transition-colors">
+                <button type="button" onClick={reset} className="mt-3 text-sm text-red-500 hover:text-red-400 transition-colors">
                   Сбросить фильтры
                 </button>
               </div>
             ) : (
-              <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
+              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {filtered.map((product, i) => (
-                  <Reveal key={product.slug} delay={Math.min(i, 6) * 0.05}>
-                    <div className="product-card-premium group hover-lift flex h-full min-w-0 flex-col overflow-hidden rounded-lg transition-colors duration-300">
+                  <Reveal key={product.slug} delay={Math.min(i, 6) * 0.035}>
+                    <div className="catalog-card product-card-premium group flex h-full min-w-0 flex-col overflow-hidden">
                       <Link href={`/catalog/${product.slug}`} className="block">
-                        <div className="product-photo-stage relative aspect-[16/10] overflow-hidden">
+                        <div className="product-photo-stage relative aspect-video overflow-hidden">
                           <Image
                             src={product.img}
                             alt={product.name}
                             fill
-                            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 540px"
+                            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 30vw"
                             className="product-photo-blend img-zoom"
                           />
-                          <div className="absolute left-3 top-3 flex gap-1.5">
-                            <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-red-300">
+                          <div className="absolute left-2.5 top-2.5 flex gap-1.5">
+                            <span className="glass-pill rounded-md px-2 py-1 text-[9px] font-medium uppercase tracking-normal text-red-300">
                               {product.categoryLabel}
                             </span>
                             {product.naks && (
-                              <span className="glass-pill rounded-md px-2.5 py-1 text-[10px] font-medium uppercase tracking-normal text-emerald-300">
+                              <span className="glass-pill rounded-md px-2 py-1 text-[9px] font-medium uppercase tracking-normal text-emerald-300">
                                 НАКС
                               </span>
                             )}
@@ -259,16 +256,16 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                         </div>
                       </Link>
 
-                      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4 sm:p-5">
+                      <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-3.5">
                         <Link href={`/catalog/${product.slug}`} className="min-w-0">
-                          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white sm:text-lg">
+                          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-zinc-100 transition-colors group-hover:text-white">
                             {product.name}
                           </h3>
                         </Link>
-                        <p className="line-clamp-2 text-sm leading-relaxed text-zinc-500">{product.description}</p>
+                        <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">{product.description}</p>
 
-                        <div className="grid gap-2 border-t border-white/[0.06] pt-3">
-                          {product.specs.slice(0, 2).map((spec) => (
+                        <div className="grid gap-2 border-t border-white/[0.06] pt-2.5">
+                          {product.specs.slice(0, 1).map((spec) => (
                             <div key={spec.label} className="flex min-w-0 items-center justify-between gap-3 text-xs leading-none">
                               <span className="truncate text-zinc-600">{spec.label}</span>
                               <span className="shrink-0 font-medium text-zinc-300">{spec.value}</span>
@@ -276,14 +273,14 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                           ))}
                         </div>
 
-                        <div className="mt-auto flex items-baseline justify-between gap-3 pt-3">
-                          <p className="text-lg font-bold tabular-nums text-red-500 sm:text-xl">{product.price}</p>
+                        <div className="mt-auto flex items-baseline justify-between gap-3 pt-2">
+                          <p className="text-base font-bold tabular-nums text-red-500">{product.price}</p>
                           <span className="shrink-0 text-[11px] text-zinc-600">под заказ</span>
                         </div>
                         <div className="flex min-w-0 gap-2">
                           <AddToCartButton
                             product={product}
-                            className="energy-strip min-w-0 flex-1 rounded-lg bg-red-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-red-500"
+                            className="energy-strip min-w-0 flex-1 rounded-lg bg-red-600 py-2 text-center text-xs font-semibold text-white hover:bg-red-500"
                           />
                           <Link
                             href={`/catalog/${product.slug}`}

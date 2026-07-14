@@ -33,15 +33,14 @@ function Hero() {
     <section className="minimal-hero">
       <div className="minimal-hero-grid">
         <div>
-          <p className="hero-in hero-in-1 page-kicker">Промышленное оборудование · с 2006 года</p>
-          <h1 className="hero-in hero-in-2 minimal-hero-title">
-            Техника для <em>производственных</em> задач
+          <h1 className="hero-in hero-in-1 minimal-hero-title">
+            Оборудование, которое держит <em>производство в движении</em>
           </h1>
-          <p className="hero-in hero-in-3 minimal-hero-copy">
-            Сварочное оборудование и промышленное освещение с инженерным подбором, поставкой и сопровождением запуска.
+          <p className="hero-in hero-in-2 minimal-hero-copy">
+            Сварочные системы и промышленное освещение — от инженерного подбора до запуска на вашем объекте.
           </p>
 
-          <div className="hero-in hero-in-4 mt-8 flex flex-wrap gap-3">
+          <div className="hero-in hero-in-3 mt-8 flex flex-wrap gap-3">
             <MagneticButton href="/catalog" className="energy-strip btn bg-red-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-red-500">
               Открыть каталог
             </MagneticButton>
@@ -49,21 +48,23 @@ function Hero() {
               Обсудить задачу
             </Link>
           </div>
-
-          <div className="hero-in hero-in-5 hero-facts mt-9 flex flex-wrap gap-x-8 gap-y-3 text-[11px] uppercase tracking-[0.13em] text-zinc-600">
-            <span><b>20+</b> лет опыта</span>
-            <span>Ростов-на-Дону</span>
-            <span>Поставки по России</span>
-          </div>
         </div>
 
-        <div className="hero-wordmark" aria-hidden="true">
-          <div className="hero-wordmark-logo">DEI</div>
-          <div className="hero-product-list">
-            <div className="hero-product-row"><b>01</b><span>Сварочное оборудование</span></div>
-            <div className="hero-product-row"><b>02</b><span>Промышленное освещение</span></div>
+        <div className="hero-reactor hero-in hero-in-2" aria-hidden="true">
+          <div className="reactor-halo" />
+          <div className="reactor-stage">
+            <div className="reactor-ring reactor-ring-one" />
+            <div className="reactor-ring reactor-ring-two" />
+            <div className="reactor-ring reactor-ring-three" />
+            <div className="reactor-axis" />
+            <div className="reactor-core">
+              <span />
+            </div>
+            <div className="reactor-particles">
+              {Array.from({ length: 8 }, (_, index) => <i key={index} />)}
+            </div>
           </div>
-          <div className="hero-wordmark-year">2006</div>
+          <div className="reactor-floor" />
         </div>
       </div>
     </section>
