@@ -35,7 +35,7 @@ export default function ContactsClient() {
       </section>
 
       <section className="section-shell pb-24 md:pb-32">
-        <div className="glass-card grid overflow-hidden rounded-[28px] lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="contact-shell glass-card grid overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
           <Reveal direction="left">
             <div className="px-7 py-10 lg:px-12 lg:py-16">
               <p className="section-kicker">Прямой контакт</p>
@@ -71,8 +71,8 @@ export default function ContactsClient() {
           </Reveal>
 
           <Reveal direction="right" delay={0.08}>
-            <div className="relative min-h-[430px] overflow-hidden border-white/10 px-7 py-10 lg:border-l lg:px-14 lg:py-16">
-              <div className="absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] [background-size:42px_42px]" />
+            <div className="contact-visual relative min-h-[430px] overflow-hidden border-white/10 px-7 py-10 lg:border-l lg:px-14 lg:py-16">
+              <div className="contact-energy-arc" aria-hidden="true" />
               <div className="relative flex min-h-[350px] flex-col justify-between">
                 <div>
                   <p className="section-kicker">Офис и производство</p>

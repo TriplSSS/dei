@@ -16,8 +16,8 @@ export default function ProductPageClient({ product, products }: { product: Prod
   return (
     <>
       {/* ── Хлебные крошки ── */}
-      <div className="px-4 pb-0 pt-28 sm:px-6">
-        <div className="mx-auto max-w-[1180px]">
+      <div className="product-breadcrumbs">
+        <div className="product-detail-shell">
           <nav className="flex items-center gap-2 text-xs text-zinc-700" aria-label="Навигационная цепочка">
             <Link href="/" className="hover:text-zinc-400 transition-colors">Главная</Link>
             <span>/</span>
@@ -29,13 +29,13 @@ export default function ProductPageClient({ product, products }: { product: Prod
       </div>
 
       {/* ── Основной контент ── */}
-      <section className="px-4 pb-24 pt-8 sm:px-6">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+      <section className="product-detail-section">
+        <div className="product-detail-shell">
+          <div className="product-detail-grid">
 
             {/* Изображение */}
             <Reveal direction="left" delay={0}>
-              <div className="product-photo-stage relative aspect-[4/3] overflow-hidden rounded-lg border border-white/[0.09]">
+              <div className="product-gallery product-photo-stage relative aspect-[4/3] overflow-hidden border border-white/[0.09]">
                 <Image
                   src={product.img}
                   alt={product.name}
@@ -59,18 +59,18 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
             {/* Информация */}
             <Reveal direction="right" delay={0.08}>
-              <div className="flex flex-col gap-6">
+              <div className="product-info">
                 {/* Заголовок */}
                 <div>
                   <p className="page-kicker mb-4">{product.categoryLabel}</p>
-                  <h1 className="text-[clamp(2.25rem,4.5vw,4.5rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-white">
+                  <h1 className="product-name">
                     {product.name}
                   </h1>
                   <p className="mt-5 max-w-[580px] text-base leading-relaxed text-zinc-400">{product.fullDescription}</p>
                 </div>
 
                 {/* Цена + покупка */}
-                <div className="surface rounded-lg px-5 py-4">
+                <div className="product-purchase-card surface px-5 py-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-zinc-500 uppercase tracking-widest mb-0.5">Стоимость</p>
@@ -78,9 +78,9 @@ export default function ProductPageClient({ product, products }: { product: Prod
                     </div>
                     {/* количество */}
                     <div className="flex items-center rounded-lg border border-white/[0.1] bg-black/20 shadow-[0_16px_38px_-28px_rgba(255,255,255,0.5)]">
-                      <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white btn" aria-label="Меньше">−</button>
-                      <span className="w-9 text-center text-white font-medium tabular-nums">{qty}</span>
-                      <button onClick={() => setQty(q => q + 1)} className="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white btn" aria-label="Больше">+</button>
+                      <button type="button" onClick={() => setQty(q => Math.max(1, q - 1))} className="btn flex h-11 w-11 items-center justify-center text-zinc-400 hover:text-white" aria-label="Меньше">−</button>
+                      <span className="w-9 text-center font-medium tabular-nums text-white">{qty}</span>
+                      <button type="button" onClick={() => setQty(q => q + 1)} className="btn flex h-11 w-11 items-center justify-center text-zinc-400 hover:text-white" aria-label="Больше">+</button>
                     </div>
                   </div>
                   <p className="mt-3 text-[11px] text-zinc-500 leading-relaxed">
@@ -89,13 +89,13 @@ export default function ProductPageClient({ product, products }: { product: Prod
                 </div>
 
                 {/* Технические характеристики */}
-                <div className="surface overflow-hidden rounded-lg">
+                <div className="product-specs-panel surface overflow-hidden">
                   <div className="px-5 py-3 border-b border-white/[0.05]">
                     <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Технические характеристики</p>
                   </div>
                   <div className="grid gap-1 p-1">
                     {product.specs.map((spec) => (
-                      <div key={spec.label} className="flex items-center justify-between rounded-lg bg-white/[0.018] px-4 py-3">
+                      <div key={spec.label} className="product-spec-row flex items-center justify-between rounded-lg bg-white/[0.018] px-4 py-3">
                         <span className="text-sm text-zinc-500">{spec.label}</span>
                         <span className="text-sm text-zinc-200 font-medium text-right max-w-[55%]">{spec.value}</span>
                       </div>
@@ -134,13 +134,10 @@ export default function ProductPageClient({ product, products }: { product: Prod
 
       {/* ── Похожие товары ── */}
       {related.length > 0 && (
-        <section className="px-4 pb-24 sm:px-6">
-          <div className="mx-auto max-w-[1180px]">
+        <section className="related-products">
+          <div className="product-detail-shell">
             <Reveal direction="up">
-              <h2
-                className="mb-8 font-bold tracking-normal text-white"
-                style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)" }}
-              >
+              <h2 className="mb-8 text-[clamp(1.6rem,3vw,2.4rem)] font-semibold tracking-[-0.035em] text-white">
                 Похожие <span className="text-red-500">товары</span>
               </h2>
             </Reveal>

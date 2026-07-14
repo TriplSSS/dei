@@ -125,8 +125,8 @@ export default function CheckoutClient() {
       order.onlinePayment?.status === "created" ? order.onlinePayment.confirmationUrl : undefined;
 
     return (
-      <section className="section-shell pb-28 pt-36">
-        <div className="surface mx-auto max-w-[680px] p-6 text-center md:p-10">
+      <section className="checkout-page section-shell pb-28 pt-36">
+        <div className="checkout-success surface mx-auto max-w-[680px] p-6 text-center md:p-10" aria-live="polite">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center border border-white/10">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400">
               <path d="M20 6 9 17l-5-5" />
@@ -202,7 +202,7 @@ export default function CheckoutClient() {
   }
 
   return (
-    <div className="section-shell pb-24 pt-36">
+    <div className="checkout-page section-shell pb-24 pt-36">
       <div className="max-w-[1100px]">
         <nav className="mb-6 flex items-center gap-2 text-xs text-zinc-600">
           <Link href="/catalog" className="transition-colors hover:text-zinc-400">Каталог</Link>
@@ -224,11 +224,11 @@ export default function CheckoutClient() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[1fr_400px] items-start">
-            <form onSubmit={submit} className="surface flex flex-col gap-6 p-6 md:p-8">
+          <div className="checkout-layout grid items-start gap-8 lg:grid-cols-[1fr_400px]">
+            <form onSubmit={submit} className="checkout-form surface flex flex-col gap-6 p-6 md:p-8">
               <div>
-                <p className="mb-2 block text-xs font-medium text-zinc-400">Способ оплаты *</p>
-                <div className="grid gap-1 border border-white/[0.08] bg-black/20 p-1 sm:grid-cols-2">
+                <p id="payment-method-label" className="mb-2 block text-xs font-medium text-zinc-400">Способ оплаты *</p>
+                <div className="payment-methods grid gap-1 border border-white/[0.08] bg-black/20 p-1 sm:grid-cols-2" role="group" aria-labelledby="payment-method-label">
                   <PaymentButton
                     active={paymentMethod === "invoice"}
                     title="Счет на оплату"
@@ -260,8 +260,7 @@ export default function CheckoutClient() {
                     onChange={set("comment")}
                     rows={3}
                     placeholder="Сроки, адрес доставки, пожелания..."
-                    className="w-full resize-none border border-white/[0.08] bg-black/20 px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-red-600/40"
-                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="dei-control w-full resize-none px-4 py-3 text-sm"
                   />
                 </div>
               </div>
@@ -273,7 +272,7 @@ export default function CheckoutClient() {
               )}
 
               {error && (
-                <div className="border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                <div className="border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">
                   {error}
                 </div>
               )}
@@ -291,7 +290,7 @@ export default function CheckoutClient() {
               </button>
             </form>
 
-            <aside className="surface p-6">
+            <aside className="checkout-summary surface p-6">
               <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Ваш заказ</p>
               <div className="flex flex-col gap-3">
                 {items.map((it) => (
@@ -345,7 +344,7 @@ function PaymentButton({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`border px-4 py-3 text-left transition-colors ${
+      className={`payment-method border px-4 py-3 text-left transition-colors ${
         active ? "border-red-500/45 bg-red-600/10 text-white" : "border-transparent text-zinc-400 hover:bg-white/[0.04] hover:text-white"
       }`}
     >
@@ -390,8 +389,7 @@ function Field({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full border border-white/[0.08] bg-black/20 px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-red-600/40"
-        style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+        className="dei-control px-4 py-3 text-sm"
       />
     </div>
   );

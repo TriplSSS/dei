@@ -59,7 +59,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
   };
 
   const Filters = (
-    <div className="flex flex-col gap-6 lg:gap-8">
+    <div className="catalog-filters flex flex-col gap-6 lg:gap-8">
       {/* Категории */}
       <div>
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Категории</p>
@@ -69,7 +69,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
               type="button"
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
-              className={`flex items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors ${
+              className={`flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
                 activeCategory === cat.key
                   ? "bg-red-600/15 text-white"
                   : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
@@ -87,6 +87,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Цена до</p>
         <input
           type="range"
+          aria-label="Максимальная цена"
           min={priceMin}
           max={priceMax}
           step={100}
@@ -106,6 +107,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         <label className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-300">
           <input
             type="checkbox"
+            aria-label="Только товары с аттестацией НАКС"
             checked={onlyNaks}
             onChange={(e) => setOnlyNaks(e.target.checked)}
             className="h-4 w-4 accent-red-600"
@@ -135,11 +137,11 @@ export default function CatalogClient({ products }: { products: Product[] }) {
         </div>
       </section>
 
-      <section className="px-4 pb-28 sm:px-6">
-        <div className="mx-auto grid min-w-0 max-w-[1480px] gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-5">
+      <section className="catalog-section">
+        <div className="catalog-layout grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-5">
           {/* ── Сайдбар (десктоп) ── */}
           <aside className="hidden lg:block">
-            <div className="surface sticky top-24 rounded-xl p-4">
+            <div className="catalog-filter-panel surface sticky top-24 p-4">
               {Filters}
             </div>
           </aside>
@@ -147,7 +149,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
           {/* ── Основная колонка ── */}
           <div className="min-w-0">
             {/* Панель: счётчик + поиск + сортировка + фильтры(моб) */}
-            <div className="surface mb-4 min-w-0 rounded-xl p-2.5">
+            <div className="catalog-toolbar surface min-w-0 p-2.5">
               <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
                 <div className="flex min-w-0 items-center justify-between gap-3 md:min-w-[190px]">
                   <p className="text-sm text-zinc-500">
@@ -158,8 +160,9 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                   <button
                     type="button"
                     onClick={() => setFiltersOpen((v) => !v)}
+                    aria-expanded={filtersOpen}
+                    aria-controls="catalog-mobile-filters"
                     className="glass-pill inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm text-zinc-300 shadow-[0_14px_32px_-24px_rgba(248,113,113,0.85)] lg:hidden"
-                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
                   >
                     Фильтры
                     {activeFilterCount > 0 && (
@@ -173,17 +176,17 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                 <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_7.75rem] gap-2 md:ml-auto md:flex md:items-center">
                   <input
                     type="text"
+                    aria-label="Поиск по каталогу"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Поиск по каталогу…"
-                    className="glass-pill min-w-0 rounded-lg px-3.5 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 outline-none focus:border-red-600/40 md:w-64 md:flex-none"
-                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="dei-control min-w-0 px-3.5 py-2 text-sm md:w-64 md:flex-none"
                   />
                   <select
                     value={sort}
+                    aria-label="Сортировка товаров"
                     onChange={(e) => setSort(e.target.value as typeof sort)}
-                    className="glass-pill w-full cursor-pointer rounded-lg px-3 py-2 text-sm text-zinc-400 outline-none md:w-auto"
-                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="dei-control w-full cursor-pointer px-3 py-2 text-sm md:w-auto"
                   >
                     <option value="default" style={{ background: "#09090b" }}>Сортировка</option>
                     <option value="asc" style={{ background: "#09090b" }}>Дешевле</option>
@@ -216,7 +219,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
 
             {/* Фильтры (моб, раскрывающиеся) */}
             {filtersOpen && (
-              <div className="premium-panel glass-card mb-5 rounded-lg p-4 lg:hidden">
+              <div id="catalog-mobile-filters" className="catalog-filter-panel premium-panel glass-card mb-5 p-4 lg:hidden">
                 {Filters}
               </div>
             )}
@@ -230,7 +233,7 @@ export default function CatalogClient({ products }: { products: Product[] }) {
                 </button>
               </div>
             ) : (
-              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              <div className="catalog-product-grid grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {filtered.map((product, i) => (
                   <Reveal key={product.slug} delay={Math.min(i, 6) * 0.035}>
                     <div className="catalog-card product-card-premium group flex h-full min-w-0 flex-col overflow-hidden">
@@ -300,17 +303,17 @@ export default function CatalogClient({ products }: { products: Product[] }) {
             )}
 
             {/* Нестандартный заказ */}
-              <div className="surface mt-10 flex flex-col items-start gap-5 rounded-lg px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
+            <div className="catalog-bespoke surface mt-10 flex flex-col items-start gap-5 px-5 py-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8">
               <div className="min-w-0">
                 <p className="text-lg font-semibold text-white">Нужен нестандартный заказ?</p>
                 <p className="mt-1 text-sm text-zinc-400">Изготовим по техническому заданию. Выезд к заказчику бесплатно.</p>
               </div>
-              <a
+              <Link
                 href="/contacts"
                 className="energy-strip btn shrink-0 rounded-lg bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
               >
                 Оставить заявку
-              </a>
+              </Link>
             </div>
           </div>
         </div>

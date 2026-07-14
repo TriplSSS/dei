@@ -144,7 +144,7 @@ export default function AdminOrdersClient() {
   };
 
   return (
-    <main className="px-4 pt-32 pb-24 sm:px-6">
+    <main className="dei-admin-page px-4 pb-24 sm:px-6">
       <div className="mx-auto max-w-[1180px]">
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>

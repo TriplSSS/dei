@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="relative z-10 mt-12 px-4 pb-5 pt-4 sm:px-6">
       <div className="mx-auto max-w-[1400px]">
-        <div className="glass-card grid gap-12 rounded-[28px] p-7 md:grid-cols-[1.4fr_1fr_1fr] md:p-10">
+        <div className="site-footer-panel glass-card grid gap-12 p-7 md:grid-cols-[1.4fr_1fr_1fr] md:p-10">
           <div>
             <Link href="/" className="text-3xl font-bold tracking-[-0.05em] text-white">DEI</Link>
             <p className="mt-4 max-w-[360px] text-sm leading-relaxed text-zinc-500">

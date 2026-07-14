@@ -3,12 +3,38 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
 
 const ruble = (n: number) => n.toLocaleString("ru-RU") + " ₽";
 
 export default function CartDrawer() {
   const { items, count, total, setQty, remove, isOpen, close } = useCart();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef(close);
+
+  useEffect(() => {
+    closeRef.current = close;
+  }, [close]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeRef.current();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
@@ -26,6 +52,9 @@ export default function CartDrawer() {
 
           {/* панель */}
           <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cart-drawer-title"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -35,12 +64,13 @@ export default function CartDrawer() {
             {/* шапка */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
               <div className="flex items-center gap-2.5">
-                <h2 className="text-lg font-semibold tracking-tight text-white">Корзина</h2>
+                <h2 id="cart-drawer-title" className="text-lg font-semibold tracking-tight text-white">Корзина</h2>
                 {count > 0 && (
                   <span className="text-xs font-semibold text-zinc-500 tabular-nums">{count} шт.</span>
                 )}
               </div>
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={close}
                 aria-label="Закрыть"
@@ -71,7 +101,7 @@ export default function CartDrawer() {
                 {/* список */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
                   {items.map((it) => (
-                    <div key={it.slug} className="glass-inner flex gap-3 p-3">
+                    <div key={it.slug} className="cart-item glass-inner flex gap-3 p-3">
                       <Link href={`/catalog/${it.slug}`} onClick={close} className="shrink-0">
                         <Image src={it.img} alt={it.name} width={64} height={64} className="h-16 w-16 object-cover" />
                       </Link>
@@ -105,6 +135,7 @@ export default function CartDrawer() {
                             type="button"
                             onClick={() => remove(it.slug)}
                             className="text-xs text-zinc-600 hover:text-red-400 transition-colors"
+                            aria-label={`Убрать ${it.name} из корзины`}
                           >
                             Убрать
                           </button>

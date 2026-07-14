@@ -90,11 +90,11 @@ export default function CalculatorClient() {
       </section>
 
       <section className="section-shell pb-24 md:pb-32">
-        <div className="grid max-w-[1000px] gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="calculator-layout grid gap-6 lg:grid-cols-[1fr_380px]">
 
           {/* Форма */}
           <Reveal direction="left" delay={0.05}>
-            <div className="surface flex flex-col gap-8 p-6 lg:p-8">
+            <div className="calculator-panel surface flex flex-col gap-8 p-6 lg:p-8">
 
               {/* Размеры */}
               <div>
@@ -112,8 +112,7 @@ export default function CalculatorClient() {
                         min="1" max="500"
                         value={value}
                         onChange={e => set(e.target.value)}
-                        className="w-full border border-white/10 bg-black/20 px-3 py-2.5 text-sm tabular-nums text-zinc-200 outline-none transition-colors focus:border-red-600/50"
-                        style={{ border: "1px solid rgba(255,255,255,0.07)" }}
+                        className="dei-control px-3 py-2.5 text-sm tabular-nums"
                       />
                     </div>
                   ))}
@@ -128,7 +127,9 @@ export default function CalculatorClient() {
                     <button
                       key={rt.key}
                       onClick={() => setRoomType(rt.key)}
-                      className={`btn border px-4 py-3 text-left transition-colors duration-200 ${
+                      type="button"
+                      aria-pressed={roomType === rt.key}
+                      className={`selection-card btn border px-4 py-3 text-left transition-colors duration-200 ${
                         roomType === rt.key
                           ? "border-red-500/45 bg-red-600/10 text-white"
                           : "border-white/10 bg-white/[0.015] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
@@ -149,7 +150,9 @@ export default function CalculatorClient() {
                     <button
                       key={m.name}
                       onClick={() => setModel(m.name)}
-                      className={`btn flex items-center justify-between border px-4 py-3 transition-colors duration-200 ${
+                      type="button"
+                      aria-pressed={model === m.name}
+                      className={`selection-card btn flex items-center justify-between border px-4 py-3 transition-colors duration-200 ${
                         model === m.name
                           ? "border-red-500/45 bg-red-600/10 text-white"
                           : "border-white/10 bg-white/[0.015] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
@@ -166,7 +169,7 @@ export default function CalculatorClient() {
 
           {/* Результаты */}
           <Reveal direction="right" delay={0.1}>
-            <div className="flex flex-col gap-4 lg:sticky lg:top-28">
+            <div className="calculator-result flex flex-col gap-4">
 
               {result ? (
                 <>

@@ -18,7 +18,7 @@ const timeline = [
 export default function AboutClient() {
   return (
     <>
-      <section className="page-intro pb-12">
+      <section className="page-intro">
         <div className="page-intro-inner">
           <Reveal>
             <p className="page-kicker">О компании</p>
@@ -32,7 +32,7 @@ export default function AboutClient() {
 
       <section className="section-shell pb-20">
         <Reveal>
-          <div className="glass-card grid min-h-[360px] overflow-hidden rounded-[28px] lg:grid-cols-[1fr_1.25fr]">
+          <div className="brand-statement glass-card grid min-h-[360px] overflow-hidden lg:grid-cols-[1fr_1.25fr]">
             <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_30%_20%,rgba(239,45,63,.14),transparent_55%)] p-8 sm:p-12">
               <span className="text-xs uppercase tracking-[0.16em] text-zinc-600">ДонЭлектроИнтел</span>
               <span className="text-[clamp(6rem,16vw,13rem)] font-bold leading-[0.7] tracking-[-0.09em] text-white">DEI</span>
@@ -46,7 +46,7 @@ export default function AboutClient() {
         </Reveal>
       </section>
 
-      <section className="section-space border-t border-white/[0.07]">
+      <section className="dei-page-section section-space">
         <div className="section-shell">
           <Reveal>
             <p className="section-kicker">Принципы</p>
@@ -66,7 +66,7 @@ export default function AboutClient() {
         </div>
       </section>
 
-      <section className="section-space border-t border-white/[0.07]">
+      <section className="dei-page-section section-space">
         <div className="section-shell grid gap-14 lg:grid-cols-[0.72fr_1.28fr]">
           <Reveal>
             <div className="lg:sticky lg:top-28">
@@ -74,10 +74,10 @@ export default function AboutClient() {
               <h2 className="section-title mt-5">Этапы развития</h2>
             </div>
           </Reveal>
-          <div className="glass-card overflow-hidden rounded-[22px] p-2">
+          <div className="timeline-panel glass-card overflow-hidden p-2">
             {timeline.map(([year, text], index) => (
               <Reveal key={year} delay={index * 0.05}>
-                <div className="grid gap-4 rounded-[14px] border-b border-white/[0.07] px-5 py-6 transition-colors hover:bg-white/[0.035] sm:grid-cols-[100px_1fr]">
+                <div className="timeline-row grid gap-4 rounded-[14px] border-b border-white/[0.07] px-5 py-6 sm:grid-cols-[100px_1fr]">
                   <span className="text-xl font-medium tabular-nums text-white">{year}</span>
                   <p className="max-w-[620px] text-sm leading-relaxed text-zinc-500">{text}</p>
                 </div>
@@ -87,10 +87,10 @@ export default function AboutClient() {
         </div>
       </section>
 
-      <section className="section-space border-t border-white/[0.07]">
+      <section className="dei-page-section section-space">
         <div className="section-shell">
           <Reveal>
-            <div className="glass-card grid gap-10 rounded-[26px] p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="cta-panel glass-card grid gap-10 p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
               <div>
                 <p className="section-kicker">Сегодня</p>
                 <h2 className="section-title mt-5 max-w-[800px]">Производим, подбираем и сопровождаем оборудование</h2>

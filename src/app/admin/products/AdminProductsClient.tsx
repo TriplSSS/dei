@@ -325,7 +325,7 @@ export default function AdminProductsClient() {
   };
 
   return (
-    <main className="px-4 pt-32 pb-24 sm:px-6">
+    <main className="dei-admin-page px-4 pb-24 sm:px-6">
       <div className="mx-auto grid max-w-[1280px] gap-6 lg:grid-cols-[minmax(0,1fr)_460px]">
         <section className="min-w-0">
           <div className="mb-6">
