@@ -1,6 +1,6 @@
 import Link from "next/link";
 import CountUp from "@/components/CountUp";
-import MagneticButton from "@/components/MagneticButton";
+import { ElectricHero } from "@/components/ElectricHero";
 import Reveal from "@/components/Reveal";
 
 const principles = [
@@ -27,70 +27,6 @@ const process = [
   ["Поставка", "Согласовываем комплектацию, сроки, оплату и доставку."],
   ["Запуск", "Помогаем с монтажом и дальнейшей эксплуатацией оборудования."],
 ];
-
-function Hero() {
-  return (
-    <section className="minimal-hero">
-      <div className="minimal-hero-grid">
-        <div>
-          <h1 className="hero-in hero-in-1 minimal-hero-title">
-            DEI
-          </h1>
-
-          <div className="hero-in hero-in-2 mt-8 flex flex-wrap gap-3">
-            <MagneticButton href="/catalog" className="energy-strip btn bg-red-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-red-500">
-              Каталог
-            </MagneticButton>
-            <Link href="/contacts" className="glass-pill btn px-6 py-3.5 text-sm font-medium text-zinc-300 hover:border-white/[0.24] hover:text-white">
-              Связаться с нами
-            </Link>
-          </div>
-        </div>
-
-        <div className="hero-electric hero-in hero-in-2" aria-hidden="true">
-          <div className="electric-field" />
-          <div className="electric-terminal electric-terminal-left">
-            <span />
-            <i />
-            <b />
-          </div>
-          <svg className="electric-arc" viewBox="0 0 640 360" role="presentation">
-            <defs>
-              <filter id="electric-glow" x="-40%" y="-80%" width="180%" height="260%">
-                <feGaussianBlur stdDeviation="5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              <linearGradient id="electric-gradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stopColor="#a90022" />
-                <stop offset=".48" stopColor="#ffffff" />
-                <stop offset=".55" stopColor="#ff2349" />
-                <stop offset="1" stopColor="#a90022" />
-              </linearGradient>
-            </defs>
-            <path className="electric-arc-halo" d="M88 181 L138 158 L178 199 L225 146 L270 192 L316 132 L355 190 L404 149 L447 196 L497 157 L552 181" />
-            <path className="electric-arc-main" d="M88 181 L138 158 L178 199 L225 146 L270 192 L316 132 L355 190 L404 149 L447 196 L497 157 L552 181" />
-            <path className="electric-arc-pulse" d="M88 181 L138 158 L178 199 L225 146 L270 192 L316 132 L355 190 L404 149 L447 196 L497 157 L552 181" />
-            <path className="electric-arc-branch branch-one" d="M225 146 L206 104 L176 84" />
-            <path className="electric-arc-branch branch-two" d="M355 190 L379 232 L410 250" />
-            <path className="electric-arc-branch branch-three" d="M447 196 L470 230 L497 239" />
-          </svg>
-          <div className="electric-terminal electric-terminal-right">
-            <span />
-            <i />
-            <b />
-          </div>
-          <div className="electric-particles">
-            {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
-          </div>
-          <div className="electric-floor" />
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Stats() {
   return (
@@ -196,7 +132,7 @@ function ContactCta() {
 export default function Home() {
   return (
     <>
-      <Hero />
+      <ElectricHero />
       <Stats />
       <Principles />
       <Process />
