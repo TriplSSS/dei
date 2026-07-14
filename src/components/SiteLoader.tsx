@@ -97,11 +97,11 @@ export function SiteLoader() {
           <svg className="site-loader-orbit site-loader-orbit--back" viewBox="0 0 600 300">
             <defs>
               <linearGradient id="loader-orbit-gradient" x1="50" y1="150" x2="550" y2="150" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stopColor="#510015" stopOpacity="0.2" />
-                <stop offset="0.28" stopColor="#b0002c" stopOpacity="0.72" />
-                <stop offset="0.5" stopColor="#ef003d" />
-                <stop offset="0.68" stopColor="#ff6c91" stopOpacity="0.9" />
-                <stop offset="1" stopColor="#510015" stopOpacity="0.2" />
+                <stop offset="0" stopColor="#450306" stopOpacity="0.2" />
+                <stop offset="0.28" stopColor="#a80910" stopOpacity="0.72" />
+                <stop offset="0.5" stopColor="#e50914" />
+                <stop offset="0.68" stopColor="#ff6b62" stopOpacity="0.9" />
+                <stop offset="1" stopColor="#450306" stopOpacity="0.2" />
               </linearGradient>
               <filter id="loader-orbit-glow" x="-30%" y="-90%" width="160%" height="280%">
                 <feGaussianBlur stdDeviation="5" result="blur" />
@@ -128,11 +128,11 @@ export function SiteLoader() {
           <svg className="site-loader-orbit site-loader-orbit--front" viewBox="0 0 600 300">
             <defs>
               <linearGradient id="loader-orbit-front-gradient" x1="50" y1="150" x2="550" y2="150" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#ef003d" stopOpacity="0" />
-                <stop offset="0.16" stopColor="#ef003d" stopOpacity="0.46" />
-                <stop offset="0.42" stopColor="#ff174e" stopOpacity="0.96" />
-                <stop offset="0.74" stopColor="#ef003d" stopOpacity="0.78" />
-                <stop offset="1" stopColor="#ef003d" stopOpacity="0" />
+                <stop stopColor="#e50914" stopOpacity="0" />
+                <stop offset="0.16" stopColor="#e50914" stopOpacity="0.46" />
+                <stop offset="0.42" stopColor="#ff3b30" stopOpacity="0.96" />
+                <stop offset="0.74" stopColor="#e50914" stopOpacity="0.78" />
+                <stop offset="1" stopColor="#e50914" stopOpacity="0" />
               </linearGradient>
               <clipPath id="loader-orbit-front-half">
                 <rect x="0" y="150" width="600" height="150" />

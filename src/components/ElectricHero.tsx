@@ -55,10 +55,10 @@ export function ElectricHero() {
             <svg className="dei-energy-orbit dei-energy-orbit--back" viewBox="0 0 800 420" aria-hidden="true">
               <defs>
                 <linearGradient id="dei-orbit-gradient" x1="70" y1="210" x2="730" y2="210" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="#510015" />
-                  <stop offset="0.46" stopColor="#ef003d" />
-                  <stop offset="0.58" stopColor="#ff839f" />
-                  <stop offset="1" stopColor="#510015" />
+                  <stop offset="0" stopColor="#450306" />
+                  <stop offset="0.46" stopColor="#e50914" />
+                  <stop offset="0.58" stopColor="#ff786f" />
+                  <stop offset="1" stopColor="#450306" />
                 </linearGradient>
                 <filter id="dei-orbit-glow" x="-30%" y="-80%" width="160%" height="260%">
                   <feGaussianBlur stdDeviation="5" result="blur" />
@@ -85,11 +85,11 @@ export function ElectricHero() {
             <svg className="dei-energy-orbit dei-energy-orbit--front" viewBox="0 0 800 420" aria-hidden="true">
               <defs>
                 <linearGradient id="dei-orbit-front-gradient" x1="70" y1="210" x2="730" y2="210" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#ef003d" stopOpacity="0" />
-                  <stop offset="0.15" stopColor="#ef003d" stopOpacity="0.42" />
-                  <stop offset="0.42" stopColor="#ff174e" stopOpacity="0.96" />
-                  <stop offset="0.74" stopColor="#ef003d" stopOpacity="0.8" />
-                  <stop offset="1" stopColor="#ef003d" stopOpacity="0" />
+                  <stop stopColor="#e50914" stopOpacity="0" />
+                  <stop offset="0.15" stopColor="#e50914" stopOpacity="0.42" />
+                  <stop offset="0.42" stopColor="#ff3b30" stopOpacity="0.96" />
+                  <stop offset="0.74" stopColor="#e50914" stopOpacity="0.8" />
+                  <stop offset="1" stopColor="#e50914" stopOpacity="0" />
                 </linearGradient>
                 <clipPath id="dei-orbit-front-half">
                   <rect x="0" y="210" width="800" height="210" />
