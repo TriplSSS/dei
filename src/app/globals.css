@@ -630,7 +630,7 @@ img { -webkit-user-drag: none; user-select: none; }
 .product-photo-stage {
   isolation: isolate;
   background:
-    radial-gradient(circle at 2% 72%, rgba(229, 9, 47, .2), rgba(96, 0, 18, .06) 28%, transparent 47%),
+    radial-gradient(circle at 18% 72%, rgba(229, 9, 47, .23), rgba(96, 0, 18, .07) 30%, transparent 52%),
     radial-gradient(circle at 50% 112%, rgba(229, 9, 47, .07), transparent 44%),
     linear-gradient(145deg, #050505 0%, #030303 54%, #020202 100%);
   border-bottom: 1px solid var(--line-soft);
@@ -652,8 +652,8 @@ img { -webkit-user-drag: none; user-select: none; }
   padding: clamp(.2rem, .55vw, .5rem);
   mix-blend-mode: screen;
   filter: saturate(1.04) contrast(1.08) brightness(.96);
-  -webkit-mask-image: radial-gradient(ellipse 102% 104% at 50% 50%, #000 72%, rgba(0, 0, 0, .96) 86%, transparent 100%);
-  mask-image: radial-gradient(ellipse 102% 104% at 50% 50%, #000 72%, rgba(0, 0, 0, .96) 86%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .42) 5%, #000 13%, #000 87%, rgba(0, 0, 0, .42) 95%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .42) 5%, #000 13%, #000 87%, rgba(0, 0, 0, .42) 95%, transparent 100%);
 }
 
 .cart-glass {
