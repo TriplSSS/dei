@@ -271,6 +271,17 @@ function availabilityClass(status?: ProductAvailabilityStatus) {
   return "is-order";
 }
 
+function isPreviewableProductImage(value: string) {
+  if (value.startsWith("/")) return true;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && url.hostname.endsWith(".public.blob.vercel-storage.com");
+  } catch {
+    return false;
+  }
+}
+
 export default function AdminProductsClient() {
   const [token, setToken] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
@@ -747,7 +758,7 @@ export default function AdminProductsClient() {
               <form onSubmit={saveCurrentProduct} className="admin-drawer__form">
                 <div className="admin-image-editor">
                   <div className="admin-image-editor__preview">
-                    {form.img.startsWith("/") ? <Image src={form.img} alt={form.name || "Фото товара"} fill sizes="520px" className="object-contain" /> : <span><AdminIcon name="image" />{form.img ? "Для предпросмотра загрузите файл" : "Фото товара"}</span>}
+                    {isPreviewableProductImage(form.img) ? <Image src={form.img} alt={form.name || "Фото товара"} fill sizes="520px" className="object-contain" /> : <span><AdminIcon name="image" />{form.img ? "Укажите локальный путь или загрузите файл" : "Фото товара"}</span>}
                   </div>
                   <div className="admin-image-editor__actions">
                     <label className="admin-upload-button">{uploading ? "Загрузка…" : "Загрузить фото"}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadImage} disabled={uploading} /></label>

@@ -1,3 +1,4 @@
+import { put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -33,10 +34,29 @@ export async function POST(request: Request) {
   if (!extension) return adminJsonError("Поддерживаются JPG, PNG и WEBP.");
 
   try {
+    const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}.${extension}`;
+
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const blob = await put(`products/${fileName}`, file, {
+        access: "public",
+        addRandomSuffix: false,
+        cacheControlMaxAge: 31_536_000,
+        contentType: file.type,
+      });
+
+      return Response.json({
+        ok: true,
+        url: blob.url,
+        message: "Изображение загружено.",
+      });
+    }
+
+    if (process.env.VERCEL) {
+      return adminJsonError("Хранилище изображений не подключено.", 503);
+    }
+
     const uploadDirectory = path.join(process.cwd(), "public", "uploads", "products");
     await mkdir(uploadDirectory, { recursive: true });
-
-    const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}.${extension}`;
     await writeFile(path.join(uploadDirectory, fileName), Buffer.from(await file.arrayBuffer()));
 
     return Response.json({
@@ -44,7 +64,10 @@ export async function POST(request: Request) {
       url: `/uploads/products/${fileName}`,
       message: "Изображение загружено.",
     });
-  } catch {
-    return adminJsonError("Изображение не сохранено: локальное хранилище недоступно.", 500);
+  } catch (error) {
+    console.error("[admin:image-upload] failed", {
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return adminJsonError("Изображение не сохранено. Повторите загрузку.", 500);
   }
 }
