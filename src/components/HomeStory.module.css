@@ -1,0 +1,536 @@
+.story {
+  --story-shell: 1320px;
+  --story-gutter: clamp(1rem, 4vw, 3rem);
+  --story-red: #e50914;
+  --story-red-bright: #ff3b30;
+  --story-line: rgb(255 255 255 / 0.09);
+  --story-soft: #aaa6a8;
+  --story-muted: #666164;
+  position: relative;
+  overflow: clip;
+  background:
+    radial-gradient(circle at 10% 12%, rgb(132 0 8 / 0.12), transparent 28rem),
+    #050505;
+  color: #f7f7f5;
+}
+
+.shell {
+  width: min(calc(100% - (var(--story-gutter) * 2)), var(--story-shell));
+  margin-inline: auto;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #ff626b;
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--story-red-bright), transparent);
+  content: "";
+}
+
+.metrics {
+  position: relative;
+  padding: clamp(5rem, 9vw, 8rem) 0 clamp(6rem, 10vw, 10rem);
+}
+
+.metrics::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(229 9 20 / 0.35), transparent);
+  content: "";
+}
+
+.metricsIntro {
+  display: grid;
+  grid-template-columns: 0.7fr 1.4fr 0.8fr;
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 2rem;
+}
+
+.metricsIntro h2 {
+  max-width: 680px;
+  color: #fff;
+  font-size: clamp(2.25rem, 4vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.metricsIntro > span {
+  max-width: 260px;
+  justify-self: end;
+  color: var(--story-muted);
+  font-size: 0.73rem;
+  line-height: 1.55;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.metricCard {
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  position: relative;
+  display: flex;
+  min-height: 250px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--story-line);
+  border-radius: 20px;
+  background:
+    radial-gradient(280px circle at var(--pointer-x) var(--pointer-y), rgb(229 9 20 / 0.17), transparent 42%),
+    linear-gradient(145deg, rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.012));
+  padding: 1.3rem;
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.025);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), border-color 320ms ease, box-shadow 320ms ease;
+}
+
+.metricCard::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.06), transparent 64%);
+  opacity: 0;
+  transform: translateX(-40%);
+  transition: opacity 250ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  content: "";
+}
+
+.metricCard::after {
+  position: absolute;
+  inset: auto 1.25rem 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--story-red), transparent);
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition: opacity 240ms ease, transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
+  content: "";
+}
+
+.metricCard:hover {
+  border-color: rgb(229 9 20 / 0.5);
+  box-shadow: 0 22px 70px rgb(0 0 0 / 0.45), 0 0 42px rgb(229 9 20 / 0.08);
+  transform: translateY(-7px);
+}
+
+.metricCard:hover::before { opacity: 1; transform: translateX(40%); }
+.metricCard:hover::after { opacity: 1; transform: scaleX(1); }
+
+.metricIndex {
+  position: relative;
+  z-index: 1;
+  color: #5e595b;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.metricCard strong {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  color: #fff;
+  font-size: clamp(2.8rem, 5vw, 5.2rem);
+  font-weight: 720;
+  line-height: 0.84;
+  letter-spacing: -0.075em;
+}
+
+.metricLabel {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.2rem;
+  color: #d8d5d6;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.metricNote {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.32rem;
+  color: var(--story-muted);
+  font-size: 0.65rem;
+}
+
+.metricArrow {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 50%;
+  color: #777174;
+  transition: color 250ms ease, border-color 250ms ease, transform 250ms ease;
+}
+
+.metricCard:hover .metricArrow { border-color: rgb(229 9 20 / 0.4); color: #ff6b72; transform: rotate(45deg); }
+
+.principles {
+  position: relative;
+  padding: clamp(6rem, 11vw, 11rem) 0;
+  background:
+    linear-gradient(118deg, rgb(255 255 255 / 0.022), transparent 32%),
+    radial-gradient(circle at 76% 45%, rgb(112 0 8 / 0.18), transparent 34rem);
+}
+
+.principles::before {
+  position: absolute;
+  inset: 8% 4% auto auto;
+  width: min(42vw, 660px);
+  aspect-ratio: 1;
+  border: 1px solid rgb(229 9 20 / 0.08);
+  border-radius: 50%;
+  content: "";
+}
+
+.principlesLayout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(340px, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: stretch;
+}
+
+.sectionLead {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.sectionLead h2,
+.processHead h2,
+.ctaCopy h2 {
+  margin-top: 1rem;
+  color: #fff;
+  font-size: clamp(2.7rem, 5.2vw, 5.9rem);
+  font-weight: 650;
+  line-height: 0.93;
+  letter-spacing: -0.07em;
+}
+
+.sectionLead > div > p:last-child {
+  max-width: 520px;
+  margin-top: 1.4rem;
+  color: var(--story-soft);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.principleTabs {
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  gap: 0.55rem;
+  margin-top: auto;
+  padding-top: 4rem;
+}
+
+.principleTabs button {
+  display: grid;
+  grid-template-columns: 42px 1fr 32px;
+  gap: 0.7rem;
+  align-items: center;
+  min-height: 64px;
+  border: 1px solid var(--story-line);
+  border-radius: 15px;
+  background: rgb(255 255 255 / 0.018);
+  padding: 0.75rem 0.9rem;
+  color: #888285;
+  text-align: left;
+  transition: color 240ms ease, border-color 240ms ease, background 240ms ease, transform 240ms ease;
+}
+
+.principleTabs button:hover { color: #fff; border-color: rgb(255 255 255 / 0.16); transform: translateX(4px); }
+.principleTabs button.isActive { border-color: rgb(229 9 20 / 0.48); background: linear-gradient(90deg, rgb(229 9 20 / 0.13), rgb(229 9 20 / 0.025)); color: #fff; }
+.principleTabs button > span { color: #f25d65; font-size: 0.65rem; font-weight: 750; }
+.principleTabs button > strong { font-size: 0.82rem; font-weight: 650; }
+.principleTabs button > i { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: rgb(255 255 255 / 0.035); font-style: normal; }
+
+.principlePanel {
+  position: relative;
+  min-height: 690px;
+  overflow: hidden;
+  border: 1px solid var(--story-line);
+  border-radius: 26px;
+  background: linear-gradient(150deg, #151516, #090909 54%, #070707);
+  box-shadow: 0 50px 120px rgb(0 0 0 / 0.42), inset 0 1px rgb(255 255 255 / 0.035);
+}
+
+.principlePanel::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 32%, rgb(255 255 255 / 0.025) 50%, transparent 67%);
+  pointer-events: none;
+  content: "";
+}
+
+.signalVisual {
+  position: relative;
+  display: grid;
+  height: 310px;
+  place-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--story-line);
+  background: radial-gradient(circle, rgb(229 9 20 / 0.22), transparent 37%);
+}
+
+.signalCore {
+  position: relative;
+  z-index: 3;
+  color: #fff;
+  font-size: clamp(3.8rem, 8vw, 7.2rem);
+  font-weight: 800;
+  letter-spacing: -0.09em;
+  text-shadow: 0 0 38px rgb(229 9 20 / 0.35);
+}
+
+.signalOrbitOne,
+.signalOrbitTwo,
+.signalSweep {
+  position: absolute;
+  width: 58%;
+  aspect-ratio: 2 / 0.82;
+  border: 1px solid rgb(229 9 20 / 0.34);
+  border-radius: 50%;
+  transform: rotate(-8deg);
+}
+
+.signalOrbitTwo { width: 78%; border-color: rgb(255 255 255 / 0.08); transform: rotate(12deg); }
+.signalSweep { width: 67%; border-color: transparent; border-top-color: var(--story-red-bright); filter: drop-shadow(0 0 7px rgb(229 9 20 / 0.75)); animation: orbitSweep 7s linear infinite; }
+
+.signalDot {
+  position: absolute;
+  z-index: 4;
+  left: 19%;
+  top: 53%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px #fff, 0 0 20px var(--story-red-bright);
+  animation: signalPulse 2.1s ease-in-out infinite;
+}
+
+.principlePanel article { position: relative; z-index: 2; padding: clamp(1.5rem, 4vw, 3.3rem); }
+.panelMeta { display: flex; justify-content: space-between; gap: 1rem; color: #6d676a; font-size: 0.59rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.panelMeta span:last-child { color: #a23b41; }
+.panelCaption { margin-top: 2.5rem; color: #ff646c; font-size: 0.65rem; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; }
+.principlePanel h3 { margin-top: 0.75rem; color: #fff; font-size: clamp(2rem, 4vw, 3.8rem); line-height: 0.98; letter-spacing: -0.055em; }
+.panelText { max-width: 680px; margin-top: 1.25rem; color: var(--story-soft); font-size: 0.83rem; line-height: 1.72; }
+.principlePanel ul { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.7rem; }
+.principlePanel li { border: 1px solid rgb(255 255 255 / 0.09); border-radius: 999px; background: rgb(255 255 255 / 0.025); padding: 0.58rem 0.75rem; color: #9b9698; font-size: 0.64rem; }
+
+.process {
+  position: relative;
+  padding: clamp(6rem, 11vw, 11rem) 0;
+  border-top: 1px solid rgb(255 255 255 / 0.055);
+  background: linear-gradient(180deg, #050505, #080606 52%, #050505);
+}
+
+.processHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.7fr);
+  gap: 3rem;
+  align-items: end;
+}
+
+.processHead > p {
+  max-width: 430px;
+  justify-self: end;
+  color: var(--story-soft);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.processConsole {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  min-height: 540px;
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  overflow: hidden;
+  border: 1px solid var(--story-line);
+  border-radius: 26px;
+  background: #090909;
+  box-shadow: 0 40px 100px rgb(0 0 0 / 0.38);
+}
+
+.processNav { display: grid; grid-template-rows: repeat(4, 1fr); border-right: 1px solid var(--story-line); }
+.processNav button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 1rem;
+  align-items: center;
+  border-bottom: 1px solid var(--story-line);
+  background: transparent;
+  padding: 1.2rem 1.4rem;
+  color: #777174;
+  text-align: left;
+  transition: background 260ms ease, color 260ms ease;
+}
+.processNav button:last-child { border-bottom: 0; }
+.processNav button:hover { background: rgb(255 255 255 / 0.025); color: #fff; }
+.processNav button.isActive { background: linear-gradient(90deg, rgb(229 9 20 / 0.14), transparent); color: #fff; }
+.processNav button > span { color: #ed4a52; font-size: 0.65rem; font-weight: 750; }
+.processNav button > div { display: grid; gap: 0.32rem; }
+.processNav button strong { font-size: 1rem; font-weight: 650; }
+.processNav button small { color: #696467; font-size: 0.66rem; }
+.processNav button > i { position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--story-red); opacity: 0; transform: scaleY(0.3); transition: opacity 260ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); }
+.processNav button.isActive > i { opacity: 1; transform: scaleY(1); }
+
+.processStage {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 72% 38%, rgb(229 9 20 / 0.18), transparent 24rem),
+    linear-gradient(135deg, rgb(255 255 255 / 0.025), transparent 60%);
+}
+
+.processStage::before {
+  position: absolute;
+  inset: -20% -10% auto auto;
+  width: 520px;
+  aspect-ratio: 1;
+  border: 1px solid rgb(229 9 20 / 0.13);
+  border-radius: 50%;
+  content: "";
+}
+
+.processStageContent { position: relative; z-index: 1; display: flex; min-height: 540px; flex-direction: column; justify-content: flex-end; padding: clamp(2rem, 5vw, 4.8rem); }
+.processNumber { position: absolute; top: 1rem; right: 1.8rem; color: rgb(255 255 255 / 0.035); font-size: clamp(8rem, 20vw, 17rem); font-weight: 800; line-height: 0.8; letter-spacing: -0.1em; }
+.processStageContent > p:first-of-type { color: #f0525a; font-size: 0.63rem; font-weight: 750; letter-spacing: 0.15em; text-transform: uppercase; }
+.processStageContent h3 { margin-top: 0.8rem; color: #fff; font-size: clamp(2.8rem, 6vw, 6rem); line-height: 0.9; letter-spacing: -0.07em; }
+.processLine { width: 100%; height: 1px; margin: 2rem 0; overflow: hidden; background: rgb(255 255 255 / 0.08); }
+.processLine i { display: block; width: 38%; height: 100%; background: linear-gradient(90deg, var(--story-red-bright), transparent); box-shadow: 0 0 12px var(--story-red); }
+.processDescription { max-width: 680px; color: var(--story-soft); font-size: 0.82rem; line-height: 1.72; }
+.processResult { margin-top: 1.5rem; color: #fff; font-size: 0.75rem; font-weight: 650; }
+
+.cta {
+  position: relative;
+  padding: clamp(5rem, 10vw, 9rem) 0;
+  border-top: 1px solid rgb(255 255 255 / 0.055);
+}
+
+.ctaCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(250px, 0.6fr);
+  gap: 3rem;
+  align-items: end;
+  min-height: 480px;
+  overflow: hidden;
+  border: 1px solid rgb(229 9 20 / 0.35);
+  border-radius: 28px;
+  background:
+    linear-gradient(125deg, rgb(229 9 20 / 0.2), transparent 42%),
+    #0a0808;
+  padding: clamp(2rem, 6vw, 5rem);
+  box-shadow: 0 42px 110px rgb(0 0 0 / 0.48), inset 0 1px rgb(255 255 255 / 0.035);
+}
+
+.ctaCard::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 36%, rgb(255 255 255 / 0.028) 50%, transparent 64%);
+  content: "";
+}
+
+.ctaEnergy { position: absolute; inset: 0 0 0 auto; width: 48%; pointer-events: none; }
+.ctaEnergy span { position: absolute; top: 50%; right: -8%; width: 68%; aspect-ratio: 1; border: 1px solid rgb(229 9 20 / 0.22); border-radius: 50%; transform: translateY(-50%); }
+.ctaEnergy span:nth-child(2) { width: 92%; border-color: rgb(229 9 20 / 0.11); }
+.ctaEnergy span:nth-child(3) { width: 120%; border-color: rgb(255 255 255 / 0.05); }
+.ctaEnergy i { position: absolute; top: 50%; right: 24%; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff, 0 0 28px var(--story-red-bright); animation: ctaPulse 2.4s ease-in-out infinite; }
+
+.ctaCopy { position: relative; z-index: 2; }
+.ctaCopy h2 { max-width: 900px; }
+.ctaCopy > p:last-child { max-width: 650px; margin-top: 1.5rem; color: #a9a4a6; font-size: 0.83rem; line-height: 1.7; }
+.ctaActions { position: relative; z-index: 2; display: grid; gap: 0.65rem; }
+.ctaPrimary,
+.ctaSecondary { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 1rem; border-radius: 15px; padding: 0 1.15rem; font-size: 0.72rem; font-weight: 700; transition: transform 250ms ease, background 250ms ease, border-color 250ms ease; }
+.ctaPrimary { background: var(--story-red); color: #fff; box-shadow: 0 15px 42px rgb(229 9 20 / 0.22); }
+.ctaPrimary span { font-variant-numeric: tabular-nums; }
+.ctaPrimary:hover { background: var(--story-red-bright); transform: translateY(-3px); }
+.ctaSecondary { border: 1px solid rgb(255 255 255 / 0.11); background: rgb(255 255 255 / 0.028); color: #d9d6d7; }
+.ctaSecondary:hover { border-color: rgb(229 9 20 / 0.45); background: rgb(229 9 20 / 0.06); transform: translateY(-3px); }
+
+.metricCard:focus-visible,
+.principleTabs button:focus-visible,
+.processNav button:focus-visible,
+.ctaPrimary:focus-visible,
+.ctaSecondary:focus-visible {
+  outline: 2px solid var(--story-red-bright);
+  outline-offset: 3px;
+}
+
+@keyframes orbitSweep { to { transform: rotate(352deg); } }
+@keyframes signalPulse { 50% { opacity: 0.35; transform: scale(0.7); } }
+@keyframes ctaPulse { 50% { opacity: 0.35; transform: scale(1.8); } }
+
+@media (max-width: 1023px) {
+  .metricsIntro { grid-template-columns: 1fr 1.6fr; }
+  .metricsIntro > span { display: none; }
+  .metricsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .principlesLayout { grid-template-columns: 1fr; }
+  .principleTabs { grid-template-columns: repeat(3, 1fr); margin-top: 2.5rem; padding-top: 0; }
+  .principleTabs button { grid-template-columns: 34px 1fr; }
+  .principleTabs button > i { display: none; }
+  .principlePanel { min-height: 640px; }
+  .processConsole { grid-template-columns: 1fr; }
+  .processNav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none; border-right: 0; border-bottom: 1px solid var(--story-line); }
+  .processNav button { grid-template-columns: 1fr; gap: 0.5rem; border-right: 1px solid var(--story-line); border-bottom: 0; }
+  .processNav button:last-child { border-right: 0; }
+  .processNav button > div small { display: none; }
+  .processNav button > i { inset: auto 0 0; width: auto; height: 2px; transform: scaleX(0.3); }
+  .processNav button.isActive > i { transform: scaleX(1); }
+  .ctaCard { grid-template-columns: 1fr; }
+  .ctaActions { max-width: 520px; }
+}
+
+@media (max-width: 720px) {
+  .metricsIntro { grid-template-columns: 1fr; }
+  .metricsGrid { grid-template-columns: 1fr; }
+  .metricCard { min-height: 210px; }
+  .principleTabs { display: flex; overflow-x: auto; padding-bottom: 0.35rem; scrollbar-width: none; }
+  .principleTabs::-webkit-scrollbar { display: none; }
+  .principleTabs button { min-width: 220px; }
+  .principlePanel { min-height: 650px; border-radius: 20px; }
+  .signalVisual { height: 260px; }
+  .panelMeta { align-items: flex-start; flex-direction: column; }
+  .processHead { grid-template-columns: 1fr; }
+  .processHead > p { justify-self: start; }
+  .processConsole { border-radius: 20px; }
+  .processNav { overflow-x: auto; grid-template-columns: repeat(4, minmax(120px, 1fr)); scrollbar-width: none; }
+  .processNav::-webkit-scrollbar { display: none; }
+  .processStageContent { min-height: 500px; }
+  .ctaCard { min-height: 560px; border-radius: 20px; }
+  .ctaEnergy { width: 90%; opacity: 0.65; }
+  .ctaPrimary { align-items: flex-start; flex-direction: column; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signalSweep,
+  .signalDot,
+  .ctaEnergy i { animation: none !important; }
+  .metricCard,
+  .principleTabs button,
+  .ctaPrimary,
+  .ctaSecondary { transition-duration: 0.01ms !important; }
+}

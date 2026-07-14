@@ -12,14 +12,6 @@ export default function Footer() {
   return (
     <footer className="site-footer-v11">
       <div className="site-footer-v11__inner">
-        <div className="site-footer-v11__cta">
-          <div>
-            <span>Нужна помощь с выбором?</span>
-            <h2>Подберём оборудование под вашу задачу</h2>
-          </div>
-          <Link href="/contacts">Получить консультацию <span aria-hidden="true">↗</span></Link>
-        </div>
-
         <div className="site-footer-v11__grid">
           <div className="site-footer-v11__brand">
             <Link href="/">DEI</Link>
@@ -37,7 +29,7 @@ export default function Footer() {
             <Link href="/catalog">Оборудование</Link>
             <Link href="/documents">Сертификаты</Link>
             <Link href="/calculator">Расчёт освещения</Link>
-            <Link href="/checkout">Оформление заказа</Link>
+            <Link href="/checkout">Заявка на подбор</Link>
           </div>
 
           <div className="site-footer-v11__contacts">

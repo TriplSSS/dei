@@ -523,6 +523,10 @@
 .checkout-steps-v11 li.is-active::after { content: ""; position: absolute; inset: auto 0 0; height: 2px; background: var(--v11-red); }
 .checkout-layout-v11 { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1.2rem; align-items: start; }
 .checkout-form-v11 { overflow: hidden; border: 1px solid var(--v11-line); border-radius: var(--v11-radius); background: var(--v11-surface); padding: clamp(1.2rem, 3vw, 2rem); }
+.checkout-request-note-v11 { display: grid; grid-template-columns: 36px 1fr; gap: 0.85rem; margin-bottom: 1.8rem; border: 1px solid rgb(229 9 20 / 0.24); border-radius: 14px; background: linear-gradient(120deg, rgb(229 9 20 / 0.1), rgb(229 9 20 / 0.025)); padding: 1rem; }
+.checkout-request-note-v11 > span { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 9px; background: rgb(229 9 20 / 0.14); color: #f26b73; font-size: 0.62rem; }
+.checkout-request-note-v11 strong { color: #fff; font-size: 0.82rem; }
+.checkout-request-note-v11 p { max-width: 620px; margin-top: 0.35rem; color: var(--v11-soft); font-size: 0.72rem; line-height: 1.55; }
 .checkout-page-v11 .checkout-v10__section { padding: 0 0 1.8rem; border: 0; }
 .checkout-page-v11 .checkout-v10__section + .checkout-v10__section { margin-top: 0.3rem; border-top: 1px solid var(--v11-line); padding-top: 1.8rem; }
 .checkout-page-v11 .checkout-v10__section-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
