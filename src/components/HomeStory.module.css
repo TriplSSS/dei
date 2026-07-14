@@ -19,10 +19,21 @@
 
 .metrics {
   position: relative;
+  margin-top: -1px;
   padding: clamp(5rem, 9vw, 8rem) 0 clamp(3.5rem, 5vw, 5.5rem);
   background:
-    radial-gradient(circle at 10% 20%, rgb(132 0 8 / 0.12), transparent 30rem),
-    linear-gradient(180deg, #050505 0%, #060505 62%, #090606 100%);
+    radial-gradient(ellipse 58% 46% at 10% 58%, rgb(132 0 8 / 0.1), transparent 72%),
+    linear-gradient(180deg, #050505 0%, #050505 18%, #060505 68%, #090606 100%);
+}
+
+.metrics::before {
+  position: absolute;
+  z-index: 0;
+  inset: -1px 0 auto;
+  height: clamp(170px, 20vw, 320px);
+  background: linear-gradient(180deg, #050505 0%, #050505 12%, rgb(5 5 5 / 0.94) 32%, rgb(5 5 5 / 0.62) 58%, transparent 100%);
+  pointer-events: none;
+  content: "";
 }
 
 .metrics::after {
