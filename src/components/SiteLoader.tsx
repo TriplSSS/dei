@@ -2,53 +2,75 @@
 
 import { useEffect, useState } from "react";
 
-const STANDARD_DURATION = 1650;
-const REDUCED_DURATION = 120;
-const EXIT_DURATION = 620;
+const STANDARD_DURATION = 2800;
+const REDUCED_DURATION = 160;
+const COMPLETION_HOLD = 180;
+const EXIT_DURATION = 700;
+const MAXIMUM_WAIT = 8000;
 
 export function SiteLoader() {
   const [visible, setVisible] = useState(true);
   const [leaving, setLeaving] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const root = document.documentElement;
     const startedAt = performance.now();
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const minimumDuration = reducedMotion ? REDUCED_DURATION : STANDARD_DURATION;
-    let exitTimer: number | undefined;
+    let pageLoaded = document.readyState === "complete";
+    let completed = false;
+    let animationFrame = 0;
+    let holdTimer: number | undefined;
     let removeTimer: number | undefined;
-    let scheduled = false;
 
     root.classList.add("site-is-loading");
 
-    const finish = () => {
-      if (scheduled) return;
-      scheduled = true;
+    const onLoad = () => {
+      pageLoaded = true;
+    };
 
-      const remaining = Math.max(0, minimumDuration - (performance.now() - startedAt));
-      exitTimer = window.setTimeout(() => {
+    const finish = () => {
+      if (completed) return;
+      completed = true;
+      setProgress(100);
+
+      holdTimer = window.setTimeout(() => {
         setLeaving(true);
         root.classList.remove("site-is-loading");
         removeTimer = window.setTimeout(
           () => setVisible(false),
           reducedMotion ? 20 : EXIT_DURATION,
         );
-      }, remaining);
+      }, reducedMotion ? 10 : COMPLETION_HOLD);
     };
 
-    if (document.readyState === "complete") {
-      finish();
-    } else {
-      window.addEventListener("load", finish, { once: true });
-    }
+    const updateProgress = (now: number) => {
+      const elapsed = now - startedAt;
+      const progressCeiling = pageLoaded ? 99 : 94;
+      const timedProgress = Math.floor((elapsed / minimumDuration) * progressCeiling);
+      const nextProgress = Math.min(progressCeiling, timedProgress);
 
-    const fallbackTimer = window.setTimeout(finish, 2500);
+      setProgress((current) => Math.max(current, nextProgress));
+
+      if ((pageLoaded && elapsed >= minimumDuration) || elapsed >= MAXIMUM_WAIT) {
+        finish();
+        return;
+      }
+
+      animationFrame = window.requestAnimationFrame(updateProgress);
+    };
+
+    if (!pageLoaded) {
+      window.addEventListener("load", onLoad, { once: true });
+    }
+    animationFrame = window.requestAnimationFrame(updateProgress);
 
     return () => {
-      window.removeEventListener("load", finish);
-      window.clearTimeout(exitTimer);
+      window.removeEventListener("load", onLoad);
+      window.cancelAnimationFrame(animationFrame);
+      window.clearTimeout(holdTimer);
       window.clearTimeout(removeTimer);
-      window.clearTimeout(fallbackTimer);
       root.classList.remove("site-is-loading");
     };
   }, []);
@@ -56,60 +78,87 @@ export function SiteLoader() {
   if (!visible) return null;
 
   return (
-    <div
-      className={`site-loader${leaving ? " site-loader--leaving" : ""}`}
-      role="status"
-      aria-live="polite"
-    >
+    <div className={`site-loader${leaving ? " site-loader--leaving" : ""}`} role="status">
       <span className="sr-only">Загрузка сайта DEI</span>
-      <div className="site-loader-stage" aria-hidden="true">
-        <div className="site-loader-logo">
-          <span>DEI</span>
-          <i />
-        </div>
 
-        <div className="site-loader-circuit">
-          <span className="site-loader-contact site-loader-contact--left" />
-          <svg viewBox="0 0 320 72" fill="none">
+      <div className="site-loader-panels" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+
+      <div className="site-loader-stage">
+        <div className="site-loader-lockup" aria-hidden="true">
+          <div className="site-loader-bloom" />
+
+          <svg className="site-loader-orbit site-loader-orbit--back" viewBox="0 0 600 300">
             <defs>
-              <linearGradient
-                id="loader-current"
-                x1="12"
-                y1="36"
-                x2="308"
-                y2="36"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#e5092f" stopOpacity="0" />
-                <stop offset="0.22" stopColor="#ff173f" />
-                <stop offset="0.52" stopColor="#ffffff" />
-                <stop offset="0.8" stopColor="#ff173f" />
-                <stop offset="1" stopColor="#e5092f" stopOpacity="0" />
+              <linearGradient id="loader-orbit-gradient" x1="50" y1="150" x2="550" y2="150" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stopColor="#510015" stopOpacity="0.2" />
+                <stop offset="0.28" stopColor="#b0002c" stopOpacity="0.72" />
+                <stop offset="0.5" stopColor="#ef003d" />
+                <stop offset="0.68" stopColor="#ff6c91" stopOpacity="0.9" />
+                <stop offset="1" stopColor="#510015" stopOpacity="0.2" />
               </linearGradient>
-              <filter id="loader-glow" x="-30%" y="-100%" width="160%" height="300%">
-                <feGaussianBlur stdDeviation="4" result="blur" />
+              <filter id="loader-orbit-glow" x="-30%" y="-90%" width="160%" height="280%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
             </defs>
-            <path
-              className="site-loader-arc site-loader-arc--glow"
-              d="M12 37L61 32L84 44L107 21L132 40L154 13L178 52L201 26L224 43L251 29L278 38L308 34"
-            />
-            <path
-              className="site-loader-arc site-loader-arc--core"
-              d="M12 37L61 32L84 44L107 21L132 40L154 13L178 52L201 26L224 43L251 29L278 38L308 34"
-              stroke="url(#loader-current)"
-              filter="url(#loader-glow)"
-            />
-            <path className="site-loader-branch" d="M107 21L119 5M178 52L190 68M224 43L237 59" />
+            <ellipse className="site-loader-orbit-track" cx="300" cy="150" rx="250" ry="70" />
+            <ellipse className="site-loader-orbit-halo" cx="300" cy="150" rx="250" ry="70" />
+            <ellipse className="site-loader-orbit-energy" cx="300" cy="150" rx="250" ry="70" pathLength="1" />
+            <circle className="site-loader-orbit-charge" r="4.5">
+              <animateMotion
+                dur="5.4s"
+                repeatCount="indefinite"
+                path="M50 150a250 70 0 1 0 500 0a250 70 0 1 0-500 0"
+              />
+            </circle>
           </svg>
-          <span className="site-loader-contact site-loader-contact--right" />
+
+          <div className="site-loader-logo">DEI</div>
+
+          <svg className="site-loader-orbit site-loader-orbit--front" viewBox="0 0 600 300">
+            <defs>
+              <linearGradient id="loader-orbit-front-gradient" x1="50" y1="150" x2="550" y2="150" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#ef003d" stopOpacity="0" />
+                <stop offset="0.16" stopColor="#ef003d" stopOpacity="0.46" />
+                <stop offset="0.42" stopColor="#ff174e" stopOpacity="0.96" />
+                <stop offset="0.74" stopColor="#ef003d" stopOpacity="0.78" />
+                <stop offset="1" stopColor="#ef003d" stopOpacity="0" />
+              </linearGradient>
+              <clipPath id="loader-orbit-front-half">
+                <rect x="0" y="150" width="600" height="150" />
+              </clipPath>
+            </defs>
+            <ellipse
+              className="site-loader-orbit-front-arc"
+              cx="300"
+              cy="150"
+              rx="250"
+              ry="70"
+              clipPath="url(#loader-orbit-front-half)"
+            />
+          </svg>
         </div>
 
-        <div className="site-loader-progress"><span /></div>
+        <div
+          className="site-loader-progress"
+          role="progressbar"
+          aria-label="Загрузка сайта"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={progress}
+        >
+          <span style={{ transform: `scaleX(${progress / 100})` }} />
+        </div>
+        <p className="site-loader-percent" aria-hidden="true">
+          {String(progress).padStart(2, "0")}%
+        </p>
       </div>
     </div>
   );
