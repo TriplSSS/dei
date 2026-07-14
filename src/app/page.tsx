@@ -47,21 +47,45 @@ function Hero() {
           </div>
         </div>
 
-        <div className="hero-reactor hero-in hero-in-2" aria-hidden="true">
-          <div className="reactor-halo" />
-          <div className="reactor-stage">
-            <div className="reactor-ring reactor-ring-one" />
-            <div className="reactor-ring reactor-ring-two" />
-            <div className="reactor-ring reactor-ring-three" />
-            <div className="reactor-axis" />
-            <div className="reactor-core">
-              <span />
-            </div>
-            <div className="reactor-particles">
-              {Array.from({ length: 8 }, (_, index) => <i key={index} />)}
-            </div>
+        <div className="hero-electric hero-in hero-in-2" aria-hidden="true">
+          <div className="electric-field" />
+          <div className="electric-terminal electric-terminal-left">
+            <span />
+            <i />
+            <b />
           </div>
-          <div className="reactor-floor" />
+          <svg className="electric-arc" viewBox="0 0 640 360" role="presentation">
+            <defs>
+              <filter id="electric-glow" x="-40%" y="-80%" width="180%" height="260%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <linearGradient id="electric-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stopColor="#a90022" />
+                <stop offset=".48" stopColor="#ffffff" />
+                <stop offset=".55" stopColor="#ff2349" />
+                <stop offset="1" stopColor="#a90022" />
+              </linearGradient>
+            </defs>
+            <path className="electric-arc-halo" d="M88 181 L138 158 L178 199 L225 146 L270 192 L316 132 L355 190 L404 149 L447 196 L497 157 L552 181" />
+            <path className="electric-arc-main" d="M88 181 L138 158 L178 199 L225 146 L270 192 L316 132 L355 190 L404 149 L447 196 L497 157 L552 181" />
+            <path className="electric-arc-pulse" d="M88 181 L138 158 L178 199 L225 146 L270 192 L316 132 L355 190 L404 149 L447 196 L497 157 L552 181" />
+            <path className="electric-arc-branch branch-one" d="M225 146 L206 104 L176 84" />
+            <path className="electric-arc-branch branch-two" d="M355 190 L379 232 L410 250" />
+            <path className="electric-arc-branch branch-three" d="M447 196 L470 230 L497 239" />
+          </svg>
+          <div className="electric-terminal electric-terminal-right">
+            <span />
+            <i />
+            <b />
+          </div>
+          <div className="electric-particles">
+            {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
+          </div>
+          <div className="electric-floor" />
         </div>
       </div>
     </section>
