@@ -388,15 +388,6 @@ img { -webkit-user-drag: none; user-select: none; }
     radial-gradient(ellipse 54% 52% at 6% 48%, rgba(48, 0, 9, .12), transparent 76%),
     linear-gradient(180deg, #030303 0%, #030202 66%, #050505 100%);
 }
-.dei-cinematic-hero::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  inset: auto 0 0;
-  height: clamp(150px, 20vw, 300px);
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent 0%, rgb(5 5 5 / .16) 28%, rgb(5 5 5 / .72) 70%, #050505 100%);
-}
 .dei-hero-panels {
   position: absolute;
   z-index: -4;
