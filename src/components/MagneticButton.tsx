@@ -2,6 +2,9 @@
 
 import { useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "motion/react";
+import Link from "next/link";
+
+const MotionLink = motion.create(Link);
 
 export default function MagneticButton({
   children,
@@ -37,7 +40,7 @@ export default function MagneticButton({
   }, [x, y]);
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
       href={href}
       style={{ x: springX, y: springY }}
@@ -46,6 +49,6 @@ export default function MagneticButton({
       className={className}
     >
       {children}
-    </motion.a>
+    </MotionLink>
   );
 }

@@ -7,6 +7,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import BackToTop from "@/components/BackToTop";
 import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/CartDrawer";
+import { SiteLoader } from "@/components/SiteLoader";
 
 const inter = Inter({
   subsets: ["cyrillic", "latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ru" className={`${inter.variable} antialiased`}>
       <body className="font-[family-name:var(--font-inter)]">
+        <SiteLoader />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
