@@ -91,17 +91,11 @@ export function ElectricHero() {
                   <stop offset="0.74" stopColor="#e50914" stopOpacity="0.8" />
                   <stop offset="1" stopColor="#e50914" stopOpacity="0" />
                 </linearGradient>
-                <clipPath id="dei-orbit-front-half">
-                  <rect x="0" y="210" width="800" height="210" />
-                </clipPath>
               </defs>
-              <ellipse
+              <path
                 className="dei-orbit-front-arc"
-                cx="400"
-                cy="210"
-                rx="330"
-                ry="104"
-                clipPath="url(#dei-orbit-front-half)"
+                d="M70 210 A330 104 0 0 0 730 210"
+                pathLength="1"
               />
             </svg>
           </div>

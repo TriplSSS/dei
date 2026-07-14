@@ -134,17 +134,11 @@ export function SiteLoader() {
                 <stop offset="0.74" stopColor="#e50914" stopOpacity="0.78" />
                 <stop offset="1" stopColor="#e50914" stopOpacity="0" />
               </linearGradient>
-              <clipPath id="loader-orbit-front-half">
-                <rect x="0" y="150" width="600" height="150" />
-              </clipPath>
             </defs>
-            <ellipse
+            <path
               className="site-loader-orbit-front-arc"
-              cx="300"
-              cy="150"
-              rx="250"
-              ry="70"
-              clipPath="url(#loader-orbit-front-half)"
+              d="M50 150 A250 70 0 0 0 550 150"
+              pathLength="1"
             />
           </svg>
         </div>

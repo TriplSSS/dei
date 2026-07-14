@@ -481,8 +481,6 @@ img { -webkit-user-drag: none; user-select: none; }
   stroke: url(#dei-orbit-gradient);
   stroke-width: 2.4;
   stroke-linecap: round;
-  stroke-dasharray: .34 .66;
-  stroke-dashoffset: -.08;
   filter: url(#dei-orbit-glow);
 }
 .dei-orbit-front-arc {
@@ -979,8 +977,6 @@ html.site-is-loading body {
   stroke: url(#loader-orbit-gradient);
   stroke-width: 2.3;
   stroke-linecap: round;
-  stroke-dasharray: .38 .62;
-  stroke-dashoffset: -.08;
   filter: url(#loader-orbit-glow);
 }
 .site-loader-orbit-front-arc {
