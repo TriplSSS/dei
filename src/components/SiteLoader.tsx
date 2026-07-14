@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const STANDARD_DURATION = 2800;
 const REDUCED_DURATION = 160;
 const COMPLETION_HOLD = 180;
-const EXIT_DURATION = 700;
+const EXIT_DURATION = 960;
 const MAXIMUM_WAIT = 8000;
 
 export function SiteLoader() {
@@ -36,10 +36,13 @@ export function SiteLoader() {
       setProgress(100);
 
       holdTimer = window.setTimeout(() => {
+        root.classList.add("site-is-revealing");
         setLeaving(true);
-        root.classList.remove("site-is-loading");
         removeTimer = window.setTimeout(
-          () => setVisible(false),
+          () => {
+            setVisible(false);
+            root.classList.remove("site-is-loading", "site-is-revealing");
+          },
           reducedMotion ? 20 : EXIT_DURATION,
         );
       }, reducedMotion ? 10 : COMPLETION_HOLD);
@@ -71,7 +74,7 @@ export function SiteLoader() {
       window.cancelAnimationFrame(animationFrame);
       window.clearTimeout(holdTimer);
       window.clearTimeout(removeTimer);
-      root.classList.remove("site-is-loading");
+      root.classList.remove("site-is-loading", "site-is-revealing");
     };
   }, []);
 
